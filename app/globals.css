@@ -847,6 +847,324 @@
     line-height: 1.7;
   }
 
+  @media (max-width: 768px) {
+    .p5v2-hero {
+      padding: 2.5rem 6vw 4rem;
+    }
+
+    .p5v2-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .p5v2-nav {
+      flex-wrap: wrap;
+      gap: 0.9rem 1.2rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+    }
+
+    .p5v2-hero-grid {
+      margin-top: 2rem;
+      gap: 2rem;
+    }
+
+    .p5v2-copy h1 {
+      font-size: clamp(2rem, 7vw, 2.8rem);
+    }
+
+    .p5v2-cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .p5v2-primary,
+    .p5v2-ghost {
+      width: 100%;
+      text-align: center;
+    }
+
+    .p5v2-panel-split {
+      grid-template-columns: 1fr;
+    }
+
+    .p5v2-panel-right {
+      border-left: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-left: 0;
+      padding-top: 1.5rem;
+      min-height: 120px;
+    }
+
+    .p5v2-band {
+      padding: 3.5rem 6vw;
+    }
+
+    .p5v2-insight-card {
+      padding: 2rem 1.5rem;
+    }
+
+    .landing-title {
+      letter-spacing: 0.12em;
+    }
+
+    .landing-subtle {
+      bottom: 2rem;
+      letter-spacing: 0.3em;
+    }
+
+    .landing-logo {
+      width: 320px;
+      height: 320px;
+    }
+
+    .landing-title {
+      font-size: clamp(2.2rem, 9vw, 3.4rem);
+    }
+
+    .p5v2-band {
+      gap: 2rem;
+    }
+
+    .p5v2-card {
+      padding: 1.4rem;
+    }
+
+    .p5v2-insight {
+      padding: 0 6vw 3.5rem;
+    }
+
+    .p5v2-insight-card h3 {
+      font-size: 1.5rem;
+    }
+
+    .p5v2-panel {
+      padding: 1.6rem;
+    }
+
+    .p5v2-panel-code {
+      font-size: 0.95rem;
+      letter-spacing: 0.16em;
+    }
+
+    .p5v2-panel-list {
+      font-size: 0.85rem;
+    }
+
+    .float-cta {
+      animation-duration: 4.8s;
+    }
+
+    footer {
+      padding-left: 6vw;
+      padding-right: 6vw;
+    }
+
+    footer a {
+      height: 44px;
+      width: 44px;
+    }
+
+    footer svg {
+      height: 18px;
+      width: 18px;
+    }
+
+    .p5v2-band-inner {
+      max-width: 100%;
+    }
+
+    .p5v2-bands {
+      gap: 1.2rem;
+    }
+
+    .p5v2-card h3 {
+      font-size: 1.1rem;
+    }
+
+    .p5v2-card p {
+      line-height: 1.5;
+    }
+
+    .p5v2-insight-card {
+      border-radius: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 8vw, 2.6rem);
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 6vw, 2.2rem);
+    }
+
+    h3 {
+      font-size: clamp(1.25rem, 5vw, 1.7rem);
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+
+    .p5v2-band-inner p,
+    .p5v2-card p,
+    .p5v2-insight-card p,
+    .p5v2-copy p {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .p5v2-hero {
+      padding: 2.2rem 6vw 3.6rem;
+    }
+
+    .p5v2-nav {
+      gap: 0.75rem 1rem;
+      letter-spacing: 0.12em;
+    }
+
+    .p5v2-primary,
+    .p5v2-ghost {
+      padding: 0.75rem 1.2rem;
+    }
+
+    .p5v2-panel {
+      border-radius: 20px;
+    }
+
+    .p5v2-card {
+      border-radius: 18px;
+    }
+
+    .landing-page {
+      padding: 0 6vw;
+    }
+
+    .landing-subtle {
+      font-size: 0.55rem;
+    }
+
+    .p5v2-hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .p5v2-panel {
+      border-radius: 18px;
+    }
+
+    .p5v2-panel-label {
+      font-size: 0.65rem;
+    }
+
+    .p5v2-panel-list {
+      gap: 0.6rem;
+    }
+
+    .p5v2-panel-code {
+      font-size: 0.9rem;
+    }
+
+    .p5v2-insight-card h3 {
+      font-size: 1.4rem;
+    }
+
+    .p5v2-insight-card p {
+      font-size: 0.92rem;
+    }
+
+    p {
+      font-size: 0.92rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .p7-products .p7-product-glow {
+      width: 360px;
+      height: 360px;
+      opacity: 0.35;
+      filter: blur(120px);
+    }
+
+    .p7-products .p7-product-glow:nth-child(2) {
+      top: 20%;
+    }
+
+    .p7-products .p7-product-glow:nth-child(3) {
+      left: 10%;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .talk-modal {
+      padding: 1.1rem;
+      border-radius: 20px;
+    }
+
+    .talk-modal h3 {
+      font-size: 1.2rem;
+    }
+
+    .talk-modal label {
+      letter-spacing: 0.2em;
+    }
+
+    .talk-modal input,
+    .talk-modal textarea {
+      padding: 0.65rem 0.85rem;
+      font-size: 0.85rem;
+    }
+
+    .talk-modal button[type="submit"] {
+      width: 100%;
+    }
+
+    .landing-logo {
+      width: 260px;
+      height: 260px;
+    }
+
+    .landing-subtle {
+      bottom: 1.5rem;
+      letter-spacing: 0.25em;
+    }
+
+    .p5v2-cta {
+      gap: 0.75rem;
+    }
+
+    .p5v2-primary,
+    .p5v2-ghost {
+      font-size: 0.85rem;
+    }
+
+    .p5v2-panel {
+      padding: 1.2rem;
+    }
+
+    .p5v2-panel-code {
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 9vw, 2.2rem);
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 7vw, 1.9rem);
+    }
+
+    h3 {
+      font-size: clamp(1.1rem, 6vw, 1.5rem);
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+
   .p6-root {
     min-height: 100vh;
     background: rgb(var(--bg));

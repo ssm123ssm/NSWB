@@ -149,7 +149,6 @@ export default function P7Combined() {
           priority
         />
         <div className="landing-content">
-          <p className="landing-label">P1</p>
           <p className="landing-title">TECH REVOLUTIONIZED</p>
         </div>
         <p className="landing-subtle">scroll to discover</p>
@@ -161,7 +160,7 @@ export default function P7Combined() {
         <header className="p5v2-header">
           <div className="p5v2-brand">
             <Image className="grayscale" src="/logo.svg" alt="Neurasense" width={24} height={24} />
-            <span>Neurasense • P5</span>
+            <span>Neurasense</span>
           </div>
           <nav className="p5v2-nav">
             <a href="#p7-home">Home</a>

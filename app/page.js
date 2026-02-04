@@ -69,6 +69,67 @@ export default function P7Combined() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const landing = document.getElementById("p7-landing");
+    const target = document.getElementById("p7-home");
+    if (!landing || !target) return;
+
+    const goNext = () => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const onWheel = (event) => {
+      if (event.deltaY <= 0) return;
+      const rect = landing.getBoundingClientRect();
+      const inView = rect.top <= 0 && rect.bottom > 0;
+      if (!inView) return;
+      event.preventDefault();
+      goNext();
+    };
+
+    const onKeyDown = (event) => {
+      const keys = ["PageDown", " ", "Spacebar", "ArrowDown"];
+      if (!keys.includes(event.key)) return;
+      const rect = landing.getBoundingClientRect();
+      const inView = rect.top <= 0 && rect.bottom > 0;
+      if (!inView) return;
+      event.preventDefault();
+      goNext();
+    };
+
+    let touchStartY = null;
+    const onTouchStart = (event) => {
+      touchStartY = event.touches?.[0]?.clientY ?? null;
+    };
+
+    const onTouchMove = (event) => {
+      if (touchStartY === null) return;
+      const currentY = event.touches?.[0]?.clientY ?? touchStartY;
+      const delta = touchStartY - currentY;
+      if (delta <= 12) return;
+      const rect = landing.getBoundingClientRect();
+      const inView = rect.top <= 0 && rect.bottom > 0;
+      if (!inView) return;
+      event.preventDefault();
+      touchStartY = null;
+      goNext();
+    };
+
+    landing.addEventListener("click", goNext);
+    landing.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("keydown", onKeyDown);
+    landing.addEventListener("touchstart", onTouchStart, { passive: true });
+    landing.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    return () => {
+      landing.removeEventListener("click", goNext);
+      landing.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKeyDown);
+      landing.removeEventListener("touchstart", onTouchStart);
+      landing.removeEventListener("touchmove", onTouchMove);
+    };
+  }, []);
+
   return (
     <main className="scroll-smooth">
       <section className="landing-page" id="p7-landing">

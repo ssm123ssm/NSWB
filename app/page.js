@@ -26,6 +26,7 @@ const signals = [
   "Private inference layers",
   "Agentic workflow design",
   "Enterprise deployment",
+  "Cryptographic hash",
 ];
 
 const products = [
@@ -59,6 +60,9 @@ export default function P7Combined() {
   const [counter, setCounter] = useState(0);
   const [accessProduct, setAccessProduct] = useState(null);
   const [accessStatus, setAccessStatus] = useState("idle");
+  const [talkOpen, setTalkOpen] = useState(false);
+  const [talkStatus, setTalkStatus] = useState("idle");
+  const [talkError, setTalkError] = useState("");
 
   useEffect(() => {
     document.title = "Neurasense";
@@ -162,7 +166,17 @@ export default function P7Combined() {
           <nav className="p5v2-nav">
             <a href="#p7-home">Home</a>
             <a href="#p7-products">Our products</a>
-            <a href="#p7-contact">Contact</a>
+            <a href="#p7-research">Research</a>
+            <a
+              href="#p7-contact"
+              onClick={(event) => {
+                event.preventDefault();
+                setTalkOpen(true);
+                setTalkStatus("idle");
+              }}
+            >
+              Contact
+            </a>
           </nav>
         </header>
 
@@ -317,8 +331,123 @@ export default function P7Combined() {
             Share your idea or challenge, and we will help shape it into a clear
             plan with the right tech and timeline.
           </p>
+          <button
+            className="float-cta mt-8 inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-white/90 shadow-[0_18px_45px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:border-white/70 hover:bg-white/20 hover:text-white"
+            type="button"
+            onClick={() => {
+              setTalkOpen(true);
+              setTalkStatus("idle");
+            }}
+          >
+            Let&apos;s talk
+          </button>
         </div>
       </section>
+
+      {talkOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
+          <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#0c111a] p-6 text-left text-white shadow-[0_30px_90px_rgba(0,0,0,0.6)] sm:p-8">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                {talkStatus === "success" && (
+                  <p className="text-xs uppercase tracking-[0.35em] font-semibold text-white/80">
+                    Thank you
+                  </p>
+                )}
+              </div>
+              <button
+                className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
+                type="button"
+                onClick={() => {
+                  setTalkOpen(false);
+                  setTalkStatus("idle");
+                  setTalkError("");
+                }}
+              >
+                Close
+              </button>
+            </div>
+            {talkStatus === "success" ? (
+              <div className="mt-6 space-y-3 text-white/80">
+                <p className="text-sm">
+                  We will contact you shortly.
+                </p>
+                <p className="text-base font-semibold text-white sm:text-lg">
+                  Let&apos;s build together.
+                </p>
+              </div>
+            ) : (
+              <form
+                className="mt-6 grid gap-4"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const formData = new FormData(event.currentTarget);
+                  const email = String(formData.get("email") ?? "").trim();
+                  const contact = String(formData.get("contact") ?? "").trim();
+                  if (!email && !contact) {
+                    setTalkError("Please provide an email or contact number.");
+                    return;
+                  }
+                  setTalkError("");
+                  setTalkStatus("success");
+                }}
+              >
+                <p className="text-sm text-white/70">
+                  We&apos;d love to contact you. Share your details and we&apos;ll reach out.
+                </p>
+                {talkError && (
+                  <p className="text-sm text-rose-200">
+                    {talkError}
+                  </p>
+                )}
+                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                  Name
+                  <input
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    name="name"
+                    placeholder="Your name"
+                    type="text"
+                    required
+                  />
+                </label>
+                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                  Email
+                  <input
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    name="email"
+                    placeholder="you@company.com"
+                    type="email"
+                  />
+                </label>
+                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                  Contact number
+                  <input
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    name="contact"
+                    placeholder="+1 555 000 0000"
+                    type="tel"
+                  />
+                </label>
+                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                  Message
+                  <textarea
+                    className="min-h-[120px] rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    name="message"
+                    placeholder="Tell us a bit about what you want to build."
+                    required
+                  />
+                </label>
+                <button
+                  className="mt-2 inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  type="submit"
+                >
+                  Send message
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {accessProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
@@ -387,6 +516,60 @@ export default function P7Combined() {
           </div>
         </div>
       )}
+
+      <footer className="border-t border-white/10 py-10">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-4 px-6 sm:gap-6">
+          <a
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"
+            href="#"
+            aria-label="GitHub (coming soon)"
+            title="GitHub (coming soon)"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="currentColor"
+            >
+              <path d="M12 .5C5.73.5.75 5.6.75 12c0 5.2 3.44 9.61 8.2 11.18.6.11.82-.26.82-.59 0-.29-.01-1.05-.02-2.06-3.34.75-4.04-1.66-4.04-1.66-.55-1.43-1.35-1.81-1.35-1.81-1.1-.78.08-.77.08-.77 1.22.09 1.86 1.27 1.86 1.27 1.08 1.9 2.83 1.35 3.52 1.03.11-.8.42-1.35.76-1.66-2.67-.31-5.48-1.37-5.48-6.1 0-1.35.46-2.46 1.22-3.33-.12-.31-.53-1.58.12-3.28 0 0 1-.33 3.3 1.27a11.13 11.13 0 0 1 3-.42c1.02 0 2.05.14 3 .42 2.3-1.6 3.3-1.27 3.3-1.27.65 1.7.24 2.97.12 3.28.76.87 1.22 1.98 1.22 3.33 0 4.74-2.82 5.78-5.5 6.08.43.38.81 1.13.81 2.28 0 1.65-.02 2.98-.02 3.38 0 .33.22.71.83.59A11.75 11.75 0 0 0 23.25 12C23.25 5.6 18.27.5 12 .5z" />
+            </svg>
+          </a>
+          <a
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"
+            href="https://www.linkedin.com/company/neurasns/?viewAsMember=true"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LinkedIn"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="currentColor"
+            >
+              <path d="M4.98 3.5C4.98 4.88 3.9 6 2.5 6S0 4.88 0 3.5 1.08 1 2.48 1c1.4 0 2.5 1.12 2.5 2.5zM0 23.5h5V7.98H0V23.5zM7.5 7.98H12v2.13h.06c.63-1.2 2.18-2.47 4.49-2.47 4.8 0 5.69 3.16 5.69 7.27v8.59h-5v-7.61c0-1.82-.03-4.16-2.54-4.16-2.54 0-2.93 1.99-2.93 4.03v7.74h-5V7.98z" />
+            </svg>
+          </a>
+          <a
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"
+            href="#"
+            aria-label="Instagram (coming soon)"
+            title="Instagram (coming soon)"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="currentColor"
+            >
+              <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9zm9.75 1.75a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z" />
+            </svg>
+          </a>
+        </div>
+        <p className="mt-6 text-center text-xs uppercase tracking-[0.3em] text-white/40">
+          © 2026 Neurasense. All rights reserved.
+        </p>
+      </footer>
     </main>
   );
 }

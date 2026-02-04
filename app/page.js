@@ -57,6 +57,8 @@ const products = [
 
 export default function P7Combined() {
   const [counter, setCounter] = useState(0);
+  const [accessProduct, setAccessProduct] = useState(null);
+  const [accessStatus, setAccessStatus] = useState("idle");
 
   useEffect(() => {
     document.title = "Neurasense";
@@ -159,7 +161,7 @@ export default function P7Combined() {
           </div>
           <nav className="p5v2-nav">
             <a href="#p7-home">Home</a>
-            <a href="#p7-products">Products</a>
+            <a href="#p7-products">Our products</a>
             <a href="#p7-contact">Contact</a>
           </nav>
         </header>
@@ -239,7 +241,7 @@ export default function P7Combined() {
           <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.45em] text-white/55">
-                Products
+                Our products
               </p>
               <h1 className="text-balance text-4xl leading-tight sm:text-6xl">
                 A focused product line for secure, modern intelligence.
@@ -290,12 +292,15 @@ export default function P7Combined() {
                     <p className="text-sm text-white/65 leading-relaxed">
                       {product.description}
                     </p>
-                    <a
-                      className="mt-6 inline-flex items-center text-xs uppercase tracking-[0.35em] text-white/80 underline-offset-4 transition hover:text-white"
-                      href={product.href}
-                    >
-                      Visit {product.name}
-                    </a>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <button
+                        className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white"
+                        type="button"
+                        onClick={() => setAccessProduct(product.name)}
+                      >
+                        Request access for {product.name}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -304,9 +309,84 @@ export default function P7Combined() {
         </div>
       </section>
 
-      <section className="text-center" id="p7-contact">
-        <h2>Let’s build</h2>
+      <section className="p5v2-insight" id="p7-contact">
+        <div className="p5v2-insight-card">
+          <p className="p5v2-insight-label">Start a project</p>
+          <h3>Tell us what would you like to build?</h3>
+          <p>
+            Share your idea or challenge, and we will help shape it into a clear
+            plan with the right tech and timeline.
+          </p>
+        </div>
       </section>
+
+      {accessProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
+          <div className="w-full max-w-lg rounded-[28px] border border-white/15 bg-[#0c111a] p-6 text-left text-white shadow-[0_30px_90px_rgba(0,0,0,0.6)] sm:p-8">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-white/50">
+                  Request access
+                </p>
+                <h3 className="mt-3 text-2xl">
+                  {accessProduct}
+                </h3>
+              </div>
+              <button
+                className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
+                type="button"
+                onClick={() => {
+                  setAccessProduct(null);
+                  setAccessStatus("idle");
+                }}
+              >
+                Close
+              </button>
+            </div>
+            {accessStatus === "success" ? (
+              <p className="mt-6 text-sm text-white/75">
+                We received your request and you will be notified by email
+                shortly.
+              </p>
+            ) : (
+              <form
+                className="mt-6 grid gap-4"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  setAccessStatus("success");
+                }}
+              >
+                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                  Name
+                  <input
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    name="name"
+                    placeholder="Your name"
+                    type="text"
+                    required
+                  />
+                </label>
+                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                  Email
+                  <input
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    name="email"
+                    placeholder="you@company.com"
+                    type="email"
+                  required
+                />
+              </label>
+              <button
+                className="mt-2 inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                type="submit"
+              >
+                Send request
+              </button>
+            </form>
+          )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

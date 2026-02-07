@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const capabilityBands = [
   {
@@ -54,6 +54,22 @@ const products = [
     href: "https://presence.neurasense.io/owner/login",
     accent: "from-emerald-400/30 via-white/10 to-transparent",
   },
+  {
+    name: "Lipd Hub",
+    tagline: "Lipid management for insight, referral, and research.",
+    description:
+      "A lipid management system that helps identify important patterns in lipid metabolism, streamlines the referral system, and facilitates research.",
+    href: "#",
+    accent: "from-rose-400/30 via-white/10 to-transparent",
+  },
+  {
+    name: "AES",
+    tagline: "Automated AI‑based essay scoring system.",
+    description:
+      "An automated, AI‑based essay scoring system designed for fast, consistent evaluation and feedback.",
+    href: "#",
+    accent: "from-amber-400/30 via-white/10 to-transparent",
+  },
 ];
 
 export default function P7Combined() {
@@ -63,6 +79,8 @@ export default function P7Combined() {
   const [talkOpen, setTalkOpen] = useState(false);
   const [talkStatus, setTalkStatus] = useState("idle");
   const [talkError, setTalkError] = useState("");
+  const landingRef = useRef(null);
+  const networkRef = useRef(null);
 
   useEffect(() => {
     document.title = "Neurasense";
@@ -136,10 +154,167 @@ export default function P7Combined() {
     };
   }, []);
 
+  useEffect(() => {
+    const container = landingRef.current;
+    const canvas = networkRef.current;
+    if (!container || !canvas) return;
+
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    let width = 0;
+    let height = 0;
+    let animationFrame = 0;
+    let particles = [];
+    let running = true;
+    const mouse = { x: 0, y: 0, active: false };
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const resize = () => {
+      const rect = container.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const makeParticles = () => {
+      const target = Math.max(42, Math.min(140, Math.floor((width * height) / 15000)));
+      particles = Array.from({ length: target }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        radius: 1 + Math.random() * 1.8,
+      }));
+    };
+
+    const draw = () => {
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = "rgba(160, 214, 255, 0.75)";
+      context.strokeStyle = "rgba(160, 214, 255, 0.25)";
+
+      for (const particle of particles) {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        if (particle.x < -20) particle.x = width + 20;
+        if (particle.x > width + 20) particle.x = -20;
+        if (particle.y < -20) particle.y = height + 20;
+        if (particle.y > height + 20) particle.y = -20;
+
+        if (mouse.active) {
+          const dx = mouse.x - particle.x;
+          const dy = mouse.y - particle.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance < 160) {
+            const pull = (1 - distance / 160) * 0.015;
+            particle.vx += dx * pull * 0.002;
+            particle.vy += dy * pull * 0.002;
+          }
+        }
+
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      for (let i = 0; i < particles.length; i += 1) {
+        const particle = particles[i];
+        for (let j = i + 1; j < particles.length; j += 1) {
+          const neighbor = particles[j];
+          const dx = particle.x - neighbor.x;
+          const dy = particle.y - neighbor.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 140) continue;
+          const alpha = 0.3 * (1 - dist / 140);
+          context.strokeStyle = `rgba(160, 214, 255, ${alpha})`;
+          context.beginPath();
+          context.moveTo(particle.x, particle.y);
+          context.lineTo(neighbor.x, neighbor.y);
+          context.stroke();
+        }
+      }
+
+      if (mouse.active) {
+        for (const particle of particles) {
+          const dx = particle.x - mouse.x;
+          const dy = particle.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 180) continue;
+          const alpha = 0.28 * (1 - dist / 180);
+          context.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+          context.beginPath();
+          context.moveTo(particle.x, particle.y);
+          context.lineTo(mouse.x, mouse.y);
+          context.stroke();
+        }
+      }
+    };
+
+    const animate = () => {
+      if (!running) return;
+      draw();
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const updateMouse = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = event.clientX - rect.left;
+      mouse.y = event.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const clearMouse = () => {
+      mouse.active = false;
+    };
+
+    const handleMotionPreference = () => {
+      running = !mediaQuery.matches;
+      if (running) {
+        animationFrame = window.requestAnimationFrame(animate);
+      } else {
+        window.cancelAnimationFrame(animationFrame);
+        draw();
+      }
+    };
+
+    const handleResize = () => {
+      resize();
+      makeParticles();
+      if (!running) draw();
+    };
+
+    resize();
+    makeParticles();
+    handleMotionPreference();
+
+    container.addEventListener("pointermove", updateMouse);
+    container.addEventListener("pointerdown", updateMouse);
+    container.addEventListener("pointerleave", clearMouse);
+    window.addEventListener("resize", handleResize);
+    mediaQuery.addEventListener("change", handleMotionPreference);
+
+    return () => {
+      running = false;
+      window.cancelAnimationFrame(animationFrame);
+      container.removeEventListener("pointermove", updateMouse);
+      container.removeEventListener("pointerdown", updateMouse);
+      container.removeEventListener("pointerleave", clearMouse);
+      window.removeEventListener("resize", handleResize);
+      mediaQuery.removeEventListener("change", handleMotionPreference);
+    };
+  }, []);
+
   return (
     <main className="scroll-smooth">
-      <section className="landing-page" id="p7-landing">
+      <section className="landing-page" id="p7-landing" ref={landingRef}>
         <div className="landing-bg" />
+        <canvas className="landing-network" ref={networkRef} aria-hidden="true" />
         <Image
           className="landing-logo"
           src="/logo.svg"
@@ -520,21 +695,6 @@ export default function P7Combined() {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-4 px-6 sm:gap-6">
           <a
             className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"
-            href="#"
-            aria-label="GitHub (coming soon)"
-            title="GitHub (coming soon)"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="currentColor"
-            >
-              <path d="M12 .5C5.73.5.75 5.6.75 12c0 5.2 3.44 9.61 8.2 11.18.6.11.82-.26.82-.59 0-.29-.01-1.05-.02-2.06-3.34.75-4.04-1.66-4.04-1.66-.55-1.43-1.35-1.81-1.35-1.81-1.1-.78.08-.77.08-.77 1.22.09 1.86 1.27 1.86 1.27 1.08 1.9 2.83 1.35 3.52 1.03.11-.8.42-1.35.76-1.66-2.67-.31-5.48-1.37-5.48-6.1 0-1.35.46-2.46 1.22-3.33-.12-.31-.53-1.58.12-3.28 0 0 1-.33 3.3 1.27a11.13 11.13 0 0 1 3-.42c1.02 0 2.05.14 3 .42 2.3-1.6 3.3-1.27 3.3-1.27.65 1.7.24 2.97.12 3.28.76.87 1.22 1.98 1.22 3.33 0 4.74-2.82 5.78-5.5 6.08.43.38.81 1.13.81 2.28 0 1.65-.02 2.98-.02 3.38 0 .33.22.71.83.59A11.75 11.75 0 0 0 23.25 12C23.25 5.6 18.27.5 12 .5z" />
-            </svg>
-          </a>
-          <a
-            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"
             href="https://www.linkedin.com/company/neurasns/?viewAsMember=true"
             target="_blank"
             rel="noreferrer"
@@ -547,21 +707,6 @@ export default function P7Combined() {
               fill="currentColor"
             >
               <path d="M4.98 3.5C4.98 4.88 3.9 6 2.5 6S0 4.88 0 3.5 1.08 1 2.48 1c1.4 0 2.5 1.12 2.5 2.5zM0 23.5h5V7.98H0V23.5zM7.5 7.98H12v2.13h.06c.63-1.2 2.18-2.47 4.49-2.47 4.8 0 5.69 3.16 5.69 7.27v8.59h-5v-7.61c0-1.82-.03-4.16-2.54-4.16-2.54 0-2.93 1.99-2.93 4.03v7.74h-5V7.98z" />
-            </svg>
-          </a>
-          <a
-            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"
-            href="#"
-            aria-label="Instagram (coming soon)"
-            title="Instagram (coming soon)"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="currentColor"
-            >
-              <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9zm9.75 1.75a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z" />
             </svg>
           </a>
         </div>

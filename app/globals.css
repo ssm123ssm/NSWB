@@ -957,24 +957,38 @@
   }
 
   .product-more {
+    position: absolute;
+    left: 0;
+    top: 0;
     opacity: 0;
     transform: translateY(6px);
+    visibility: hidden;
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.35em;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.32);
     transition: opacity 0.35s ease, transform 0.35s ease, color 0.35s ease;
+    pointer-events: none;
   }
 
   .product-more--show {
     opacity: 1;
     transform: translateY(0);
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.45);
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .product-more:hover {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.6);
   }
+
+  .product-intent {
+    margin-top: 0.9rem;
+    min-height: 20px;
+    position: relative;
+  }
+
 
   .onepage-section {
     position: relative;
@@ -1461,5 +1475,16 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes prompt-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

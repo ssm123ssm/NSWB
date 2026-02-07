@@ -79,8 +79,11 @@ export default function P7Combined() {
   const [talkOpen, setTalkOpen] = useState(false);
   const [talkStatus, setTalkStatus] = useState("idle");
   const [talkError, setTalkError] = useState("");
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [infoProduct, setInfoProduct] = useState(null);
   const landingRef = useRef(null);
   const networkRef = useRef(null);
+  const hoverTimerRef = useRef(null);
 
   useEffect(() => {
     document.title = "Neurasense";
@@ -310,9 +313,17 @@ export default function P7Combined() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        window.clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <main className="scroll-smooth">
-      <section className="landing-page" id="p7-landing" ref={landingRef}>
+      <section className="landing-page onepage-section" id="p7-landing" ref={landingRef}>
         <div className="landing-bg" />
         <canvas className="landing-network" ref={networkRef} aria-hidden="true" />
         <Image
@@ -326,10 +337,9 @@ export default function P7Combined() {
         <div className="landing-content">
           <p className="landing-title">TECH REVOLUTIONIZED</p>
         </div>
-        <p className="landing-subtle">scroll to discover</p>
       </section>
 
-      <section className="p5v2-hero" id="p7-home">
+      <section className="p5v2-hero onepage-section" id="p7-home">
         <div className="p5v2-glow p5v2-glow-a" />
         <div className="p5v2-glow p5v2-glow-b" />
         <header className="p5v2-header">
@@ -370,7 +380,7 @@ export default function P7Combined() {
               <button className="p5v2-ghost">View research</button>
             </div>
           </div>
-          <div className="p5v2-panel p5v2-panel-split">
+          <div className="p5v2-panel p5v2-panel-split surface-card">
             <div className="p5v2-panel-left">
               <p className="p5v2-panel-label">Signal Stack</p>
               <div className="p5v2-panel-list">
@@ -389,7 +399,7 @@ export default function P7Combined() {
         </div>
       </section>
 
-      <section className="p5v2-band">
+      <section className="p5v2-band onepage-section">
         <div className="p5v2-band-inner">
           <h2>Capabilities</h2>
           <p>
@@ -399,7 +409,7 @@ export default function P7Combined() {
         </div>
         <div className="p5v2-bands">
           {capabilityBands.map((band) => (
-            <div key={band.title} className="p5v2-card">
+            <div key={band.title} className="p5v2-card surface-card">
               <h3>{band.title}</h3>
               <p>{band.description}</p>
             </div>
@@ -407,8 +417,8 @@ export default function P7Combined() {
         </div>
       </section>
 
-      <section className="p5v2-insight">
-        <div className="p5v2-insight-card">
+      <section className="p5v2-insight onepage-section">
+        <div className="p5v2-insight-card surface-card">
           <p className="p5v2-insight-label">Neurasense Principle</p>
           <h3>Make the complex feel inevitable.</h3>
           <p>
@@ -418,20 +428,14 @@ export default function P7Combined() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden p7-products" id="p7-products">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="p7-product-glow absolute -left-40 top-0 h-[520px] w-[520px] rounded-full bg-cyan-400/20 blur-[160px]" />
-          <div className="p7-product-glow absolute right-0 top-32 h-[460px] w-[460px] rounded-full bg-indigo-500/20 blur-[160px]" />
-          <div className="p7-product-glow absolute left-1/3 bottom-0 h-[520px] w-[520px] rounded-full bg-emerald-400/15 blur-[180px]" />
-        </div>
-
-        <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-10 sm:px-12">
+      <section className="relative overflow-hidden p7-products onepage-section" id="p7-products">
+        <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-20 sm:px-12">
           <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.45em] text-white/55">
                 Our products
               </p>
-              <h1 className="text-balance text-4xl leading-tight sm:text-6xl">
+              <h1 className="text-balance text-3xl leading-tight sm:text-5xl">
                 A focused product line for secure, modern intelligence.
               </h1>
               <p className="max-w-2xl text-base text-white/65 leading-relaxed">
@@ -464,7 +468,22 @@ export default function P7Combined() {
             {products.map((product) => (
               <article
                 key={product.name}
-                className="group relative overflow-hidden rounded-[30px] border border-white/20 bg-white/[0.02] p-8 shadow-[0_32px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl transition hover:-translate-y-1.5"
+                className="group relative overflow-hidden rounded-[30px] p-8 transition hover:-translate-y-1.5 surface-card"
+                onMouseEnter={() => {
+                  if (hoverTimerRef.current) {
+                    window.clearTimeout(hoverTimerRef.current);
+                  }
+                  setHoveredProduct(null);
+                  hoverTimerRef.current = window.setTimeout(() => {
+                    setHoveredProduct(product.name);
+                  }, 2000);
+                }}
+                onMouseLeave={() => {
+                  if (hoverTimerRef.current) {
+                    window.clearTimeout(hoverTimerRef.current);
+                  }
+                  setHoveredProduct(null);
+                }}
               >
                 <div
                   className={`pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br ${product.accent} blur-[120px] opacity-0 transition group-hover:opacity-100`}
@@ -480,13 +499,22 @@ export default function P7Combined() {
                     <p className="text-sm text-white/65 leading-relaxed">
                       {product.description}
                     </p>
-                    <div className="mt-6 flex flex-wrap gap-3">
+                    <div className="mt-6 flex flex-wrap items-center gap-3">
                       <button
                         className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white"
                         type="button"
                         onClick={() => setAccessProduct(product.name)}
                       >
                         Request access for {product.name}
+                      </button>
+                      <button
+                        className={`product-more ${
+                          hoveredProduct === product.name ? "product-more--show" : ""
+                        }`}
+                        type="button"
+                        onClick={() => setInfoProduct(product.name)}
+                      >
+                        More info
                       </button>
                     </div>
                   </div>
@@ -497,10 +525,10 @@ export default function P7Combined() {
         </div>
       </section>
 
-      <section className="p5v2-insight" id="p7-contact">
-        <div className="p5v2-insight-card">
+      <section className="p5v2-insight onepage-section" id="p7-contact">
+        <div className="p5v2-insight-card surface-card">
           <p className="p5v2-insight-label">Start a project</p>
-          <h3>Tell us what would you like to build?</h3>
+          <h3>Tell us what you&apos;d like to build.</h3>
           <p>
             Share your idea or challenge, and we will help shape it into a clear
             plan with the right tech and timeline.
@@ -513,14 +541,14 @@ export default function P7Combined() {
               setTalkStatus("idle");
             }}
           >
-            Let&apos;s talk
+            Start a project
           </button>
         </div>
       </section>
 
       {talkOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
-          <div className="talk-modal w-full max-w-lg rounded-[28px] border border-white/15 bg-[#0c111a] p-6 text-left text-white shadow-[0_30px_90px_rgba(0,0,0,0.6)] sm:p-8">
+        <div className="popup-overlay fixed inset-0 z-50 flex items-center justify-center px-6">
+          <div className="talk-modal popup-card surface-card w-full max-w-lg rounded-[28px] p-6 text-left text-white sm:p-8">
             <div className="flex items-start justify-between gap-6">
               <div>
                 {talkStatus === "success" && (
@@ -530,7 +558,7 @@ export default function P7Combined() {
                 )}
               </div>
               <button
-                className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
+                className="popup-close"
                 type="button"
                 onClick={() => {
                   setTalkOpen(false);
@@ -543,10 +571,10 @@ export default function P7Combined() {
             </div>
             {talkStatus === "success" ? (
               <div className="mt-6 space-y-3 text-white/80">
-                <p className="text-sm">
+                <p className="popup-body">
                   We will contact you shortly.
                 </p>
-                <p className="text-base font-semibold text-white sm:text-lg">
+                <p className="popup-heading">
                   Let&apos;s build together.
                 </p>
               </div>
@@ -566,53 +594,53 @@ export default function P7Combined() {
                   setTalkStatus("success");
                 }}
               >
-                <p className="text-sm text-white/70">
+                <p className="popup-body">
                   We&apos;d love to contact you. Share your details and we&apos;ll reach out.
                 </p>
                 {talkError && (
-                  <p className="text-sm text-rose-200">
+                  <p className="popup-body text-rose-200">
                     {talkError}
                   </p>
                 )}
-                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                <label className="popup-label">
                   Name
                   <input
-                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    className="popup-input"
                     name="name"
                     placeholder="Your name"
                     type="text"
                     required
                   />
                 </label>
-                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                <label className="popup-label">
                   Email
                   <input
-                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    className="popup-input"
                     name="email"
                     placeholder="you@company.com"
                     type="email"
                   />
                 </label>
-                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                <label className="popup-label">
                   Contact number
                   <input
-                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    className="popup-input"
                     name="contact"
                     placeholder="+1 555 000 0000"
                     type="tel"
                   />
                 </label>
-                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                <label className="popup-label">
                   Message
                   <textarea
-                    className="min-h-[120px] rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    className="popup-input popup-textarea"
                     name="message"
                     placeholder="Tell us a bit about what you want to build."
                     required
                   />
                 </label>
                 <button
-                  className="mt-2 inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="popup-submit"
                   type="submit"
                 >
                   Send message
@@ -624,19 +652,19 @@ export default function P7Combined() {
       )}
 
       {accessProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
-          <div className="talk-modal w-full max-w-lg rounded-[28px] border border-white/15 bg-[#0c111a] p-6 text-left text-white shadow-[0_30px_90px_rgba(0,0,0,0.6)] sm:p-8">
+        <div className="popup-overlay fixed inset-0 z-50 flex items-center justify-center px-6">
+          <div className="talk-modal popup-card surface-card w-full max-w-lg rounded-[28px] p-6 text-left text-white sm:p-8">
             <div className="flex items-start justify-between gap-6">
               <div>
                 <p className="text-xs uppercase tracking-[0.35em] text-white/50">
                   Request access
                 </p>
-                <h3 className="mt-3 text-2xl">
+                <h3 className="popup-heading">
                   {accessProduct}
                 </h3>
               </div>
               <button
-                className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
+                className="popup-close"
                 type="button"
                 onClick={() => {
                   setAccessProduct(null);
@@ -647,7 +675,7 @@ export default function P7Combined() {
               </button>
             </div>
             {accessStatus === "success" ? (
-              <p className="mt-6 text-sm text-white/75">
+              <p className="popup-body mt-6">
                 We received your request and you will be notified by email
                 shortly.
               </p>
@@ -659,20 +687,20 @@ export default function P7Combined() {
                   setAccessStatus("success");
                 }}
               >
-                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                <label className="popup-label">
                   Name
                   <input
-                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    className="popup-input"
                     name="name"
                     placeholder="Your name"
                     type="text"
                     required
                   />
                 </label>
-                <label className="grid gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+                <label className="popup-label">
                   Email
                   <input
-                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/50"
+                    className="popup-input"
                     name="email"
                     placeholder="you@company.com"
                     type="email"
@@ -680,7 +708,7 @@ export default function P7Combined() {
                 />
               </label>
               <button
-                className="mt-2 inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="popup-submit"
                 type="submit"
               >
                 Send request
@@ -691,7 +719,45 @@ export default function P7Combined() {
         </div>
       )}
 
-      <footer className="border-t border-white/10 py-10">
+      {infoProduct && (
+        <div className="popup-overlay fixed inset-0 z-50 flex items-center justify-center px-6">
+          <div className="talk-modal popup-card surface-card w-full max-w-lg rounded-[28px] p-6 text-left text-white sm:p-8">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-white/50">
+                  More info
+                </p>
+                <h3 className="popup-heading">
+                  {infoProduct}
+                </h3>
+              </div>
+              <button
+                className="popup-close"
+                type="button"
+                onClick={() => setInfoProduct(null)}
+              >
+                Close
+              </button>
+            </div>
+            <p className="popup-body mt-6">
+              Share your interest in {infoProduct}, and we&apos;ll send detailed
+              documentation, onboarding steps, and timelines tailored to your team.
+            </p>
+            <button
+              className="popup-submit mt-6"
+              type="button"
+              onClick={() => {
+                setInfoProduct(null);
+                setAccessProduct(infoProduct);
+              }}
+            >
+              Request access
+            </button>
+          </div>
+        </div>
+      )}
+
+      <footer className="border-t border-white/10 py-10 onepage-section">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-4 px-6 sm:gap-6">
           <a
             className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/15 hover:text-white"

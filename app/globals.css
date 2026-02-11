@@ -956,6 +956,207 @@
     color: white;
   }
 
+  .vault-modal {
+    position: relative;
+    overflow: hidden;
+    animation: vault-modal-sequence 6s ease-in-out both;
+  }
+
+  .vault-modal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(120, 214, 255, 0.12), transparent 60%),
+      radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.08), transparent 55%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .vault-holo {
+    position: relative;
+    padding: 1.75rem 1.5rem 1.5rem;
+    border-radius: 20px;
+    background: radial-gradient(circle at top, rgba(160, 214, 255, 0.18), transparent 58%),
+      linear-gradient(120deg, rgba(255, 255, 255, 0.05), transparent 45%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 0 36px rgba(160, 214, 255, 0.08);
+    overflow: hidden;
+  }
+
+  .vault-holo::before {
+    content: "";
+    position: absolute;
+    inset: -120% 0 0;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(160, 214, 255, 0.35) 40%,
+      rgba(255, 255, 255, 0.1) 55%,
+      transparent 75%
+    );
+    animation: vault-scan 2.2s linear infinite;
+    mix-blend-mode: screen;
+  }
+
+  .vault-holo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .vault-holo .vault-title,
+  .vault-holo .vault-subtitle {
+    position: relative;
+    z-index: 1;
+  }
+
+  .vault-title {
+    position: relative;
+    font-size: 2.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 0 16px rgba(160, 214, 255, 0.25);
+  }
+
+  .vault-title--delayed {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: vault-title-reveal 0.65s ease-out 3.2s forwards;
+  }
+
+  .vault-subtitle {
+    margin-top: 0.6rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    color: rgba(255, 255, 255, 0.5);
+    animation: vault-fade 2.4s ease-in-out infinite;
+  }
+
+  .vault-stream {
+    margin: 1.4rem auto 0;
+    max-width: 320px;
+    color: rgba(255, 255, 255, 0.65);
+    opacity: 1;
+  }
+
+  .vault-hash {
+    display: inline-block;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+  }
+
+  .vault-space {
+    display: inline;
+  }
+
+  .vault-glyph {
+    position: relative;
+    display: inline-block;
+  }
+
+  .vault-glyph-trail {
+    position: absolute;
+    left: 0;
+    top: -0.7em;
+    opacity: 0;
+    color: rgba(160, 214, 255, 0.45);
+    filter: blur(0.6px);
+    animation: vault-glyph-trail 1.3s ease-out both;
+    animation-delay: var(--glyph-delay, 0ms);
+  }
+
+  .vault-glyph-main {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 10px rgba(160, 214, 255, 0.2);
+  }
+
+  @keyframes vault-modal-sequence {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+  }
+
+  @keyframes vault-scan {
+    0% {
+      transform: translateY(-120%);
+    }
+    100% {
+      transform: translateY(120%);
+    }
+  }
+
+  @keyframes vault-fade {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.75;
+    }
+  }
+
+  @keyframes vault-title-reveal {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes vault-glyph-trail {
+    0% {
+      opacity: 0;
+      transform: translateY(-0.6em);
+    }
+    40% {
+      opacity: 0.45;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(0.6em);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vault-holo::before,
+    .vault-title,
+    .vault-subtitle,
+    .vault-glyph-trail,
+    .vault-modal {
+      animation: none;
+    }
+  }
+
   .product-more {
     position: absolute;
     left: 0;
@@ -987,6 +1188,29 @@
     margin-top: 0.9rem;
     min-height: 20px;
     position: relative;
+  }
+
+  .product-featured {
+    border: 1px solid rgba(99, 102, 241, 0.55);
+    box-shadow: 0 30px 90px rgba(56, 189, 248, 0.18),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    background: rgba(99, 102, 241, 0.06);
+  }
+
+  .product-featured-pill {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(129, 140, 248, 0.7);
+    background: rgba(15, 23, 42, 0.65);
+    padding: 0.25rem 0.6rem;
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: rgba(224, 231, 255, 0.9);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
   }
 
 

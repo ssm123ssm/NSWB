@@ -4,14 +4,6 @@ import Image from "next/image";
 import { useEffect } from "react";
 const products = [
   {
-    name: "Preview",
-    tagline: "Private Git previews with controlled access.",
-    description:
-      "Share rendered files inside private repositories with collaborators. Built with Next.js + Clerk for fast, secure review workflows.",
-    href: "https://preview.neurasense.io/",
-    accent: "from-cyan-400/30 via-white/10 to-transparent",
-  },
-  {
     name: "Vault",
     tagline: "Zero‑trust storage built around client‑side encryption.",
     description:

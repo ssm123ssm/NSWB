@@ -31,20 +31,14 @@ const signals = [
 
 const products = [
   {
-    name: "Preview",
-    tagline: "Private Git previews with controlled access.",
-    description:
-      "Share rendered files inside private repositories with collaborators. Built with Next.js + Clerk for fast, secure review workflows.",
-    href: "https://preview.neurasense.io/",
-    accent: "from-cyan-400/30 via-white/10 to-transparent",
-  },
-  {
     name: "Vault",
     tagline: "Zero‑trust storage built around client‑side encryption.",
     description:
       "End‑to‑end encrypted file storage where plaintext never touches the server. Encrypted manifests and policy‑based access by design.",
     href: "https://vault.neurasense.io/dashboard",
     accent: "from-indigo-500/30 via-white/10 to-transparent",
+    featured: true,
+    infoHref: "/vault",
   },
   {
     name: "Presence",
@@ -73,6 +67,8 @@ const products = [
 ];
 
 export default function P7Combined() {
+  const vaultTarget = "ENCRYPTED COLLABORATING";
+  const vaultFinal = "ENCRYPT3D C0LLABORAT1NG";
   const [counter, setCounter] = useState(0);
   const [accessProduct, setAccessProduct] = useState(null);
   const [accessStatus, setAccessStatus] = useState("idle");
@@ -81,9 +77,16 @@ export default function P7Combined() {
   const [talkError, setTalkError] = useState("");
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [infoProduct, setInfoProduct] = useState(null);
+  const [vaultOpen, setVaultOpen] = useState(false);
+  const [vaultPhase, setVaultPhase] = useState("hash");
+  const [vaultHash, setVaultHash] = useState("");
   const landingRef = useRef(null);
   const networkRef = useRef(null);
   const hoverTimerRef = useRef(null);
+  const vaultTimerRef = useRef(null);
+  const vaultPhaseTimerRef = useRef(null);
+  const vaultHashIntervalRef = useRef(null);
+  const vaultHashStartRef = useRef(null);
 
   useEffect(() => {
     document.title = "Neurasense";
@@ -318,9 +321,78 @@ export default function P7Combined() {
       if (hoverTimerRef.current) {
         window.clearTimeout(hoverTimerRef.current);
       }
-      
+      if (vaultTimerRef.current) {
+        window.clearTimeout(vaultTimerRef.current);
+      }
+      if (vaultPhaseTimerRef.current) {
+        window.clearTimeout(vaultPhaseTimerRef.current);
+      }
+      if (vaultHashIntervalRef.current) {
+        window.clearInterval(vaultHashIntervalRef.current);
+      }
+      if (vaultHashStartRef.current) {
+        window.clearTimeout(vaultHashStartRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!vaultOpen) return;
+    setVaultPhase("hash");
+    setVaultHash("");
+    if (vaultHashIntervalRef.current) {
+      window.clearInterval(vaultHashIntervalRef.current);
+    }
+    if (vaultHashStartRef.current) {
+      window.clearTimeout(vaultHashStartRef.current);
+    }
+    const target = vaultTarget;
+    const jitter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%&*+-=";
+    const revealInterval = 100;
+    const startDelay = 0;
+    const holdFinal = 2000;
+    vaultHashStartRef.current = window.setTimeout(() => {
+      vaultHashIntervalRef.current = window.setInterval(() => {
+        const chars = target.split("").map((char) => {
+          if (char === " ") return " ";
+          return jitter[Math.floor(Math.random() * jitter.length)];
+        });
+        setVaultHash(chars.join(""));
+      }, revealInterval);
+    }, startDelay);
+    if (vaultPhaseTimerRef.current) {
+      window.clearTimeout(vaultPhaseTimerRef.current);
+    }
+    const totalRun = 1500;
+    vaultPhaseTimerRef.current = window.setTimeout(() => {
+      setVaultPhase("final");
+      setVaultHash(vaultFinal);
+      if (vaultHashIntervalRef.current) {
+        window.clearInterval(vaultHashIntervalRef.current);
+        vaultHashIntervalRef.current = null;
+      }
+    }, totalRun);
+    if (vaultTimerRef.current) {
+      window.clearTimeout(vaultTimerRef.current);
+    }
+    vaultTimerRef.current = window.setTimeout(() => {
+      setVaultOpen(false);
+    }, totalRun + holdFinal);
+    return () => {
+      if (vaultTimerRef.current) {
+        window.clearTimeout(vaultTimerRef.current);
+      }
+      if (vaultPhaseTimerRef.current) {
+        window.clearTimeout(vaultPhaseTimerRef.current);
+      }
+      if (vaultHashIntervalRef.current) {
+        window.clearInterval(vaultHashIntervalRef.current);
+      }
+      if (vaultHashStartRef.current) {
+        window.clearTimeout(vaultHashStartRef.current);
+      }
+    };
+  }, [vaultOpen]);
 
   return (
     <main className="scroll-smooth">
@@ -469,7 +541,9 @@ export default function P7Combined() {
             {products.map((product) => (
               <article
                 key={product.name}
-                className="group relative overflow-hidden rounded-[30px] p-8 transition hover:-translate-y-1.5 surface-card"
+                className={`group relative overflow-hidden rounded-[30px] p-8 transition hover:-translate-y-1.5 surface-card ${
+                  product.featured ? "product-featured" : ""
+                }`}
                 onMouseEnter={() => {
                   if (hoverTimerRef.current) {
                     window.clearTimeout(hoverTimerRef.current);
@@ -489,9 +563,20 @@ export default function P7Combined() {
                 <div
                   className={`pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br ${product.accent} blur-[120px] opacity-0 transition group-hover:opacity-100`}
                 />
+                {product.featured && (
+                  <div className="product-featured-pill">
+                    Featured
+                  </div>
+                )}
                 <div className="relative grid gap-6 lg:grid-cols-[0.55fr_0.45fr]">
                   <div>
-                    <h2 className="mt-4 text-3xl">{product.name}</h2>
+                    <h2
+                      className={`mt-4 text-3xl ${
+                        product.featured ? "mt-10" : ""
+                      }`}
+                    >
+                      {product.name}
+                    </h2>
                     <p className="mt-3 text-sm text-white/70">
                       {product.tagline}
                     </p>
@@ -512,13 +597,28 @@ export default function P7Combined() {
                       </button>
                     </div>
                     <div className="mt-6 flex flex-wrap items-center gap-3">
-                      <button
-                        className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white"
-                        type="button"
-                        onClick={() => setAccessProduct(product.name)}
-                      >
-                        Request access for {product.name}
-                      </button>
+                      {product.infoHref && (
+                        <a
+                          className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/15 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/90 shadow-[0_10px_30px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:border-white/70 hover:bg-white/25 hover:text-white"
+                          href={product.infoHref}
+                          onClick={(event) => {
+                            if (product.name !== "Vault") return;
+                            event.preventDefault();
+                            setVaultOpen(true);
+                          }}
+                        >
+                          Explore {product.name}
+                        </a>
+                      )}
+                      {!product.featured && (
+                        <button
+                          className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white"
+                          type="button"
+                          onClick={() => setAccessProduct(product.name)}
+                        >
+                          Request access for {product.name}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -756,6 +856,44 @@ export default function P7Combined() {
             >
               Request access
             </button>
+          </div>
+        </div>
+      )}
+
+      {vaultOpen && (
+        <div
+          className="popup-overlay fixed inset-0 z-50 flex items-center justify-center px-6"
+          onClick={() => setVaultOpen(false)}
+        >
+          <div
+            className="vault-modal popup-card surface-card w-full max-w-lg rounded-[28px] p-8 text-center text-white sm:p-10"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="vault-holo">
+              <div className="vault-title">Vault</div>
+            </div>
+            <div className="vault-stream">
+              <span className="vault-hash p5v2-panel-code" aria-hidden="true">
+                {(vaultPhase === "hash" ? vaultHash : vaultFinal)
+                  .split("")
+                  .map((char, index) => (
+                    <span
+                      className={char === " " ? "vault-space" : "vault-glyph"}
+                      key={`${char}-${index}`}
+                      style={{ "--glyph-delay": `${index * 45}ms` }}
+                    >
+                      {char === " " ? (
+                        "\u00A0"
+                      ) : (
+                        <>
+                          <span className="vault-glyph-trail">{char}</span>
+                          <span className="vault-glyph-main">{char}</span>
+                        </>
+                      )}
+                    </span>
+                  ))}
+              </span>
+            </div>
           </div>
         </div>
       )}

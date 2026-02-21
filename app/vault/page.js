@@ -33,6 +33,26 @@ const solutionTiles = [
   },
 ];
 
+const audienceProfiles = [
+  {
+    audience: "Research Labs & Investigators",
+    productCount: 3,
+    products:
+      "Private Data Snapshots, Synced Local Encrypted Directories, Encrypted File Sharing",
+  },
+  {
+    audience: "Engineering & Development Teams",
+    productCount: 3,
+    products:
+      "Encrypted Remote Repositories, Hosted App Access Control, Synced Local Encrypted Directories",
+  },
+  {
+    audience: "Operations & Governance Teams",
+    productCount: 2,
+    products: "Encrypted File Sharing, Hosted App Access Control",
+  },
+];
+
 export const metadata = {
   title: "Vault | Neurasense",
   description: "Vault by Neurasense: secure collaboration and encrypted workflow infrastructure.",
@@ -53,7 +73,7 @@ export default function VaultPage() {
   const renderTile = (tile, index, layoutClass = "") => (
     <article
       key={tile.title}
-      className={`group relative isolate animate-float min-h-[280px] overflow-hidden rounded-3xl border border-white/20 bg-white/[0.04] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-300 hover:-translate-y-1.5 hover:border-cyan-100/45 hover:bg-white/[0.06] ${layoutClass}`}
+      className={`group relative isolate animate-float min-h-[240px] overflow-hidden rounded-3xl border border-white/20 bg-white/[0.04] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-300 hover:-translate-y-1.5 hover:border-cyan-100/45 hover:bg-white/[0.06] md:min-h-[170px] ${layoutClass}`}
       style={{ animationDelay: `${index * 0.6}s` }}
     >
       <div
@@ -65,10 +85,12 @@ export default function VaultPage() {
       />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-100/45 to-transparent opacity-65" />
       <h3 className="text-2xl leading-tight text-white/95">{tile.title}</h3>
-      <p className="mt-5 text-base leading-relaxed text-white/65">{tile.description}</p>
-      <div className="mt-5">
-        <p className="text-[11px] uppercase tracking-[0.3em] text-white/50">Who is it for</p>
-        <p className="mt-2 text-sm leading-relaxed text-white/70">{tile.whoFor}</p>
+      <div className="mt-5 md:mt-0 md:max-h-0 md:translate-y-1 md:overflow-hidden md:opacity-0 md:transition-all md:duration-300 md:ease-out md:group-hover:mt-5 md:group-hover:max-h-60 md:group-hover:translate-y-0 md:group-hover:opacity-100">
+        <p className="text-base leading-relaxed text-white/65">{tile.description}</p>
+        <div className="mt-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-white/50">Who is it for</p>
+          <p className="mt-2 text-sm leading-relaxed text-white/70">{tile.whoFor}</p>
+        </div>
       </div>
     </article>
   );
@@ -124,7 +146,7 @@ export default function VaultPage() {
             <div className="pointer-events-none absolute left-[33.3%] top-[34%] hidden h-[22%] w-px -translate-x-1/2 bg-gradient-to-b from-cyan-100/25 to-transparent lg:block" />
             <div className="pointer-events-none absolute right-[33.3%] top-[34%] hidden h-[22%] w-px translate-x-1/2 bg-gradient-to-b from-cyan-100/25 to-transparent lg:block" />
 
-            <div className="relative grid gap-6 md:grid-cols-2 lg:grid-cols-6">
+            <div className="relative grid items-start gap-6 md:grid-cols-2 lg:grid-cols-6">
               {solutionTiles.map((tile, index) => {
                 const isLastOddTile =
                   solutionTiles.length % 2 === 1 && index === solutionTiles.length - 1;
@@ -135,6 +157,29 @@ export default function VaultPage() {
                 return renderTile(tile, index, `${getTilePlacement(index)} ${mdCenterClass}`);
               })}
             </div>
+          </div>
+        </section>
+
+        <section className="rounded-[30px] border border-white/14 bg-white/[0.03] p-7 shadow-[0_24px_70px_rgba(0,0,0,0.42)] sm:p-8">
+          <p className="text-xs uppercase tracking-[0.35em] text-white/50">Who is it for</p>
+          <div className="mt-6 grid gap-4 text-sm text-white/62">
+            {audienceProfiles.map((item, index) => (
+              <div
+                key={item.audience}
+                className={`flex items-center justify-between ${
+                  index !== audienceProfiles.length - 1 ? "border-b border-white/10 pb-3" : ""
+                }`}
+              >
+                <div className="pr-4">
+                  <p className="text-white/78">{item.audience}</p>
+                  <p className="mt-1 text-xs text-white/50">{item.products}</p>
+                </div>
+                <span className="whitespace-nowrap text-white/40">
+                  {item.productCount} relevant{" "}
+                  {item.productCount === 1 ? "capability" : "capabilities"}
+                </span>
+              </div>
+            ))}
           </div>
         </section>
       </div>

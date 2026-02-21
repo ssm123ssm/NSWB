@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const capabilityBands = [
@@ -67,6 +68,7 @@ const products = [
 ];
 
 export default function P7Combined() {
+  const router = useRouter();
   const vaultTarget = "ENCRYPTED COLLABORATING";
   const vaultFinal = "ENCRYPT3D C0LLABORAT1NG";
   const [counter, setCounter] = useState(0);
@@ -377,6 +379,7 @@ export default function P7Combined() {
     }
     vaultTimerRef.current = window.setTimeout(() => {
       setVaultOpen(false);
+      router.push("/vault");
     }, totalRun + holdFinal);
     return () => {
       if (vaultTimerRef.current) {
@@ -392,7 +395,7 @@ export default function P7Combined() {
         window.clearTimeout(vaultHashStartRef.current);
       }
     };
-  }, [vaultOpen]);
+  }, [router, vaultOpen]);
 
   return (
     <main className="scroll-smooth">
@@ -597,19 +600,23 @@ export default function P7Combined() {
                       </button>
                     </div>
                     <div className="mt-6 flex flex-wrap items-center gap-3">
-                      {product.infoHref && (
-                        <a
-                          className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/15 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/90 shadow-[0_10px_30px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:border-white/70 hover:bg-white/25 hover:text-white"
-                          href={product.infoHref}
-                          onClick={(event) => {
-                            if (product.name !== "Vault") return;
-                            event.preventDefault();
-                            setVaultOpen(true);
-                          }}
-                        >
-                          Explore {product.name}
-                        </a>
-                      )}
+                      {product.infoHref &&
+                        (product.name === "Vault" ? (
+                          <button
+                            className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/15 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/90 shadow-[0_10px_30px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:border-white/70 hover:bg-white/25 hover:text-white"
+                            type="button"
+                            onClick={() => setVaultOpen(true)}
+                          >
+                            Explore {product.name}
+                          </button>
+                        ) : (
+                          <a
+                            className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/15 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/90 shadow-[0_10px_30px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:border-white/70 hover:bg-white/25 hover:text-white"
+                            href={product.infoHref}
+                          >
+                            Explore {product.name}
+                          </a>
+                        ))}
                       {!product.featured && (
                         <button
                           className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.35em] text-white/85 transition hover:border-white/60 hover:bg-white/20 hover:text-white"

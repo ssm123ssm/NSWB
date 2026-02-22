@@ -75,14 +75,23 @@ export default function VaultPage() {
     }
 
     const rowGap = Number.parseFloat(getComputedStyle(tilesGrid).rowGap || "0") || 0;
-    const horizontalShift = tileTwo.offsetLeft - tileFour.offsetLeft;
+    const shiftRightPx = tileTwo.offsetLeft - tileFour.offsetLeft;
+    const shiftLeftPx = tileOne.offsetLeft - tileFour.offsetLeft;
     const tileOneBottom = tileOne.offsetTop + tileOne.offsetHeight;
     const tileTwoBottom = tileTwo.offsetTop + tileTwo.offsetHeight;
     const tileThreeBottom = tileThree ? tileThree.offsetTop + tileThree.offsetHeight : tileTwoBottom;
     const rowOneBottom = Math.max(tileOneBottom, tileTwoBottom, tileThreeBottom);
     const naturalRowTwoTop = rowOneBottom + rowGap;
-    const targetTop = Math.max(tileTwoBottom, tileThreeBottom) + rowGap;
-    const verticalLift = activeTileIndex === 0 ? Math.max(0, naturalRowTwoTop - targetTop) : 0;
+    const shouldShiftBottomRow = activeTileIndex === 0 || activeTileIndex === 2;
+    const horizontalShift =
+      activeTileIndex === 0 ? shiftRightPx : activeTileIndex === 2 ? shiftLeftPx : 0;
+    const targetTop =
+      activeTileIndex === 0
+        ? Math.max(tileTwoBottom, tileThreeBottom) + rowGap
+        : activeTileIndex === 2
+          ? Math.max(tileOneBottom, tileTwoBottom) + rowGap
+          : naturalRowTwoTop;
+    const verticalLift = shouldShiftBottomRow ? Math.max(0, naturalRowTwoTop - targetTop) : 0;
 
     setBottomRowShiftPx(horizontalShift);
     setBottomRowLiftPx(verticalLift);
@@ -123,10 +132,11 @@ export default function VaultPage() {
     return placements[index] ?? "";
   };
 
-  const alignBottomUnderSecondAndThird = activeTileIndex === 0;
+  const shouldRepositionBottomRow = activeTileIndex === 0 || activeTileIndex === 2;
 
   const renderTile = (tile, index, layoutClass = "") => {
-    const shouldShiftBottomTiles = alignBottomUnderSecondAndThird && index >= 3;
+    const shouldShiftBottomTiles = shouldRepositionBottomRow && index >= 3;
+    const shouldMatchTileThreeExpandedHeight = activeTileIndex === 0 && index === 0;
     const detailsClassName =
       "mt-5 md:mt-0 md:max-h-0 md:translate-y-1 md:overflow-hidden md:opacity-0 md:transition-all md:duration-300 md:ease-out md:group-hover:mt-5 md:group-hover:max-h-60 md:group-hover:translate-y-0 md:group-hover:opacity-100";
     const tileStyle = {
@@ -143,7 +153,7 @@ export default function VaultPage() {
         }}
         className={`group relative isolate min-h-[240px] overflow-hidden rounded-3xl border border-white/20 bg-white/[0.04] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-colors duration-300 hover:-translate-y-1.5 hover:border-cyan-100/45 hover:bg-white/[0.06] md:min-h-[170px] lg:transition-transform lg:duration-500 lg:ease-[cubic-bezier(0.22,1,0.36,1)] ${
           shouldShiftBottomTiles ? "lg:translate-x-[var(--bottom-row-shift-x)]" : ""
-        } ${layoutClass}`}
+        } ${shouldMatchTileThreeExpandedHeight ? "lg:min-h-[22.5rem]" : ""} ${layoutClass}`}
         style={tileStyle}
         onMouseEnter={() => setActiveTileIndex(index)}
         onMouseLeave={() => setActiveTileIndex(null)}

@@ -136,9 +136,8 @@ export default function VaultPage() {
 
   const renderTile = (tile, index, layoutClass = "") => {
     const shouldShiftBottomTiles = shouldRepositionBottomRow && index >= 3;
-    const shouldMatchTileThreeExpandedHeight = activeTileIndex === 0 && index === 0;
     const detailsClassName =
-      "mt-5 md:mt-0 md:max-h-0 md:translate-y-1 md:overflow-hidden md:opacity-0 md:transition-all md:duration-300 md:ease-out md:group-hover:mt-5 md:group-hover:max-h-60 md:group-hover:translate-y-0 md:group-hover:opacity-100";
+      "mt-5 md:max-h-[5.5rem] md:translate-y-1 md:overflow-hidden md:opacity-55 md:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_36%,rgba(0,0,0,0.5)_70%,transparent_100%)] md:[mask-image:linear-gradient(to_bottom,black_0%,black_36%,rgba(0,0,0,0.5)_70%,transparent_100%)] md:transition-all md:duration-300 md:ease-out md:group-hover:max-h-60 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-hover:[-webkit-mask-image:none] md:group-hover:[mask-image:none]";
     const tileStyle = {
       animationDelay: `${index * 0.6}s`,
       "--bottom-row-shift-x": `${bottomRowShiftPx}px`,
@@ -151,9 +150,9 @@ export default function VaultPage() {
         ref={(node) => {
           tileRefs.current[index] = node;
         }}
-        className={`group relative isolate min-h-[240px] overflow-hidden rounded-3xl border border-white/20 bg-white/[0.04] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-colors duration-300 hover:-translate-y-1.5 hover:border-cyan-100/45 hover:bg-white/[0.06] md:min-h-[170px] lg:transition-transform lg:duration-500 lg:ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`group relative isolate min-h-[240px] overflow-hidden rounded-3xl border border-white/20 bg-white/[0.04] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-colors duration-300 hover:-translate-y-1.5 hover:border-cyan-100/45 hover:bg-white/[0.06] md:h-[8rem] md:cursor-pointer md:hover:h-[25rem] lg:transition-transform lg:duration-500 lg:ease-[cubic-bezier(0.22,1,0.36,1)] ${
           shouldShiftBottomTiles ? "lg:translate-x-[var(--bottom-row-shift-x)]" : ""
-        } ${shouldMatchTileThreeExpandedHeight ? "lg:min-h-[22.5rem]" : ""} ${layoutClass}`}
+        } ${layoutClass}`}
         style={tileStyle}
         onMouseEnter={() => setActiveTileIndex(index)}
         onMouseLeave={() => setActiveTileIndex(null)}

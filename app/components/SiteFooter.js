@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { footerLinks, site } from "../data/site";
+import HashMark from "./HashMark";
 import { GitHubIcon, LinkedInIcon } from "./Icons";
 
 const socials = [
@@ -34,7 +35,10 @@ export default function SiteFooter() {
       </div>
 
       <p className="shell pb-8 text-center text-sm text-faint">
-        © {new Date().getFullYear()} {site.name}
+        © {new Date().getFullYear()}{" "}
+        {/* The visible name morphs into a digest; screen readers get the real one. */}
+        <span className="sr-only">{site.name}</span>
+        <HashMark />
       </p>
     </footer>
   );

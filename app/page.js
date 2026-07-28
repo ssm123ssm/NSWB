@@ -21,23 +21,15 @@ export default function HomePage() {
           aria-hidden="true"
         />
 
-        <div className="shell relative flex flex-col items-center pb-20 pt-16 text-center sm:pt-24">
-          <span className="pill animate-rise">
-            Applied AI
-            <span className="text-faint" aria-hidden="true">·</span>
-            Cryptography
-            <span className="text-faint" aria-hidden="true">·</span>
-            Software
-          </span>
-
-          <h1 className="display animate-rise mt-7 max-w-4xl" style={{ animationDelay: "60ms" }}>
+        <div className="shell relative flex flex-col items-center pb-20 pt-24 text-center sm:pt-32">
+          <h1 className="display animate-rise max-w-4xl">
             Precision intelligence systems with a{" "}
             <span className="text-brand">cryptographic spine</span>
           </h1>
 
           <p
             className="lead animate-rise mt-6 max-w-2xl"
-            style={{ animationDelay: "120ms" }}
+            style={{ animationDelay: "60ms" }}
           >
             Neurasense designs AI, data science, and secure software for teams who
             need high-confidence outcomes. We turn deep research into calm,
@@ -46,7 +38,7 @@ export default function HomePage() {
 
           <div
             className="animate-rise mt-9 flex flex-col items-stretch gap-3 sm:flex-row"
-            style={{ animationDelay: "180ms" }}
+            style={{ animationDelay: "120ms" }}
           >
             <ContactButton>Start a project</ContactButton>
             <Link className="btn btn-secondary" href="/products">
@@ -56,7 +48,7 @@ export default function HomePage() {
 
           <div
             className="animate-rise mt-16 w-full max-w-3xl"
-            style={{ animationDelay: "240ms" }}
+            style={{ animationDelay: "180ms" }}
           >
             <p className="text-xs uppercase tracking-[0.14em] text-faint">
               Shipping today

@@ -1,6 +1,5 @@
 export const site = {
   name: "Neurasense",
-  tagline: "Applied AI · Cryptography · Software",
   description:
     "Neurasense designs AI, data science, and secure software for teams who need high-confidence outcomes.",
   url: "https://neurasense.io",

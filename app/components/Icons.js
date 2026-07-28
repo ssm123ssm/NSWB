@@ -126,3 +126,127 @@ export const iconMap = {
   shield: ShieldIcon,
   doc: DocIcon,
 };
+
+/* --- Product motifs ------------------------------------------------------- */
+
+/**
+ * Oversized watermark glyphs, one per product. These are decorative texture
+ * drawn at a few percent opacity — they suggest what a product does rather
+ * than depict it. The QR motif in particular is deliberately not a real
+ * encoded code: a scannable-looking mark that resolves to nothing is a trap.
+ *
+ * All five share a 120-unit box and the same stroke weight so they read as one
+ * set at a glance.
+ */
+const motifStroke = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+};
+
+const solid = { fill: "currentColor", stroke: "none" };
+
+function Motif({ className, children }) {
+  return (
+    <svg viewBox="0 0 120 120" className={className} {...motifStroke} aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+// Modules on an 18-unit pitch, avoiding the three finder squares.
+const qrModules = [
+  [46, 10], [64, 28], [10, 46], [28, 46], [46, 46], [82, 46], [100, 46],
+  [46, 64], [64, 64], [100, 64], [46, 82], [64, 82], [100, 82], [64, 100],
+  [82, 100],
+];
+
+export function QrMotif({ className }) {
+  return (
+    <Motif className={className}>
+      {[[10, 10], [80, 10], [10, 80]].map(([x, y]) => (
+        <g key={`${x}-${y}`}>
+          <rect x={x} y={y} width="30" height="30" rx="4" />
+          <rect x={x + 9} y={y + 9} width="12" height="12" rx="1.5" {...solid} />
+        </g>
+      ))}
+      {qrModules.map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="9" height="9" rx="1.5" {...solid} />
+      ))}
+    </Motif>
+  );
+}
+
+// A vault door: outer plate, dial, spokes.
+export function VaultMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <rect x="16" y="16" width="88" height="88" rx="14" />
+      <circle cx="60" cy="60" r="24" />
+      <circle cx="60" cy="60" r="8" />
+      <path d="M60 36V22M60 98V84M36 60H22M98 60H84" />
+    </Motif>
+  );
+}
+
+// An attendance grid, a few cells checked in.
+export function CheckInMotif({ className }) {
+  const cells = [14, 48, 82];
+  const checked = new Set(["14-14", "82-48", "48-82"]);
+
+  return (
+    <Motif className={className}>
+      {cells.flatMap((x) =>
+        cells.map((y) => (
+          <g key={`${x}-${y}`}>
+            <rect x={x} y={y} width="26" height="26" rx="5" />
+            {checked.has(`${x}-${y}`) && (
+              <path d={`M${x + 7} ${y + 13}l5 5 8-10`} strokeWidth="2.4" />
+            )}
+          </g>
+        ))
+      )}
+    </Motif>
+  );
+}
+
+// A lipid bilayer: two facing rows of polar heads with their tails inward.
+// A single phospholipid reads as a stick figure at this size; the membrane
+// doesn't.
+export function LipidMotif({ className }) {
+  return (
+    <Motif className={className}>
+      {[30, 60, 90].map((x) => (
+        <g key={x}>
+          <circle cx={x} cy="20" r="8" />
+          <path d={`M${x - 4} 28V56M${x + 4} 28V56`} />
+          <circle cx={x} cy="100" r="8" />
+          <path d={`M${x - 4} 92V64M${x + 4} 92V64`} />
+        </g>
+      ))}
+    </Motif>
+  );
+}
+
+// A marked-up page with a score gauge over the corner.
+export function ScoreMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <rect x="18" y="14" width="62" height="80" rx="6" />
+      <path d="M30 34h38M30 48h30M30 62h38M30 76h24" />
+      <path d="M60 86a22 22 0 0 1 44 0" />
+      <path d="M82 86 96 69" />
+      <circle cx="82" cy="86" r="3" {...solid} />
+    </Motif>
+  );
+}
+
+export const motifMap = {
+  qr: QrMotif,
+  vault: VaultMotif,
+  checkin: CheckInMotif,
+  lipid: LipidMotif,
+  score: ScoreMotif,
+};

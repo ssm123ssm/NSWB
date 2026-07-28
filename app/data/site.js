@@ -46,7 +46,26 @@ export const capabilities = [
  */
 export const products = [
   {
+    slug: "nsqr",
+    motif: "qr",
+    name: "NSQR",
+    tagline: "QR codes you can edit, track, and brand.",
+    description:
+      "Dynamic QR codes whose destination stays editable after printing, with scan analytics by time, location, and device — plus branded design control across seven content types.",
+    discipline: "Software Platforms",
+    status: "live",
+    featured: true,
+    accent: "violet",
+    app: "https://nsqr.neurasense.io/",
+    highlights: [
+      "Editable after printing",
+      "Scan analytics",
+      "Seven content types",
+    ],
+  },
+  {
     slug: "vault",
+    motif: "vault",
     name: "Vault",
     tagline: "Zero-trust storage built around client-side encryption.",
     description:
@@ -64,24 +83,8 @@ export const products = [
     ],
   },
   {
-    slug: "nsqr",
-    name: "NSQR",
-    tagline: "QR codes you can edit, track, and brand.",
-    description:
-      "Dynamic QR codes whose destination stays editable after printing, with scan analytics by time, location, and device — plus branded design control across seven content types.",
-    discipline: "Software Platforms",
-    status: "live",
-    featured: true,
-    accent: "violet",
-    app: "https://nsqr.neurasense.io/",
-    highlights: [
-      "Editable after printing",
-      "Scan analytics",
-      "Seven content types",
-    ],
-  },
-  {
     slug: "presence",
+    motif: "checkin",
     name: "Presence",
     tagline: "QR attendance with real-time visibility.",
     description:
@@ -94,6 +97,7 @@ export const products = [
   },
   {
     slug: "lipd-hub",
+    motif: "lipid",
     name: "Lipd Hub",
     tagline: "Lipid management for insight, referral, and research.",
     description:
@@ -105,6 +109,7 @@ export const products = [
   },
   {
     slug: "aes",
+    motif: "score",
     name: "AES",
     tagline: "Automated AI-based essay scoring.",
     description:

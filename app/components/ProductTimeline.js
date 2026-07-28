@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowIcon, ExternalIcon } from "./Icons";
+import { ArrowIcon, ExternalIcon, motifMap } from "./Icons";
 import { useContact } from "./SiteChrome";
 
 /**
@@ -118,6 +118,7 @@ export default function ProductTimeline({ products }) {
 function TimelineRow({ product, side, index }) {
   const { open } = useContact();
   const isLive = product.status === "live";
+  const Motif = motifMap[product.motif];
 
   return (
     <div
@@ -131,6 +132,8 @@ function TimelineRow({ product, side, index }) {
       <span className="timeline-node" aria-hidden="true" />
 
       <article className="timeline-card card card-hover card-accent p-6 sm:p-7">
+        {Motif && <Motif className="timeline-motif" />}
+
         <div className="flex items-start justify-between gap-3">
           <div>
             <span className="timeline-index">

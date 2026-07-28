@@ -540,6 +540,47 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    /* Own stacking context so the motif below can sit behind the copy. */
+    z-index: 0;
+  }
+
+  /* Per-product watermark. Decorative texture only: it inherits the row's
+     --brand, sits far below text contrast, and takes no pointer events.
+     z-index -1 paints it above the card surface but under the copy.
+
+     Deliberately not clipped to the card — card-accent::before draws the top
+     hairline at top:-1px and overflow:hidden would eat it — so the mask does
+     the work instead, holding the glyph at the bottom-right corner and
+     dissolving it before it reaches the text. */
+  .timeline-motif {
+    --motif-alpha: 0.075;
+    /* Narrow cards stack their links two-deep, so the mark has to stay small
+       enough to keep clear of them. */
+    --motif-size: 6.25rem;
+
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    z-index: -1;
+    width: var(--motif-size);
+    height: var(--motif-size);
+    color: var(--brand);
+    opacity: var(--motif-alpha);
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(315deg, #000 42%, transparent 88%);
+    mask-image: linear-gradient(315deg, #000 42%, transparent 88%);
+    transition: opacity 0.45s ease;
+  }
+
+  /* Brand accents run brighter in dark mode, but the surface is darker still —
+     it needs a touch more alpha to land at the same visual weight. */
+  :root[data-theme="dark"] .timeline-motif {
+    --motif-alpha: 0.1;
+  }
+
+  /* Rewards attention without shouting; rides the same hover as the card. */
+  .timeline-card:hover .timeline-motif {
+    opacity: calc(var(--motif-alpha) * 2);
   }
 
   .timeline-index {
@@ -644,6 +685,25 @@
     transform: none;
   }
 
+  /* The motif settles a beat after its card lands. The stagger rides on the
+     transform so opacity stays free for hover. */
+  .timeline[data-reveal="on"] .timeline-motif {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  .timeline[data-reveal="on"] .timeline-row.is-in .timeline-motif {
+    opacity: var(--motif-alpha);
+    transform: none;
+    transition: opacity 0.45s ease,
+      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+  }
+
+  /* Out-specifies the reveal rule above so hover still wins. */
+  .timeline .timeline-row.is-in .timeline-card:hover .timeline-motif {
+    opacity: calc(var(--motif-alpha) * 2);
+  }
+
   @media (min-width: 1024px) {
     .timeline {
       --tl-rail: 50%;
@@ -679,6 +739,13 @@
       display: flex;
       justify-content: center;
       padding-inline: 0;
+    }
+
+    /* Cards are wide enough here to carry a larger mark. */
+    .timeline-motif {
+      --motif-size: 9.5rem;
+      right: 0.75rem;
+      bottom: 0.75rem;
     }
 
     /* Branches drift in from their own side of the rail. */

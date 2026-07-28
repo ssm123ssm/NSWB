@@ -5,12 +5,20 @@ export const site = {
     "Neurasense designs AI, data science, and secure software for teams who need high-confidence outcomes.",
   url: "https://neurasense.io",
   linkedin: "https://www.linkedin.com/company/neurasns/?viewAsMember=true",
+  github: "https://github.com/neurasense",
 };
 
 export const navLinks = [
   { label: "Capabilities", href: "/#capabilities" },
   { label: "Products", href: "/#products" },
   { label: "Approach", href: "/#approach" },
+];
+
+/** The single inline row of footer links. */
+export const footerLinks = [
+  { label: "Company", href: "/#approach" },
+  { label: "Research", href: "/#capabilities" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export const capabilities = [

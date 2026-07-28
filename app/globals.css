@@ -397,6 +397,17 @@
     color: var(--text);
   }
 
+  /* Quieter still than .link-muted — footer-weight links. */
+  .link-faint {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-faint);
+    transition: color 0.16s ease;
+  }
+  .link-faint:hover {
+    color: var(--text);
+  }
+
   .nav-link {
     position: relative;
     font-size: 0.9375rem;

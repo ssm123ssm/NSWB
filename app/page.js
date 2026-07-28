@@ -1,15 +1,15 @@
 import Link from "next/link";
+import ProductName from "./components/ProductName";
 import ProductTimeline from "./components/ProductTimeline";
 import { ContactButton } from "./components/SiteChrome";
 import { iconMap } from "./components/Icons";
 import { capabilities, principles, products } from "./data/site";
 
 export default function HomePage() {
+  const live = products.filter((p) => p.status === "live");
+  const upcoming = products.filter((p) => p.status !== "live");
   // Timeline order: shipped first, then what is still being built.
-  const ordered = [
-    ...products.filter((p) => p.status === "live"),
-    ...products.filter((p) => p.status !== "live"),
-  ];
+  const ordered = [...live, ...upcoming];
 
   return (
     <main id="main">
@@ -47,23 +47,29 @@ export default function HomePage() {
           </div>
 
           <div
-            className="animate-rise mt-16 w-full max-w-3xl"
+            className="animate-rise mt-16 w-full max-w-2xl border-t border-[color:var(--border)] pt-8"
             style={{ animationDelay: "180ms" }}
           >
             <p className="text-xs uppercase tracking-[0.14em] text-faint">
               Shipping today
             </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-              {products.map((product) => (
-                <span
-                  key={product.slug}
-                  className="text-sm font-medium text-muted"
-                  data-brand={product.accent}
-                >
-                  {product.name}
-                </span>
+            <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+              {live.map((product) => (
+                <li key={product.slug} data-brand={product.accent}>
+                  <HeroProductLink product={product} />
+                </li>
               ))}
-            </div>
+              {upcoming.length > 0 && (
+                <li>
+                  <Link
+                    className="text-sm text-faint transition-colors hover:text-[color:var(--text-muted)]"
+                    href="/#products"
+                  >
+                    +{upcoming.length} in development
+                  </Link>
+                </li>
+              )}
+            </ul>
           </div>
         </div>
       </section>
@@ -171,6 +177,45 @@ export default function HomePage() {
         </div>
       </section>
     </main>
+  );
+}
+
+/**
+ * One lockup in the hero strip. Every product sets its own accent through the
+ * wordmark, so hierarchy comes from opacity rather than colour: the featured
+ * product sits at full strength in a tinted chip, the rest sit back until
+ * hovered.
+ *
+ * Links to the detail page where there is one, otherwise straight out to the
+ * app. Proprietary products have no public URL, so they stay plain text rather
+ * than inviting a click that goes nowhere.
+ */
+function HeroProductLink({ product }) {
+  const href =
+    product.access === "request" ? null : product.detail ?? product.app;
+  const base = "inline-flex items-center rounded-full text-sm transition-opacity";
+  const className = product.featured
+    ? `${base} bg-[color:var(--brand-soft)] px-3 py-1`
+    : `${base} opacity-70 ${href ? "hover:opacity-100" : ""}`;
+
+  const label = <ProductName product={product} hero />;
+
+  if (!href) {
+    return <span className={className}>{label}</span>;
+  }
+
+  if (product.detail) {
+    return (
+      <Link className={className} href={href}>
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <a className={className} href={href} target="_blank" rel="noreferrer">
+      {label}
+    </a>
   );
 }
 

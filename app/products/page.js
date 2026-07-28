@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowIcon, ExternalIcon } from "../components/Icons";
 import { ContactButton } from "../components/SiteChrome";
+import ProductName from "../components/ProductName";
 import RequestAccessLink from "../components/RequestAccessLink";
 import { principles, products } from "../data/site";
 
@@ -66,14 +67,18 @@ export default function ProductsPage() {
             ))}
           </div>
 
-          <h2 className="mt-16 text-xs uppercase tracking-[0.14em] text-faint">
-            In development
-          </h2>
-          <div className="mt-6 space-y-5">
-            {upcoming.map((product) => (
-              <ProductRow key={product.slug} product={product} />
-            ))}
-          </div>
+          {upcoming.length > 0 && (
+            <>
+              <h2 className="mt-16 text-xs uppercase tracking-[0.14em] text-faint">
+                In development
+              </h2>
+              <div className="mt-6 space-y-5">
+                {upcoming.map((product) => (
+                  <ProductRow key={product.slug} product={product} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -98,6 +103,9 @@ export default function ProductsPage() {
 
 function ProductRow({ product }) {
   const isLive = product.status === "live";
+  // Proprietary products are shipped but gated, so asking for access is the
+  // primary action rather than an afterthought.
+  const byRequest = product.access === "request";
 
   return (
     <article
@@ -106,12 +114,14 @@ function ProductRow({ product }) {
     >
       <div>
         <div className="flex flex-wrap items-center gap-3">
-          <h3 className="text-2xl">{product.name}</h3>
+          <h3 className="text-2xl">
+            <ProductName product={product} />
+          </h3>
           <span className={`badge ${isLive ? "" : "badge-outline"}`}>
             {isLive ? (
               <>
                 <span className="dot" aria-hidden="true" />
-                Live
+                {byRequest ? "Live · by request" : "Live"}
               </>
             ) : (
               "In development"
@@ -141,7 +151,7 @@ function ProductRow({ product }) {
         <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6">
           {product.detail && (
             <Link className="link-arrow" href={product.detail}>
-              Explore {product.name}
+              Explore <ProductName product={product} />
               <ArrowIcon />
             </Link>
           )}
@@ -156,15 +166,21 @@ function ProductRow({ product }) {
               target="_blank"
               rel="noreferrer"
             >
-              {product.detail ? "Open app" : `Visit ${product.name}`}
+              {product.detail ? (
+                "Open app"
+              ) : (
+                <>
+                  Visit <ProductName product={product} />
+                </>
+              )}
               <ExternalIcon className="h-3.5 w-3.5" />
             </a>
           )}
           <RequestAccessLink
             product={product.name}
-            label={isLive ? "Talk to us" : "Request access"}
-            className={isLive ? "link-muted" : "link-arrow"}
-            withArrow={!isLive}
+            label={isLive && !byRequest ? "Talk to us" : "Request access"}
+            className={isLive && !byRequest ? "link-muted" : "link-arrow"}
+            withArrow={!isLive || byRequest}
           />
         </div>
       </div>

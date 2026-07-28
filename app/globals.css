@@ -193,6 +193,20 @@
     line-height: 1.65;
   }
 
+  /* Product lockup. Inherits its size from context so one rule covers the hero
+     strip, card headings and inline links. */
+  .wordmark {
+    display: inline-block;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+    color: var(--text);
+  }
+
+  .wordmark-tail {
+    color: var(--brand);
+  }
+
   .eyebrow {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.7rem;

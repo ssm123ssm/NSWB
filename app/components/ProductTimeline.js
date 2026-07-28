@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowIcon, ExternalIcon, motifMap } from "./Icons";
+import ProductName from "./ProductName";
 import { useContact } from "./SiteChrome";
 
 /**
@@ -118,6 +119,9 @@ export default function ProductTimeline({ products }) {
 function TimelineRow({ product, side, index }) {
   const { open } = useContact();
   const isLive = product.status === "live";
+  // Proprietary products are shipped but gated, so asking for access is the
+  // primary action rather than an afterthought.
+  const byRequest = product.access === "request";
   const Motif = motifMap[product.motif];
 
   return (
@@ -139,13 +143,15 @@ function TimelineRow({ product, side, index }) {
             <span className="timeline-index">
               {String(index).padStart(2, "0")}
             </span>
-            <h3 className="mt-2 text-2xl">{product.name}</h3>
+            <h3 className="mt-2 text-2xl">
+              <ProductName product={product} />
+            </h3>
           </div>
           <span className={`badge shrink-0 ${isLive ? "" : "badge-outline"}`}>
             {isLive ? (
               <>
                 <span className="dot" aria-hidden="true" />
-                Live
+                {byRequest ? "Live · by request" : "Live"}
               </>
             ) : (
               "In development"
@@ -173,7 +179,7 @@ function TimelineRow({ product, side, index }) {
         <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6">
           {product.detail && (
             <Link className="link-arrow" href={product.detail}>
-              Explore {product.name}
+              Explore <ProductName product={product} />
               <ArrowIcon />
             </Link>
           )}
@@ -188,17 +194,23 @@ function TimelineRow({ product, side, index }) {
               target="_blank"
               rel="noreferrer"
             >
-              {product.detail ? "Open app" : `Visit ${product.name}`}
+              {product.detail ? (
+                "Open app"
+              ) : (
+                <>
+                  Visit <ProductName product={product} />
+                </>
+              )}
               <ExternalIcon className="h-3.5 w-3.5" />
             </a>
           )}
           <button
-            className={isLive ? "link-muted" : "link-arrow"}
+            className={isLive && !byRequest ? "link-muted" : "link-arrow"}
             type="button"
             onClick={() => open(product.name)}
           >
-            {isLive ? "Talk to us" : "Request access"}
-            {!isLive && <ArrowIcon />}
+            {isLive && !byRequest ? "Talk to us" : "Request access"}
+            {(!isLive || byRequest) && <ArrowIcon />}
           </button>
         </div>
       </article>

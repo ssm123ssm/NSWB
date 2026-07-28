@@ -48,14 +48,32 @@ export const capabilities = [
  * The one place product facts live. Home, /products and the Vault page all
  * read from here, so copy can never drift between them again.
  *
- * status: "live"        — publicly reachable today
- *         "development" — real, not yet open; surfaces a Request access flow
+ * status: "live"        — shipped and running today
+ *         "development" — real, not yet finished
+ *
+ * access: "public"  — anyone can open it at the URL (the default when omitted)
+ *         "request" — proprietary; shipped, but only reachable once we grant
+ *                     access, so it leads with Request access and carries no
+ *                     public link.
+ *
+ * featured: the single product we lead with. Drives the emphasis in the hero
+ * strip, so keep it on exactly one entry.
+ *
+ * wordmark: [head, tail] — the name set as a lockup instead of plain text, with
+ * the tail in the product accent. Rendered by <ProductName>; `name` stays the
+ * canonical spoken/written form.
+ *
+ * wordmarkScope: "all"  — settled, so the lockup replaces the name everywhere
+ *                "hero" — on trial; the lockup shows in the hero strip only and
+ *                         every other surface keeps the plain name (default)
  */
 export const products = [
   {
     slug: "nsqr",
     motif: "qr",
     name: "NSQR",
+    wordmark: ["ns", "qr"],
+    wordmarkScope: "all",
     tagline: "QR codes you can edit, track, and brand.",
     description:
       "Dynamic QR codes whose destination stays editable after printing, with scan analytics by time, location, and device — plus branded design control across seven content types.",
@@ -74,12 +92,12 @@ export const products = [
     slug: "vault",
     motif: "vault",
     name: "Vault",
+    wordmark: ["va", "ult"],
     tagline: "Zero-trust storage built around client-side encryption.",
     description:
       "End-to-end encrypted file storage where plaintext never touches the server. Encrypted manifests and policy-based access by design.",
     discipline: "Cryptographic R&D",
     status: "live",
-    featured: true,
     accent: "cyan",
     detail: "/vault",
     app: "https://vault.neurasense.io/dashboard",
@@ -93,6 +111,7 @@ export const products = [
     slug: "presence",
     motif: "checkin",
     name: "Presence",
+    wordmark: ["pre", "sence"],
     tagline: "QR attendance with real-time visibility.",
     description:
       "Fast, reliable check-ins for teams and institutions with secure access, clean exports, and operational clarity.",
@@ -106,11 +125,13 @@ export const products = [
     slug: "lipd-hub",
     motif: "lipid",
     name: "Lipd Hub",
+    wordmark: ["lipd ", "hub"],
     tagline: "Lipid management for insight, referral, and research.",
     description:
       "A lipid management system that helps identify important patterns in lipid metabolism, streamlines the referral system, and facilitates research.",
     discipline: "Neural Systems",
-    status: "development",
+    status: "live",
+    access: "request",
     accent: "amber",
     highlights: ["Pattern detection", "Referral workflow", "Research-ready data"],
   },
@@ -118,11 +139,13 @@ export const products = [
     slug: "aes",
     motif: "score",
     name: "AES",
+    wordmark: ["a", "es"],
     tagline: "Automated AI-based essay scoring.",
     description:
       "An automated, AI-based essay scoring system designed for fast, consistent evaluation and feedback at scale.",
     discipline: "Neural Systems",
-    status: "development",
+    status: "live",
+    access: "request",
     accent: "blue",
     highlights: ["Consistent scoring", "Fast turnaround", "Actionable feedback"],
   },

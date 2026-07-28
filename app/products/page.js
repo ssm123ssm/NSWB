@@ -1,140 +1,173 @@
-"use client";
+import Link from "next/link";
+import { ArrowIcon, ExternalIcon } from "../components/Icons";
+import { ContactButton } from "../components/SiteChrome";
+import RequestAccessLink from "../components/RequestAccessLink";
+import { principles, products } from "../data/site";
 
-import Image from "next/image";
-import { useEffect } from "react";
-const products = [
-  {
-    name: "Vault",
-    tagline: "Zero‑trust storage built around client‑side encryption.",
-    description:
-      "End‑to‑end encrypted file storage where plaintext never touches the server. Encrypted manifests and policy‑based access by design.",
-    href: "https://vault.neurasense.io/dashboard",
-    accent: "from-indigo-500/30 via-white/10 to-transparent",
-  },
-  {
-    name: "Presence",
-    tagline: "QR attendance with real‑time visibility.",
-    description:
-      "Fast, reliable check‑ins for teams and institutions with secure access, clean exports, and operational clarity.",
-    href: "https://presence.neurasense.io/owner/login",
-    accent: "from-emerald-400/30 via-white/10 to-transparent",
-  },
-];
+export const metadata = {
+  title: "Products",
+  description:
+    "Vault, NSQR, Presence, Lipd Hub and AES — a focused product line for secure, modern intelligence.",
+};
 
 export default function ProductsPage() {
-  useEffect(() => {
-    document.title = "P3 • Products";
-  }, []);
+  const live = products.filter((p) => p.status === "live");
+  const upcoming = products.filter((p) => p.status !== "live");
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[rgb(6,7,10)] text-white">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 top-0 h-[520px] w-[520px] rounded-full bg-cyan-400/20 blur-[160px]" />
-        <div className="absolute right-0 top-32 h-[460px] w-[460px] rounded-full bg-indigo-500/20 blur-[160px]" />
-        <div className="absolute left-1/3 bottom-0 h-[520px] w-[520px] rounded-full bg-emerald-400/15 blur-[180px]" />
-      </div>
-
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-10 sm:px-12">
-        <header className="flex flex-wrap items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5">
-              <Image className="grayscale" src="/logo.svg" alt="Neurasense" width={22} height={22} />
-            </div>
-            <p className="text-xs uppercase tracking-[0.35em] text-white/60">
-              Neurasense • P3
-            </p>
-          </div>
-          <a
-            className="text-xs uppercase tracking-[0.3em] text-white/70 hover:text-white"
-            href="/#home"
-          >
-            Back to Home
-          </a>
-        </header>
-
-        <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/55">
-              Products
-            </p>
-            <h1 className="text-balance text-4xl leading-tight sm:text-6xl">
+    <main id="main">
+      <section className="relative overflow-hidden border-b border-[color:var(--border)]">
+        <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div className="shell relative grid gap-12 pb-16 pt-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+          <div>
+            <p className="eyebrow">Products</p>
+            <h1 className="display mt-4 max-w-2xl text-[clamp(2rem,4.6vw,3.25rem)]">
               A focused product line for secure, modern intelligence.
             </h1>
-            <p className="max-w-2xl text-base text-white/65 leading-relaxed">
-              Each platform blends clean interaction design with research‑grade
+            <p className="lead mt-5 max-w-xl">
+              Each platform blends clean interaction design with research-grade
               engineering. Built to feel calm, precise, and dependable.
             </p>
           </div>
-          <div className="rounded-[28px] bg-white/[0.02] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.5)]">
-            <p className="text-xs uppercase tracking-[0.35em] text-white/45">
+
+          <dl className="card p-6">
+            <dt className="text-xs uppercase tracking-[0.14em] text-faint">
               Core themes
-            </p>
-            <div className="mt-6 grid gap-4 text-sm text-white/60">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <span>Privacy‑first architecture</span>
-                <span className="text-white/40">01</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <span>Secure collaboration workflows</span>
-                <span className="text-white/40">02</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Operational clarity at scale</span>
-                <span className="text-white/40">03</span>
-              </div>
-            </div>
+            </dt>
+            <dd className="mt-5 space-y-3.5">
+              {principles.map((item, index) => (
+                <div
+                  className={`flex items-center justify-between gap-4 text-sm ${
+                    index < principles.length - 1
+                      ? "border-b border-[color:var(--border)] pb-3.5"
+                      : ""
+                  }`}
+                  key={item.label}
+                >
+                  <span className="text-muted">{item.title}</span>
+                  <span className="font-[family-name:var(--font-mono)] text-xs text-faint">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </dd>
+          </dl>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell">
+          <h2 className="text-xs uppercase tracking-[0.14em] text-faint">
+            Available now
+          </h2>
+          <div className="mt-6 space-y-5">
+            {live.map((product) => (
+              <ProductRow key={product.slug} product={product} />
+            ))}
           </div>
-        </section>
 
-        <section className="grid gap-10">
-          {products.map((product) => (
-            <article
-              key={product.name}
-              className="group relative overflow-hidden rounded-[30px] border border-white/20 bg-white/[0.02] p-8 shadow-[0_32px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl transition hover:-translate-y-1.5"
-            >
-              <div
-                className={`pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br ${product.accent} blur-[120px] opacity-0 transition group-hover:opacity-100`}
-              />
-              <div className="relative grid gap-6 lg:grid-cols-[0.55fr_0.45fr]">
-                <div>
-                  <h2 className="mt-4 text-3xl">{product.name}</h2>
-                  <p className="mt-3 text-sm text-white/70">{product.tagline}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-white/65 leading-relaxed">
-                    {product.description}
-                  </p>
-                  <a
-                    className="mt-6 inline-flex items-center text-xs uppercase tracking-[0.35em] text-white/80 underline-offset-4 transition hover:text-white"
-                    href={product.href}
-                  >
-                    Visit {product.name}
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
-        </section>
+          <h2 className="mt-16 text-xs uppercase tracking-[0.14em] text-faint">
+            In development
+          </h2>
+          <div className="mt-6 space-y-5">
+            {upcoming.map((product) => (
+              <ProductRow key={product.slug} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <section className="text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-white/55">
-            Start a project
-          </p>
-          <h2 className="mt-4 text-3xl sm:text-4xl">
+      <section className="section section-subtle">
+        <div className="shell text-center">
+          <p className="eyebrow">Start a project</p>
+          <h2 className="section-title mt-3">
             Tell us what you want to build next.
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-white/65">
+          <p className="lead mx-auto mt-4 max-w-xl">
             From AI tooling to secure platforms, we help you design and ship
             products that feel refined and trustworthy from day one.
           </p>
-          <a
-            className="mt-6 inline-flex items-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-xs uppercase tracking-[0.35em] text-white/80 transition hover:text-white"
-            href="/#contact"
-          >
-            Start a Project
-          </a>
-        </section>
-      </div>
+          <div className="mt-8">
+            <ContactButton>Start a project</ContactButton>
+          </div>
+        </div>
+      </section>
     </main>
+  );
+}
+
+function ProductRow({ product }) {
+  const isLive = product.status === "live";
+
+  return (
+    <article
+      className="card card-hover card-accent grid gap-6 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr]"
+      data-brand={product.accent}
+    >
+      <div>
+        <div className="flex flex-wrap items-center gap-3">
+          <h3 className="text-2xl">{product.name}</h3>
+          <span className={`badge ${isLive ? "" : "badge-outline"}`}>
+            {isLive ? (
+              <>
+                <span className="dot" aria-hidden="true" />
+                Live
+              </>
+            ) : (
+              "In development"
+            )}
+          </span>
+        </div>
+        <p className="mt-3 text-[0.95rem] font-medium">{product.tagline}</p>
+        <p className="mt-2 text-sm text-faint">{product.discipline}</p>
+      </div>
+
+      <div className="flex flex-col">
+        <p className="text-[0.95rem] leading-relaxed text-muted">
+          {product.description}
+        </p>
+
+        <ul className="mt-5 flex flex-wrap gap-1.5">
+          {product.highlights.map((highlight) => (
+            <li
+              key={highlight}
+              className="rounded-md border border-[color:var(--border)] px-2 py-1 text-[0.7rem] text-faint"
+            >
+              {highlight}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6">
+          {product.detail && (
+            <Link className="link-arrow" href={product.detail}>
+              Explore {product.name}
+              <ArrowIcon />
+            </Link>
+          )}
+          {product.app && (
+            <a
+              className={
+                product.detail
+                  ? "link-muted inline-flex items-center gap-1.5"
+                  : "link-arrow"
+              }
+              href={product.app}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {product.detail ? "Open app" : `Visit ${product.name}`}
+              <ExternalIcon className="h-3.5 w-3.5" />
+            </a>
+          )}
+          <RequestAccessLink
+            product={product.name}
+            label={isLive ? "Talk to us" : "Request access"}
+            className={isLive ? "link-muted" : "link-arrow"}
+            withArrow={!isLive}
+          />
+        </div>
+      </div>
+    </article>
   );
 }

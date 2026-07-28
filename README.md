@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Neurasense — marketing site
 
-## Getting Started
+Next.js 14 (App Router) marketing site for Neurasense.
 
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+| Path | Purpose |
+| --- | --- |
+| `app/data/site.js` | Single source of truth for all site content |
+| `app/globals.css` | Design tokens + component classes |
+| `app/components/` | Shared header, footer, dialog, cards, icons |
+| `app/page.js` | Home |
+| `app/products/page.js` | Product index |
+| `app/vault/page.js` | Vault product page |
+| `app/api/contact/route.js` | Contact / access-request intake |
 
-## Learn More
+## Editing content
 
-To learn more about Next.js, take a look at the following resources:
+Add or change a product in `app/data/site.js` and it updates the home page,
+the products index and the footer at once. Set `status: "live"` with an `app`
+URL for a shipped product, or `status: "development"` to surface a
+"Request access" flow instead.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Theming
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Light and dark are driven by `data-theme` on `<html>`. The preference is read
+from `localStorage` (`ns-theme`), falling back to the OS setting, and applied
+before first paint by an inline script in `app/layout.js`.
 
-## Deploy on Vercel
+All colours resolve to CSS variables — see `app/globals.css`. Per-product
+accents are applied with `data-brand="cyan | violet | emerald | amber | blue"`
+on any wrapper element.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `CONTACT_WEBHOOK_URL` | Recommended | Slack/Teams incoming webhook that receives contact + access-request submissions. **Without it, submissions are only written to the server log.** |

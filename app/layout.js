@@ -1,32 +1,79 @@
-import { DM_Serif_Display, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import SiteChrome from "./components/SiteChrome";
+import { site } from "./data/site";
 import "./globals.css";
 
-const dmSerif = DM_Serif_Display({
+const inter = Inter({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-dm-serif",
+  display: "swap",
+  variable: "--font-inter",
 });
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-});
+
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
+  display: "swap",
+  weight: ["400", "500"],
+  variable: "--font-mono",
 });
 
 export const metadata = {
-  title: "Neurasense | AI for businesses",
-  description: "Unlocking Insights",
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.name} — Precision intelligence systems`,
+    template: `%s | ${site.name}`,
+  },
+  description: site.description,
+  openGraph: {
+    title: `${site.name} — Precision intelligence systems`,
+    description: site.description,
+    url: site.url,
+    siteName: site.name,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.name} — Precision intelligence systems`,
+    description: site.description,
+  },
 };
+
+export const viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#08090c" },
+  ],
+};
+
+/**
+ * Runs before first paint so a dark-theme visitor never sees a white flash.
+ */
+const themeScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("ns-theme");
+    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.dataset.theme =
+      stored || (prefersDark ? "dark" : "light");
+  } catch (e) {
+    document.documentElement.dataset.theme = "light";
+  }
+})();
+`;
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${dmSerif.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable}`}
-      >
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className={`${inter.variable} ${jetBrainsMono.variable}`}>
+        <a
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-[color:var(--surface)] focus:px-4 focus:py-2 focus:shadow-lg"
+          href="#main"
+        >
+          Skip to content
+        </a>
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );

@@ -1,0 +1,225 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { CheckIcon, CloseIcon } from "./Icons";
+
+export default function ContactDialog({ subject, onClose }) {
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [error, setError] = useState("");
+  const cardRef = useRef(null);
+  const firstFieldRef = useRef(null);
+
+  const isAccessRequest = Boolean(subject);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+      if (event.key !== "Tab" || !cardRef.current) return;
+
+      // Keep focus inside the dialog while it is open.
+      const focusable = cardRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), input, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    firstFieldRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      name: String(formData.get("name") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      phone: String(formData.get("phone") ?? "").trim(),
+      message: String(formData.get("message") ?? "").trim(),
+      subject: subject ?? "General enquiry",
+    };
+
+    if (!payload.email && !payload.phone) {
+      setError("Please give us an email address or a phone number.");
+      return;
+    }
+
+    setError("");
+    setStatus("sending");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error(`Request failed (${response.status})`);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+      setError(
+        "We could not send that just now. Please email us directly at hello@neurasense.io."
+      );
+    }
+  }
+
+  return (
+    <div
+      className="dialog-overlay fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      role="presentation"
+    >
+      <div
+        ref={cardRef}
+        className="dialog-card my-auto w-full max-w-md p-6 sm:p-7"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-dialog-title"
+      >
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            {isAccessRequest && (
+              <p className="eyebrow mb-1.5">Request access</p>
+            )}
+            <h2 id="contact-dialog-title" className="text-lg">
+              {status === "sent"
+                ? "Message received"
+                : isAccessRequest
+                  ? subject
+                  : "Start a project"}
+            </h2>
+          </div>
+          <button
+            className="icon-button -mr-1 -mt-1 shrink-0"
+            type="button"
+            onClick={onClose}
+            aria-label="Close dialog"
+          >
+            <CloseIcon />
+          </button>
+        </div>
+
+        {status === "sent" ? (
+          <div>
+            <span className="icon-tile mb-4">
+              <CheckIcon className="h-5 w-5" />
+            </span>
+            <p className="text-[0.95rem] leading-relaxed text-muted">
+              Thanks — we have your details and will come back to you shortly,
+              usually within two working days.
+            </p>
+            <button className="btn btn-secondary mt-6 w-full" type="button" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        ) : (
+          <form className="grid gap-4" onSubmit={handleSubmit}>
+            <p className="text-[0.925rem] leading-relaxed text-muted">
+              {isAccessRequest
+                ? `Tell us a little about your team and we'll send ${subject} documentation, onboarding steps, and timelines.`
+                : "Share your idea or challenge and we'll help shape it into a clear plan with the right tech and timeline."}
+            </p>
+
+            {error && (
+              <p
+                className="rounded-lg border border-red-500/30 bg-red-500/5 px-3 py-2 text-sm text-red-500"
+                role="alert"
+              >
+                {error}
+              </p>
+            )}
+
+            <div>
+              <label className="field-label" htmlFor="contact-name">
+                Name
+              </label>
+              <input
+                ref={firstFieldRef}
+                className="field-input"
+                id="contact-name"
+                name="name"
+                type="text"
+                placeholder="Your name"
+                autoComplete="name"
+                required
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="field-label" htmlFor="contact-email">
+                  Email
+                </label>
+                <input
+                  className="field-input"
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  placeholder="you@company.com"
+                  autoComplete="email"
+                />
+              </div>
+              <div>
+                <label className="field-label" htmlFor="contact-phone">
+                  Phone <span className="text-faint">(optional)</span>
+                </label>
+                <input
+                  className="field-input"
+                  id="contact-phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="+94 00 000 0000"
+                  autoComplete="tel"
+                />
+              </div>
+            </div>
+
+            {!isAccessRequest && (
+              <div>
+                <label className="field-label" htmlFor="contact-message">
+                  What would you like to build?
+                </label>
+                <textarea
+                  className="field-input field-textarea"
+                  id="contact-message"
+                  name="message"
+                  placeholder="A short description is plenty to get started."
+                  required
+                />
+              </div>
+            )}
+
+            <button
+              className="btn btn-primary mt-1 w-full"
+              type="submit"
+              disabled={status === "sending"}
+            >
+              {status === "sending"
+                ? "Sending…"
+                : isAccessRequest
+                  ? "Send request"
+                  : "Send message"}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -157,6 +157,16 @@ export function getProduct(slug) {
   return products.find((p) => p.slug === slug);
 }
 
+/**
+ * Products reach the contact dialog by their canonical `name`, which is all the
+ * dialog is given. This resolves that back to the full entry so the dialog can
+ * wear the product's accent and word its copy correctly. Returns undefined for
+ * a general enquiry, which keeps the house accent.
+ */
+export function getProductByName(name) {
+  return products.find((p) => p.name === name);
+}
+
 export const principles = [
   {
     label: "01",

@@ -1,15 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getProductByName } from "../data/site";
 import { CheckIcon, CloseIcon } from "./Icons";
+import ProductName from "./ProductName";
 
+/**
+ * The one contact form on the site. Opened without a subject it is a general
+ * enquiry; opened from a product it takes on that product's identity — accent,
+ * name and wording — all resolved from the product entry, so call sites only
+ * ever have to name the product.
+ */
 export default function ContactDialog({ subject, onClose }) {
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState("");
   const cardRef = useRef(null);
   const firstFieldRef = useRef(null);
 
-  const isAccessRequest = Boolean(subject);
+  const product = subject ? getProductByName(subject) : null;
+  // Gated products lead with access and documentation; the rest are an open
+  // conversation. An unrecognised subject is treated as gated, as before.
+  const isAccessRequest = product ? product.access === "request" : Boolean(subject);
+  const productName = product?.name ?? subject;
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -89,21 +101,32 @@ export default function ContactDialog({ subject, onClose }) {
       <div
         ref={cardRef}
         className="dialog-card my-auto w-full max-w-md p-6 sm:p-7"
+        data-brand={product?.accent}
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-dialog-title"
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            {isAccessRequest && (
-              <p className="eyebrow mb-1.5">Request access</p>
+            {productName && (
+              <p className="eyebrow mb-1.5">
+                {/* Once sent the heading turns into a status, so the eyebrow
+                    takes over holding on to what the message was about. */}
+                {status === "sent"
+                  ? productName
+                  : isAccessRequest
+                    ? "Request access"
+                    : "Talk to us"}
+              </p>
             )}
             <h2 id="contact-dialog-title" className="text-lg">
-              {status === "sent"
-                ? "Message received"
-                : isAccessRequest
-                  ? subject
-                  : "Start a project"}
+              {status === "sent" ? (
+                "Message received"
+              ) : product ? (
+                <ProductName product={product} />
+              ) : (
+                productName ?? "Start a project"
+              )}
             </h2>
           </div>
           <button
@@ -133,8 +156,10 @@ export default function ContactDialog({ subject, onClose }) {
           <form className="grid gap-4" onSubmit={handleSubmit}>
             <p className="text-[0.925rem] leading-relaxed text-muted">
               {isAccessRequest
-                ? `Tell us a little about your team and we'll send ${subject} documentation, onboarding steps, and timelines.`
-                : "Share your idea or challenge and we'll help shape it into a clear plan with the right tech and timeline."}
+                ? `Tell us a little about your team and we'll send ${productName} documentation, onboarding steps, and timelines.`
+                : productName
+                  ? `Tell us how you'd like to use ${productName} and we'll come back with the right next step.`
+                  : "Share your idea or challenge and we'll help shape it into a clear plan with the right tech and timeline."}
             </p>
 
             {error && (
@@ -194,7 +219,9 @@ export default function ContactDialog({ subject, onClose }) {
             {!isAccessRequest && (
               <div>
                 <label className="field-label" htmlFor="contact-message">
-                  What would you like to build?
+                  {productName
+                    ? `What would you like to do with ${productName}?`
+                    : "What would you like to build?"}
                 </label>
                 <textarea
                   className="field-input field-textarea"

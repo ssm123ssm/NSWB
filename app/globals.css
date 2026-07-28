@@ -29,6 +29,7 @@
 
     /* Per-product accent, overridden by [data-brand] below. */
     --brand: var(--accent);
+    --brand-hover: var(--accent-hover);
     --brand-soft: var(--accent-soft);
 
     --shadow-sm: 0 1px 2px rgba(12, 14, 20, 0.06);
@@ -66,43 +67,60 @@
     color-scheme: dark;
   }
 
-  /* Product accents. Applied with data-brand on any wrapper. */
+  /* Product accents. Applied with data-brand on any wrapper.
+     Values are spelled out rather than pointing back at --accent: a scope can
+     promote --brand into --accent (see .dialog-card), and an alias in both
+     directions would be a cycle. */
   [data-brand="cyan"] {
     --brand: #0891b2;
+    --brand-hover: #0e7490;
     --brand-soft: #ecfeff;
   }
   [data-brand="violet"] {
     --brand: #7c3aed;
+    --brand-hover: #6d28d9;
     --brand-soft: #f5f3ff;
   }
   [data-brand="emerald"] {
     --brand: #059669;
+    --brand-hover: #047857;
     --brand-soft: #ecfdf5;
   }
   [data-brand="amber"] {
     --brand: #b45309;
+    --brand-hover: #92400e;
     --brand-soft: #fffbeb;
   }
   [data-brand="blue"] {
-    --brand: var(--accent);
-    --brand-soft: var(--accent-soft);
+    --brand: #2f5fff;
+    --brand-hover: #2450e6;
+    --brand-soft: #eef2ff;
   }
 
   :root[data-theme="dark"] [data-brand="cyan"] {
     --brand: #38d3ee;
+    --brand-hover: #67dff4;
     --brand-soft: #0c2028;
   }
   :root[data-theme="dark"] [data-brand="violet"] {
     --brand: #a78bfa;
+    --brand-hover: #c4b5fd;
     --brand-soft: #191430;
   }
   :root[data-theme="dark"] [data-brand="emerald"] {
     --brand: #34d399;
+    --brand-hover: #6ee7b7;
     --brand-soft: #0a2018;
   }
   :root[data-theme="dark"] [data-brand="amber"] {
     --brand: #fbbf24;
+    --brand-hover: #fcd34d;
     --brand-soft: #251a06;
+  }
+  :root[data-theme="dark"] [data-brand="blue"] {
+    --brand: #6f8dff;
+    --brand-hover: #8aa2ff;
+    --brand-soft: #161c2e;
   }
 
   * {
@@ -295,7 +313,7 @@
     box-shadow: var(--shadow-sm);
   }
   .btn-brand:hover {
-    filter: brightness(1.08);
+    background: var(--brand-hover);
   }
 
   .btn-secondary {
@@ -479,11 +497,32 @@
   }
 
   .dialog-card {
+    position: relative;
     background: var(--surface-raised);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     animation: rise-in 0.2s ease-out both;
+    overflow: hidden;
+  }
+
+  /* Opened from a product, the dialog carries that product's colour: promoting
+     --brand into --accent re-tints everything accent-driven inside it — the
+     submit button, the focus rings — without those rules knowing about it. */
+  .dialog-card[data-brand] {
+    --accent: var(--brand);
+    --accent-hover: var(--brand-hover);
+    --accent-soft: var(--brand-soft);
+  }
+
+  /* Brand bar along the top edge, the dialog's echo of .card-accent. */
+  .dialog-card[data-brand]::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--brand), transparent);
   }
 
   .icon-button {
@@ -837,6 +876,7 @@
     --accent-soft: rgba(56, 211, 238, 0.12);
     --accent-on: #06222b;
     --brand: #38d3ee;
+    --brand-hover: #62dcf1;
     --brand-soft: rgba(56, 211, 238, 0.12);
 
     background: var(--bg);

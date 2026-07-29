@@ -65,30 +65,36 @@ export default function LegalDoc({ doc }) {
     <main id="main">
       <section className="border-b border-[color:var(--border)]">
         <div className="shell pb-10 pt-12">
-          <Link className="link-faint text-sm" href="/legal">
-            ← All policies
-          </Link>
-          <p className="eyebrow mt-6">{doc.scope}</p>
-          <h1 className="display mt-3 max-w-3xl text-[clamp(1.9rem,4.2vw,2.9rem)]">
-            {title ?? doc.title}
-          </h1>
-          {updated && (
-            <p className="mt-4 font-[family-name:var(--font-mono)] text-xs text-faint">
-              Last updated {updated}
-            </p>
-          )}
+          <div className="legal-measure">
+            <Link className="link-faint text-sm" href="/legal">
+              ← All policies
+            </Link>
+            <p className="eyebrow mt-6">{doc.scope}</p>
+            {/* Held smaller than a marketing hero — a document masthead, not a
+                headline, so the dense body below reads as one continuous text. */}
+            <h1 className="display mt-3 text-[clamp(1.6rem,3.4vw,2.25rem)]">
+              {title ?? doc.title}
+            </h1>
+            {updated && (
+              <p className="mt-4 font-[family-name:var(--font-mono)] text-xs text-faint">
+                Last updated {updated}
+              </p>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* Not `.section` — its 3.5–6.5rem block padding is set for marketing
+          sections and opens too wide a gap before the first clause. */}
+      <section className="pb-24 pt-10">
         <div className="shell">
-          <article className="legal-prose">
+          <article className="legal-measure legal-prose">
             <Markdown components={components} remarkPlugins={[remarkGfm]}>
               {body}
             </Markdown>
           </article>
 
-          <p className="mt-14 border-t border-[color:var(--border)] pt-8 text-sm text-faint">
+          <p className="legal-measure mt-14 border-t border-[color:var(--border)] pt-8 text-sm text-faint">
             Questions about this document?{" "}
             <Link className="link-arrow text-sm" href="/#contact">
               Get in touch

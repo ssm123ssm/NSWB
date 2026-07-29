@@ -886,17 +886,31 @@
 
   /* --- Legal prose -------------------------------------------------------- */
 
-  /* Long-form policy text rendered from `content/legal/*.md`. Measure is
-     capped for readability; every colour still resolves to a token. */
+  /* Long-form policy text rendered from `content/legal/*.md`.
+
+     Set denser than site copy so it reads as an instrument rather than
+     marketing prose — narrow measure, tight leading, close paragraph spacing.
+     The density comes from the rhythm, not from shrinking the type: these are
+     consumer privacy documents, and GDPR Art. 12 asks for information that is
+     "concise, transparent, intelligible and easily accessible". Fine print is
+     the visual language of burying terms, which is the opposite of what these
+     documents are for. 0.9rem is the floor here — don't go below it. */
+  /* One centred column shared by the masthead and the prose, so a document
+     reads as a single sheet rather than a narrow column pinned to the left of
+     a wide shell. Both must carry this class or they drift apart. */
+  .legal-measure {
+    max-width: 41rem;
+    margin-inline: auto;
+  }
+
   .legal-prose {
-    max-width: 46rem;
     color: var(--text-muted);
-    font-size: 0.975rem;
-    line-height: 1.72;
+    font-size: 0.9rem;
+    line-height: 1.62;
   }
 
   .legal-prose > * + * {
-    margin-top: 1.15rem;
+    margin-top: 0.85rem;
   }
 
   /* Markdown turns a single newline into a soft break, which HTML would
@@ -908,21 +922,25 @@
     white-space: pre-line;
   }
 
+  /* Headings sit close to body size — the rule above and the weight carry the
+     hierarchy, so the eye reads structure without the type shouting. */
   .legal-prose h2 {
-    margin-top: 3rem;
-    padding-top: 1.75rem;
+    margin-top: 2.25rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--border);
     color: var(--text);
-    font-size: 1.3rem;
-    line-height: 1.25;
-    letter-spacing: -0.018em;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.012em;
   }
 
   .legal-prose h3 {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     color: var(--text);
-    font-size: 1.02rem;
+    font-size: 0.9rem;
     font-weight: 600;
+    letter-spacing: 0.005em;
   }
 
   .legal-prose strong {
@@ -955,7 +973,7 @@
   }
 
   .legal-prose li + li {
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
   }
 
   .legal-prose li::marker {
@@ -972,12 +990,12 @@
   .legal-prose table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.845rem;
   }
 
   .legal-prose th,
   .legal-prose td {
-    padding: 0.7rem 0.95rem;
+    padding: 0.55rem 0.8rem;
     text-align: left;
     vertical-align: top;
   }

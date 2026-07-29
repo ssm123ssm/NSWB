@@ -29,30 +29,37 @@ That is the complete list for the form. We ask for nothing else and infer nothin
 
 ### b) Visit measurement, if you allow it
 
-If — and only if — you choose **Allow** on the banner described in Section 2, we count your visit using Plausible Analytics. What Plausible records is:
+If — and only if — you choose **Accept** on the banner described in Section 2, we count your visit using **Vercel Web Analytics**. What it records with each page view is:
 
-- the **page** you are on and the **referring site**, if any;
-- your **browser, operating system, and device type**;
+- the **page** you are on, any **query parameters** left on it after filtering, and the **referring site**, if any;
+- your **browser, operating system, and device type**, with versions;
 - your **country, region, and city**, derived from your IP address.
 
-**Your IP address is never stored.** Plausible uses it to look up an approximate location and to generate a one-way hash that lets it tell a returning visitor from a new one within a single day. That hash is built from a salt that is rotated every 24 hours, which makes it impossible to link your visits across days or to identify you. Then the IP address is discarded.
+**Your IP address is never stored.** Vercel uses it to look up an approximate location and, together with other details of the request, to generate a hash that lets it tell a returning visitor from a new one within a single day. That hash is valid for one day and is then reset, which makes it impossible to link your visits across days or to identify you. The IP address itself is discarded.
 
-There is **no cookie, no advertising pixel, no cross-site tracking, and no profile**. Plausible does not sell data and has no advertising business.
+**Measurement writes nothing to your device** — the hash is derived from the request as it arrives, so it needs no cookie and no browser storage. There is no advertising pixel, no cross-site tracking, and no profile.
 
-If you choose **No thanks**, or simply do not answer, no analytics script is loaded at all — not a disabled one, not one held in reserve.
+If you choose **Decline**, or simply do not answer, no analytics script is loaded at all — not a disabled one, not one held in reserve.
 
 ## 2. Cookies and Your Analytics Choice
 
-**This site sets no cookies of any kind** — not for analytics, not for anything else.
+**This site sets one cookie**, and it exists to record what you chose here:
 
-It stores two values in your browser's local storage, both of which stay in your browser and are never transmitted:
+| Name | Purpose | Type | Lifetime |
+| --- | --- | --- | --- |
+| `ns-consent` | Your answer to the analytics banner — the word `granted` or `denied`, and nothing else | First-party, strictly necessary | 12 months |
+
+It is readable only by neurasense.io, it is never sent to a third party, and it holds no identifier: everyone who answers the same way carries an identical cookie. It is set whichever way you answer, because storing a refusal is the only way to honour it. A cookie doing only this is strictly necessary and does not itself require consent.
+
+The site also stores one value in your browser's local storage, which stays on your device and is never transmitted:
 
 - `ns-theme` — whether you chose the light or dark appearance. Set only when you use the theme toggle, and containing nothing but the word `light` or `dark`.
-- `ns-consent` — your answer to the analytics banner, containing nothing but the word `granted` or `denied`.
 
-Both are strictly necessary in the sense that matters: one records a preference you set deliberately, and the other records your privacy choice so we do not have to ask again. Neither requires consent, and storing your refusal is the only way to honour it. You can clear both through your browser's site-data settings.
+You can clear both through your browser's site-data settings.
 
-**The analytics banner.** Because Plausible sets no cookies and stores no persistent identifier, consent for it is not legally required. We ask anyway, and default to off — this notice claims the site does nothing until you say so, and we would rather that be literally true than nearly true. You can change your answer at any time using the **Cookies** link in the footer of every page. Withdrawing reloads the page so that measurement stops immediately rather than at your next visit.
+**No other cookies exist here.** Nothing is set for advertising, and nothing is set by a third party — the analytics described in Section 1(b) uses no cookie at all.
+
+**The analytics banner.** Because Vercel Web Analytics sets no cookies and stores no persistent identifier, consent for the measurement itself is not legally required. We ask anyway, and default to off — this notice claims the site measures nothing until you say so, and we would rather that be literally true than nearly true. You can change your answer at any time using the **Cookies** link in the footer of every page. Withdrawing reloads the page so that measurement stops immediately rather than at your next visit.
 
 ## 3. Why We Use It and On What Basis
 
@@ -66,7 +73,9 @@ Where the EU or UK GDPR applies, our lawful basis for contact form submissions i
 
 Submissions are delivered to Neurasense staff who handle enquiries, through our internal messaging tool and email provider. Those providers process the data on our behalf under confidentiality obligations, and they do not use it for their own purposes.
 
-Visit measurement, where you have allowed it, is processed by **Plausible Insights OÜ**, an Estonian company, acting as our processor. Plausible sees only what Section 1(b) lists; it does not receive contact form submissions or anything you type on this site.
+This site is hosted by **Vercel Inc.**, a United States company, acting as our processor. Hosting means Vercel's servers handle every request to neurasense.io in order to deliver the page to you.
+
+Visit measurement, where you have allowed it, is processed by the same company through **Vercel Web Analytics**. It sees only what Section 1(b) lists; it does not receive contact form submissions or anything you type on this site.
 
 **We do not sell your information**, and we do not share it with third parties for their own marketing.
 
@@ -74,13 +83,13 @@ Visit measurement, where you have allowed it, is processed by **Plausible Insigh
 
 Contact enquiries are retained for **24 months** from the last message in the thread, then deleted. Where an enquiry becomes a customer relationship, the resulting records are governed by that product's privacy policy instead.
 
-Analytics data is aggregate from the moment it is recorded — there are no individual visit records to delete, because none are created. The daily hash Plausible uses to recognise a returning visitor within one day is rendered permanently unusable when the salt behind it rotates, within **24 hours**.
+Analytics data is aggregate from the moment it is recorded — there are no individual visit records to delete, because none are created. The hash Vercel uses to recognise a returning visitor within one day is reset every **24 hours**, and the visit session behind it is discarded on the same cycle.
 
 ## 6. Where It Goes
 
 Neurasense is established in Sri Lanka and our providers may operate elsewhere, so your enquiry may be stored and processed outside your country. Where we transfer personal data out of the EEA or UK, we rely on appropriate safeguards including the European Commission's Standard Contractual Clauses.
 
-Analytics is the exception, deliberately: **Plausible stores its data on servers in the European Union**, so allowing measurement involves no transfer out of the EEA.
+Hosting and visit measurement both involve **Vercel Inc. in the United States**. For personal data reaching Vercel from the EEA or the UK, we rely on the **Standard Contractual Clauses** in our data processing agreement with them, together with the UK International Data Transfer Addendum where UK law applies. What measurement transfers is limited to the list in Section 1(b), and it contains no identifier for you.
 
 ## 7. Your Rights
 

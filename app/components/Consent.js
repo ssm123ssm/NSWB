@@ -9,16 +9,35 @@ import {
   useState,
 } from "react";
 
-const STORAGE_KEY = "ns-consent";
+const COOKIE_NAME = "ns-consent";
+
+/** A year. Long enough not to nag, short enough to be a fresh question. */
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 const ConsentContext = createContext(null);
 
+function readConsent() {
+  const match = document.cookie.match(
+    new RegExp(`(?:^|;\\s*)${COOKIE_NAME}=(granted|denied)(?:;|$)`)
+  );
+  return match ? match[1] : null;
+}
+
+function writeConsent(value) {
+  const secure = window.location.protocol === "https:" ? "; secure" : "";
+  document.cookie =
+    `${COOKIE_NAME}=${value}; path=/; max-age=${COOKIE_MAX_AGE}` +
+    `; samesite=lax${secure}`;
+}
+
 /**
- * Analytics consent, stored the same way as the theme preference: one
- * localStorage key holding one word.
+ * Analytics consent, stored in a first-party cookie holding one word —
+ * `granted` or `denied`, the same for everyone who answers the same way, so it
+ * identifies nobody. It is strictly necessary: storing a refusal is the only
+ * way to honour it. The measurement it gates sets no cookies of its own.
  *
- * Three states matter and they are not interchangeable. `undefined` means
- * storage has not been read yet — the server render and the first paint, where
+ * Three states matter and they are not interchangeable. `undefined` means the
+ * cookie has not been read yet — the server render and the first paint, where
  * showing the banner would make it flash for people who already answered.
  * `null` means read, but undecided. A string is a decision. Only `null` (or an
  * explicit reopen) puts the banner on screen.
@@ -29,11 +48,10 @@ export function ConsentProvider({ children }) {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      setConsent(stored === "granted" || stored === "denied" ? stored : null);
+      setConsent(readConsent());
     } catch {
-      // Private browsing. Treat it as undecided and ask again next visit —
-      // never as consent.
+      // Cookies blocked outright. Treat it as undecided and ask again next
+      // visit — never as consent.
       setConsent(null);
     }
   }, []);
@@ -41,15 +59,16 @@ export function ConsentProvider({ children }) {
   const decide = useCallback(
     (next) => {
       try {
-        localStorage.setItem(STORAGE_KEY, next);
+        writeConsent(next);
       } catch {
         // Nothing to persist to; the choice still holds for this page view.
       }
 
-      // Plausible patches history.pushState so it follows client-side
-      // navigation on its own. Once it is running, dropping the <script> from
-      // the tree does not stop it — the loaded code stays live. Withdrawal has
-      // to mean withdrawal from that moment, so reload instead of pretending.
+      // The analytics script patches history.pushState so it follows
+      // client-side navigation on its own. Once it is running, dropping the
+      // component from the tree does not stop it — the loaded code stays live.
+      // Withdrawal has to mean withdrawal from that moment, so reload instead
+      // of pretending.
       if (consent === "granted" && next === "denied") {
         window.location.reload();
         return;

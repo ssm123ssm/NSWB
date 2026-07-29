@@ -43,7 +43,7 @@ export const legalDocs = [
     scope: "neurasense.io",
     note: "What this site collects, and what it does not",
     summary:
-      "What this site collects when you use the contact form, and the opt-in visit measurement that stays off until you allow it. No cookies, no tracking.",
+      "What this site collects when you use the contact form, and the opt-in visit measurement that stays off until you allow it. One cookie, which remembers your answer. No advertising, no cross-site tracking.",
   },
   {
     slug: "privacy-policy",

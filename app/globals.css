@@ -246,6 +246,19 @@
 
   /* --- Chips ------------------------------------------------------------- */
 
+  /* The product lockup set as a tinted chip — the treatment the home hero gives
+     the featured product, lifted into a class so a product page can wear its own
+     mark the same way. Type size comes from context, and the lockup inside keeps
+     its own colours: head in --text, tail in --brand. */
+  .brand-tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+    background: var(--brand-soft);
+    line-height: 1.5;
+  }
+
   .badge {
     display: inline-flex;
     align-items: center;
@@ -863,10 +876,6 @@
     opacity: 0.22;
   }
 
-  .panel-dark .glow {
-    opacity: 0.3;
-  }
-
   .rule {
     height: 1px;
     background: linear-gradient(
@@ -875,33 +884,6 @@
       var(--border-strong),
       transparent
     );
-  }
-
-  /* Always-dark panel. Rather than hardcoding colours it re-declares the
-     tokens locally, so .card, .btn, .badge and friends all keep working
-     inside it — this is how Vault keeps its own identity without needing a
-     second stylesheet. */
-  .panel-dark {
-    --bg: #08090c;
-    --bg-subtle: #0c0e13;
-    --surface: rgba(255, 255, 255, 0.04);
-    --surface-raised: #151922;
-    --border: rgba(255, 255, 255, 0.12);
-    --border-strong: rgba(255, 255, 255, 0.22);
-    --text: #f2f4f8;
-    --text-muted: #a5adbd;
-    --text-faint: #737b8b;
-    --accent: #38d3ee;
-    --accent-hover: #62dcf1;
-    --accent-soft: rgba(56, 211, 238, 0.12);
-    --accent-on: #06222b;
-    --brand: #38d3ee;
-    --brand-hover: #62dcf1;
-    --brand-soft: rgba(56, 211, 238, 0.12);
-
-    background: var(--bg);
-    color: var(--text);
-    color-scheme: dark;
   }
 
   /* --- Legal prose -------------------------------------------------------- */

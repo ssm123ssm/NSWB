@@ -101,7 +101,7 @@ For scan data, the lawful basis is determined by the account holder acting as co
 
 We share information with:
 
-- **Our payment processor** — `[PAYMENT PROCESSOR — TO BE INSERTED. State the entity name, and whether it acts as merchant of record or gateway only.]` — solely to process payments, subscriptions, refunds, and applicable taxes;
+- **Our third-party payment provider**, solely to process payments, subscriptions, refunds, and applicable taxes. The provider we use is identified at checkout and on your invoice, and you may ask us who it is at any time at payments.nsqr@neurasense.io. Depending on the provider, it may act as **merchant of record** for your purchase, in which case it is the seller of record and handles your payment information as its own controller under its own privacy policy;
 - **Infrastructure and service providers** who perform functions on our behalf, including hosting, database, email delivery, error monitoring, and analytics providers, each under written confidentiality and data protection obligations;
 - **Legal and regulatory authorities**, where required to comply with applicable law, regulation, legal process, or a lawful governmental request;
 - **Successors**, in connection with a merger, acquisition, or sale of assets, subject to protections equivalent to those in this Policy.

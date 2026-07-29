@@ -83,7 +83,7 @@ This section does not affect your right to dispute a charge you believe to be fr
 
 - Approved refunds are issued to the **original payment method** used for the purchase. We cannot refund to a different card, account, or person.
 - Refunds may take **5–10 business days** to appear, depending on your bank or payment provider.
-- Refunds are processed through our payment provider: `[PAYMENT PROCESSOR — TO BE INSERTED. If a merchant of record is used, state that it is the seller of record, that refunds are issued through it and subject to its own terms and timelines, and that this policy describes when Neurasense will approve a refund request rather than a separate refund mechanism.]`
+- Refunds are processed through the payment provider used for the original charge, which is identified at checkout and on your invoice. Where that provider acts as **merchant of record**, it is the seller of record for your purchase and its own refund terms and processing timelines apply in addition to this policy — in that case this policy describes when Neurasense will approve and request a refund on your behalf, rather than a separate mechanism for issuing one.
 
 ## 10. Taxes
 

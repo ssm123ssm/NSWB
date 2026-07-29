@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { footerLinks, site } from "../data/site";
+import { CookieSettingsButton } from "./CookieBanner";
 import HashMark from "./HashMark";
 import { GitHubIcon, LinkedInIcon } from "./Icons";
 
@@ -32,6 +33,10 @@ export default function SiteFooter() {
             {link.label}
           </Link>
         ))}
+
+        {/* Sits in the same row as the links because it does the same job —
+            it is a button only because it reopens the banner in place. */}
+        <CookieSettingsButton />
       </div>
 
       <p className="shell pb-8 text-center text-sm text-faint">

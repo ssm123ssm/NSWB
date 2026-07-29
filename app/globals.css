@@ -883,6 +883,149 @@
     color: var(--text);
     color-scheme: dark;
   }
+
+  /* --- Legal prose -------------------------------------------------------- */
+
+  /* Long-form policy text rendered from `content/legal/*.md`.
+
+     Set denser than site copy so it reads as an instrument rather than
+     marketing prose — narrow measure, tight leading, close paragraph spacing.
+     The density comes from the rhythm, not from shrinking the type: these are
+     consumer privacy documents, and GDPR Art. 12 asks for information that is
+     "concise, transparent, intelligible and easily accessible". Fine print is
+     the visual language of burying terms, which is the opposite of what these
+     documents are for. 0.9rem is the floor here — don't go below it. */
+  /* One centred column shared by the masthead and the prose, so a document
+     reads as a single sheet rather than a narrow column pinned to the left of
+     a wide shell. Both must carry this class or they drift apart. */
+  .legal-measure {
+    max-width: 41rem;
+    margin-inline: auto;
+  }
+
+  .legal-prose {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.62;
+  }
+
+  .legal-prose > * + * {
+    margin-top: 0.85rem;
+  }
+
+  /* Markdown turns a single newline into a soft break, which HTML would
+     collapse to a space — and the company identity blocks (name, registration
+     number, email) are written as consecutive lines. Preserving them means
+     each paragraph in `content/legal/*.md` must stay on one line; every
+     paragraph in those files already does. */
+  .legal-prose p {
+    white-space: pre-line;
+  }
+
+  /* Headings sit close to body size — the rule above and the weight carry the
+     hierarchy, so the eye reads structure without the type shouting. */
+  .legal-prose h2 {
+    margin-top: 2.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.012em;
+  }
+
+  .legal-prose h3 {
+    margin-top: 1.5rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+  }
+
+  .legal-prose strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .legal-prose a {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  }
+
+  .legal-prose a:hover {
+    text-decoration-color: var(--brand);
+  }
+
+  .legal-prose ul,
+  .legal-prose ol {
+    padding-left: 1.15rem;
+  }
+
+  .legal-prose ul {
+    list-style: disc;
+  }
+
+  .legal-prose ol {
+    list-style: decimal;
+  }
+
+  .legal-prose li + li {
+    margin-top: 0.3rem;
+  }
+
+  .legal-prose li::marker {
+    color: var(--text-faint);
+  }
+
+  /* Tables scroll inside their own box so a long row never widens the page. */
+  .legal-table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .legal-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.845rem;
+  }
+
+  .legal-prose th,
+  .legal-prose td {
+    padding: 0.55rem 0.8rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .legal-prose th {
+    background: var(--bg-subtle);
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .legal-prose tbody tr + tr td {
+    border-top: 1px solid var(--border);
+  }
+
+  .legal-prose code {
+    padding: 0.15em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    background: var(--bg-subtle);
+    color: var(--text);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.85em;
+  }
+
+  .legal-prose hr {
+    margin-block: 2rem;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
 }
 
 /* ==========================================================================

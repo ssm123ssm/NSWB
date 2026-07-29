@@ -16,6 +16,9 @@
   `ContactDialog`, `ProductCard`, `Icons`, …).
 - `app/page.js`, `app/products/page.js`, `app/vault/page.js`: the three pages.
 - `app/api/contact/route.js`: contact + access-request intake.
+- `content/legal/*.md`: policy prose. `app/legal/` renders it — index,
+  `/legal/website-privacy`, and `/legal/nsqr/[slug]` for the three NSQR
+  documents. `app/components/LegalDoc.js` does the reading and rendering.
 - `public/`: static assets, incl. `preview-vault-white-paper.pdf`.
 
 ## Commands
@@ -24,6 +27,14 @@
 ## Conventions
 - **Content changes go in `app/data/site.js`, not in JSX.** Adding a product
   there makes it appear on the home page, the products index and the footer.
+- **Legal prose is the one exception**, and lives in `content/legal/*.md` —
+  these are legal instruments edited as whole documents under their own
+  review, not site copy. `site.js` still holds the registry (`legalDocs`:
+  titles, routes, summaries); only the body text lives in markdown.
+  `react-markdown` + `remark-gfm` render it server-side, so the pages ship no
+  client JS. Each paragraph must stay on **one line** — `.legal-prose p` sets
+  `white-space: pre-line` so the address blocks keep their line breaks, which
+  means a hard-wrapped paragraph would render with breaks mid-sentence.
 - **Never hardcode a colour.** Everything resolves to a token in
   `app/globals.css`: `--bg`, `--bg-subtle`, `--surface`, `--border`,
   `--border-strong`, `--text`, `--text-muted`, `--text-faint`, `--accent`,

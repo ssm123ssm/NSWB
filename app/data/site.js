@@ -18,7 +18,62 @@ export const footerLinks = [
   { label: "Company", href: "/#approach" },
   { label: "Research", href: "/#capabilities" },
   { label: "Contact", href: "/#contact" },
+  { label: "Privacy", href: "/legal/website-privacy" },
+  { label: "Legal", href: "/legal" },
 ];
+
+/**
+ * Policy documents. The prose lives in `content/legal/*.md` — the only content
+ * on the site that is not authored here, because these are legal instruments
+ * kept under their own review and edited as whole documents.
+ *
+ * `scope` matters: the website notice covers neurasense.io itself, while the
+ * NSQR documents govern the product and say so in their own opening lines.
+ */
+export const legalDocs = [
+  {
+    slug: "website-privacy",
+    href: "/legal/website-privacy",
+    file: "website-privacy.md",
+    title: "Website Privacy Notice",
+    scope: "neurasense.io",
+    summary:
+      "What this site collects when you use the contact form, and what it does not. No cookies, no analytics, no tracking.",
+  },
+  {
+    slug: "privacy-policy",
+    href: "/legal/nsqr/privacy-policy",
+    file: "privacy-policy.md",
+    product: "NSQR",
+    title: "NSQR Privacy Policy",
+    scope: "NSQR",
+    summary:
+      "How NSQR handles account information, and how scan analytics work for the people who scan a customer's QR code.",
+  },
+  {
+    slug: "terms-of-service",
+    href: "/legal/nsqr/terms-of-service",
+    file: "terms-of-service.md",
+    product: "NSQR",
+    title: "NSQR Terms of Service",
+    scope: "NSQR",
+    summary:
+      "The agreement governing use of NSQR — accounts, billing, acceptable use of QR destinations, and liability.",
+  },
+  {
+    slug: "refund-policy",
+    href: "/legal/nsqr/refund-policy",
+    file: "refund-policy.md",
+    product: "NSQR",
+    title: "NSQR Refund Policy",
+    scope: "NSQR",
+    summary:
+      "The 14-day money-back guarantee, how to claim it, and what happens to your QR codes when a refund is issued.",
+  },
+];
+
+/** The three NSQR documents, in the order they are listed on `/legal`. */
+export const nsqrLegalDocs = legalDocs.filter((doc) => doc.product === "NSQR");
 
 export const capabilities = [
   {

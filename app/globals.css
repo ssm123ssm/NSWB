@@ -883,6 +883,131 @@
     color: var(--text);
     color-scheme: dark;
   }
+
+  /* --- Legal prose -------------------------------------------------------- */
+
+  /* Long-form policy text rendered from `content/legal/*.md`. Measure is
+     capped for readability; every colour still resolves to a token. */
+  .legal-prose {
+    max-width: 46rem;
+    color: var(--text-muted);
+    font-size: 0.975rem;
+    line-height: 1.72;
+  }
+
+  .legal-prose > * + * {
+    margin-top: 1.15rem;
+  }
+
+  /* Markdown turns a single newline into a soft break, which HTML would
+     collapse to a space — and the company identity blocks (name, registration
+     number, email) are written as consecutive lines. Preserving them means
+     each paragraph in `content/legal/*.md` must stay on one line; every
+     paragraph in those files already does. */
+  .legal-prose p {
+    white-space: pre-line;
+  }
+
+  .legal-prose h2 {
+    margin-top: 3rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+  }
+
+  .legal-prose h3 {
+    margin-top: 2rem;
+    color: var(--text);
+    font-size: 1.02rem;
+    font-weight: 600;
+  }
+
+  .legal-prose strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .legal-prose a {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  }
+
+  .legal-prose a:hover {
+    text-decoration-color: var(--brand);
+  }
+
+  .legal-prose ul,
+  .legal-prose ol {
+    padding-left: 1.15rem;
+  }
+
+  .legal-prose ul {
+    list-style: disc;
+  }
+
+  .legal-prose ol {
+    list-style: decimal;
+  }
+
+  .legal-prose li + li {
+    margin-top: 0.5rem;
+  }
+
+  .legal-prose li::marker {
+    color: var(--text-faint);
+  }
+
+  /* Tables scroll inside their own box so a long row never widens the page. */
+  .legal-table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .legal-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .legal-prose th,
+  .legal-prose td {
+    padding: 0.7rem 0.95rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .legal-prose th {
+    background: var(--bg-subtle);
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .legal-prose tbody tr + tr td {
+    border-top: 1px solid var(--border);
+  }
+
+  .legal-prose code {
+    padding: 0.15em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    background: var(--bg-subtle);
+    color: var(--text);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.85em;
+  }
+
+  .legal-prose hr {
+    margin-block: 2rem;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
 }
 
 /* ==========================================================================

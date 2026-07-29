@@ -1,4 +1,5 @@
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import SiteChrome from "./components/SiteChrome";
 import { site } from "./data/site";
 import "./globals.css";
@@ -74,6 +75,7 @@ export default function RootLayout({ children }) {
           Skip to content
         </a>
         <SiteChrome>{children}</SiteChrome>
+        <Analytics />
       </body>
     </html>
   );

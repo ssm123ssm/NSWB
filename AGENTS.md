@@ -2,24 +2,47 @@
 
 ## Project overview
 - Next.js 14 (App Router) marketing site using React 18.
-- Styling via Tailwind CSS and NextUI (`@nextui-org/react`).
-- Custom fonts loaded in `app/layout.js` with `next/font`.
+- Styling is plain Tailwind CSS over a CSS-variable design system. There is no
+  component library — NextUI and framer-motion were removed.
+- Two fonts, loaded in `app/layout.js` with `next/font`: Inter (`--font-inter`)
+  and JetBrains Mono (`--font-mono`, used for eyebrows, labels and numerals).
 
 ## Key paths
-- `app/page.js`: main landing page.
-- `app/products/page.js`: products page.
-- `app/layout.js`: root layout + metadata + font variables.
-- `app/globals.css`: global styles and Tailwind layers.
-- `public/`: static assets.
+- `app/data/site.js`: **single source of truth** for products, capabilities,
+  principles and Vault content. Every page reads from here.
+- `app/layout.js`: root layout, metadata defaults, pre-paint theme script.
+- `app/globals.css`: design tokens + all component classes.
+- `app/components/`: shared UI (`SiteChrome`, `SiteHeader`, `SiteFooter`,
+  `ContactDialog`, `ProductCard`, `Icons`, …).
+- `app/page.js`, `app/products/page.js`, `app/vault/page.js`: the three pages.
+- `app/api/contact/route.js`: contact + access-request intake.
+- `public/`: static assets, incl. `preview-vault-white-paper.pdf`.
 
 ## Commands
-- `npm run dev`: start dev server.
-- `npm run build`: production build.
-- `npm run start`: run production server.
-- `npm run lint`: ESLint.
+- `npm run dev` / `npm run build` / `npm run start` / `npm run lint`.
 
 ## Conventions
-- Use App Router routes: create folders under `app/` with `page.js`.
-- Prefer Tailwind utility classes and NextUI components for UI work.
-- Keep layout-level changes in `app/layout.js`; global styles in `app/globals.css`.
-- No tests are configured in this repo.
+- **Content changes go in `app/data/site.js`, not in JSX.** Adding a product
+  there makes it appear on the home page, the products index and the footer.
+- **Never hardcode a colour.** Everything resolves to a token in
+  `app/globals.css`: `--bg`, `--bg-subtle`, `--surface`, `--border`,
+  `--border-strong`, `--text`, `--text-muted`, `--text-faint`, `--accent`,
+  `--brand`. Reuse the component classes (`.shell`, `.section`, `.card`,
+  `.btn`, `.badge`, `.field-input`, `.eyebrow`, `.lead`) before writing new CSS.
+- **Theming.** Light/dark is driven by `data-theme` on `<html>`, set before
+  first paint by the inline script in `app/layout.js` and toggled by
+  `ThemeToggle`. Any new colour must be declared for both themes.
+- **Per-product accent.** Put `data-brand="cyan|violet|emerald|amber|blue"` on a
+  wrapper and `--brand` / `--brand-soft` resolve for everything inside it.
+- **`.panel-dark`** re-declares the tokens locally to make an always-dark
+  section (used by the Vault hero). Prefer it over hardcoding dark colours, so
+  `.card`, `.btn` and `.badge` keep working inside.
+- Pages are server components. Anything needing the contact dialog uses the
+  small client islands `ContactButton` / `RequestAccessLink` rather than
+  becoming a client component itself.
+- No tests are configured in this repo. Verify with `npm run build` +
+  `npm run lint`.
+
+## Known gap
+- `app/api/contact/route.js` validates and logs submissions but only delivers
+  them if `CONTACT_WEBHOOK_URL` is set. Wire an email provider before launch.

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowIcon, DocIcon, ExternalIcon, LockIcon } from "../components/Icons";
+import ProductName from "../components/ProductName";
 import RequestAccessLink from "../components/RequestAccessLink";
 import { ContactButton } from "../components/SiteChrome";
 import { getProduct, vaultAudiences, vaultCapabilities } from "../data/site";
@@ -21,24 +22,29 @@ export const metadata = {
 export default function VaultPage() {
   return (
     <main id="main" data-brand="cyan">
-      {/* ------------------------------------------------------- Dark hero */}
-      <section className="panel-dark relative overflow-hidden">
+      {/* ------------------------------------------------------------ Hero */}
+      <section className="relative overflow-hidden border-b border-[color:var(--border)]">
+        <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
         <div
-          className="glow -left-32 top-0 h-[24rem] w-[24rem] bg-cyan-400"
-          aria-hidden="true"
-        />
-        <div
-          className="glow -right-24 top-24 h-[22rem] w-[22rem] bg-indigo-500"
+          className="glow left-1/2 top-[-12rem] h-[26rem] w-[34rem] -translate-x-1/2 bg-[color:var(--brand)]"
           aria-hidden="true"
         />
 
         <div className="shell relative grid gap-12 pb-20 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div>
-            <p className="border-l border-[color:var(--brand)] pl-4 text-sm uppercase leading-relaxed tracking-[0.14em] text-[color:var(--brand)]">
-              When your work matters most, keep every byte under your control.
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="brand-tag text-base">
+                <ProductName product={vault} hero />
+              </span>
+              <span className="badge">
+                <span className="dot" aria-hidden="true" />
+                Live
+              </span>
+            </div>
 
-            <h1 className="display mt-7">Vault</h1>
+            <h1 className="display mt-6 max-w-2xl text-[clamp(1.95rem,4.4vw,3.15rem)]">
+              When your work matters most, keep every byte under your control.
+            </h1>
 
             <p className="lead mt-5 max-w-xl">
               Vault is a total security solution made by the Neurasense research

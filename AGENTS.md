@@ -45,9 +45,12 @@
   `ThemeToggle`. Any new colour must be declared for both themes.
 - **Per-product accent.** Put `data-brand="cyan|violet|emerald|amber|blue"` on a
   wrapper and `--brand` / `--brand-soft` resolve for everything inside it.
-- **`.panel-dark`** re-declares the tokens locally to make an always-dark
-  section (used by the Vault hero). Prefer it over hardcoding dark colours, so
-  `.card`, `.btn` and `.badge` keep working inside.
+- **Every page follows the light/dark theme.** There are no always-dark
+  sections: a section that needs more weight uses `.section-subtle`, a `.glow`
+  tinted with `var(--brand)`, or `.grid-field` — never a locally pinned dark
+  palette, which would ignore the theme toggle.
+- **`.brand-tag`** is the product lockup set in a `--brand-soft` chip (home
+  hero, Vault hero). Pair it with a `.badge` for status.
 - Pages are server components. Anything needing the contact dialog uses the
   small client islands `ContactButton` / `RequestAccessLink` rather than
   becoming a client component itself.

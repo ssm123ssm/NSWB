@@ -980,6 +980,60 @@
     color: var(--text-faint);
   }
 
+  /* --- Legal register ------------------------------------------------------
+
+     The index of policies, set as a register of records rather than a grid of
+     cards: ruled rows, name left, revision date right. Four documents do not
+     justify four bordered boxes, and the form matches the density of the
+     documents the rows lead into. */
+  .legal-register > :last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legal-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0.2rem 1.5rem;
+    padding: 0.9rem 0.5rem 0.95rem;
+    margin-inline: -0.5rem;
+    border-top: 1px solid var(--border);
+    border-radius: 0.4rem;
+    transition: background 0.16s ease;
+  }
+
+  .legal-row:hover {
+    background: var(--bg-subtle);
+  }
+
+  .legal-row-title {
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.008em;
+    transition: color 0.16s ease;
+  }
+
+  .legal-row:hover .legal-row-title {
+    color: var(--brand);
+  }
+
+  /* Dates share the mono face with the documents' own datelines, and sit in
+     their own column so "what changed most recently" is one glance. */
+  .legal-row-date {
+    color: var(--text-faint);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .legal-row-note {
+    grid-column: 1 / -1;
+    color: var(--text-faint);
+    font-size: 0.83rem;
+    line-height: 1.5;
+  }
+
   /* Tables scroll inside their own box so a long row never widens the page. */
   .legal-table-scroll {
     overflow-x: auto;

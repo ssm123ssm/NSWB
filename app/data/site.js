@@ -29,6 +29,10 @@ export const footerLinks = [
  *
  * `scope` matters: the website notice covers neurasense.io itself, while the
  * NSQR documents govern the product and say so in their own opening lines.
+ *
+ * Two descriptions, because they do different jobs: `note` is the one quiet
+ * line under each row of the register on `/legal`, and `summary` is the page
+ * metadata description, which wants to be fuller for search results.
  */
 export const legalDocs = [
   {
@@ -37,6 +41,7 @@ export const legalDocs = [
     file: "website-privacy.md",
     title: "Website Privacy Notice",
     scope: "neurasense.io",
+    note: "What this site collects, and what it does not",
     summary:
       "What this site collects when you use the contact form, and what it does not. No cookies, no analytics, no tracking.",
   },
@@ -47,6 +52,7 @@ export const legalDocs = [
     product: "NSQR",
     title: "NSQR Privacy Policy",
     scope: "NSQR",
+    note: "Account data, and analytics from QR code scans",
     summary:
       "How NSQR handles account information, and how scan analytics work for the people who scan a customer's QR code.",
   },
@@ -57,6 +63,7 @@ export const legalDocs = [
     product: "NSQR",
     title: "NSQR Terms of Service",
     scope: "NSQR",
+    note: "Accounts, billing, and acceptable use of QR destinations",
     summary:
       "The agreement governing use of NSQR — accounts, billing, acceptable use of QR destinations, and liability.",
   },
@@ -67,6 +74,7 @@ export const legalDocs = [
     product: "NSQR",
     title: "NSQR Refund Policy",
     scope: "NSQR",
+    note: "The 14-day guarantee and how to claim it",
     summary:
       "The 14-day money-back guarantee, how to claim it, and what happens to your QR codes when a refund is issued.",
   },

@@ -281,6 +281,16 @@
     color: var(--text-faint);
   }
 
+  /* A lockup inside a badge keeps its own face. The badge sets mono for label
+     text, which the mark would otherwise inherit — and the mark's tight
+     tracking reads as cramped on a monospace face. Slightly larger than the
+     label around it so the product still reads as the subject of the chip. */
+  .badge .wordmark {
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: -0.03em;
+  }
+
   .dot {
     width: 0.4rem;
     height: 0.4rem;

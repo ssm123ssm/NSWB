@@ -173,7 +173,9 @@ export default function HomePage() {
             className="mb-5 flex justify-center"
             data-brand={featured.accent}
           >
-            <p className="badge">Featuring {featured.name}</p>
+            <p className="badge">
+              Featuring <ProductName product={featured} />
+            </p>
           </div>
 
           <NsqrReel />

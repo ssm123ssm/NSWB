@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { legalDocs } from "../data/site";
+import { legalDocs, products } from "../data/site";
 import { readDoc } from "../components/LegalDoc";
+import ProductName from "../components/ProductName";
 
 export const metadata = {
   title: "Legal",
@@ -11,6 +12,7 @@ export const metadata = {
 export default function LegalIndexPage() {
   const site = legalDocs.filter((doc) => !doc.product);
   const nsqr = legalDocs.filter((doc) => doc.product === "NSQR");
+  const nsqrProduct = products.find((product) => product.name === "NSQR");
 
   return (
     <main id="main">
@@ -35,7 +37,14 @@ export default function LegalIndexPage() {
         <div className="shell">
           <div className="legal-measure">
             <Register docs={site} label="This website" />
-            <Register className="mt-12" docs={nsqr} label="NSQR" />
+            {/* The register heading names the product, so it wears the lockup
+                and the product's accent rather than plain uppercase text. */}
+            <Register
+              brand={nsqrProduct.accent}
+              className="mt-12"
+              docs={nsqr}
+              label={<ProductName className="text-sm" product={nsqrProduct} />}
+            />
           </div>
         </div>
       </section>
@@ -43,9 +52,9 @@ export default function LegalIndexPage() {
   );
 }
 
-function Register({ className = "", docs, label }) {
+function Register({ brand, className = "", docs, label }) {
   return (
-    <section className={className}>
+    <section className={className} data-brand={brand}>
       <h2 className="text-xs uppercase tracking-[0.14em] text-faint">
         {label}
       </h2>

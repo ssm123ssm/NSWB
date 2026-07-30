@@ -183,24 +183,16 @@ function TimelineRow({ product, side, index }) {
               <ArrowIcon />
             </Link>
           )}
-          {product.app && (
+          {/* Products with a detail page send people there first; the app link
+              lives on that page, so the card does not duplicate it. */}
+          {product.app && !product.detail && (
             <a
-              className={
-                product.detail
-                  ? "link-muted inline-flex items-center gap-1.5"
-                  : "link-arrow"
-              }
+              className="link-arrow"
               href={product.app}
               target="_blank"
               rel="noreferrer"
             >
-              {product.detail ? (
-                "Open app"
-              ) : (
-                <>
-                  Visit <ProductName product={product} />
-                </>
-              )}
+              Visit <ProductName product={product} />
               <ExternalIcon className="h-3.5 w-3.5" />
             </a>
           )}

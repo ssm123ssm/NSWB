@@ -886,6 +886,533 @@
     );
   }
 
+  /* --- Vault illustrations -------------------------------------------------
+
+     Two looping scenes carry the Vault page: `.vault-scene`, where a list of
+     files is locked in front of the reader, and `.vault-flow`, which follows
+     one file off the device. Both are markup and CSS rather than image or
+     video assets — they inherit --brand, follow the theme toggle, stay sharp
+     at any width, and cost nothing to download.
+
+     Timing is one shared 9s bar. The scan line sweeps the list once, each row
+     flips as the line reaches it (via the --i stagger set in the markup), the
+     locked state holds for half the bar, and the last beat returns to plain so
+     the loop restarts without a jump cut. Reduced motion is handled explicitly
+     at the foot of this file rather than by the global collapse: these scenes
+     have a correct still — everything locked — and it is worth pinning. */
+
+  .vault-scene {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+
+  .vault-scene-head,
+  .vault-scene-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0.95rem;
+    color: var(--text-faint);
+  }
+
+  .vault-scene-head {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-subtle);
+  }
+
+  .vault-scene-foot {
+    border-top: 1px solid var(--border);
+  }
+
+  /* Both states of a label occupy the same cell and cross-fade in place, so
+     nothing reflows as the scene turns over. */
+  .vault-swap {
+    display: grid;
+  }
+
+  .vault-swap > * {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+  }
+
+  .vault-scene-body {
+    position: relative;
+    padding: 0.35rem 0;
+  }
+
+  .vault-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.42rem 0.95rem;
+  }
+
+  .vault-row-icon {
+    color: var(--text-faint);
+  }
+
+  /* Names are the whole point of the scene — they have to be able to shrink
+     without pushing the size column off the card. */
+  .vault-row-name {
+    min-width: 0;
+  }
+
+  /* Overrides the inline-flex the swap gives its layers: only the header pill
+     needs to sit an icon beside its text, and a block box is what lets a long
+     name ellipsize instead of pushing the size column off the card. */
+  .vault-row-name > * {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .vault-row-meta {
+    justify-items: end;
+    color: var(--text-faint);
+  }
+
+  .vault-plain {
+    color: var(--text);
+    animation: vault-plain 9s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.78s);
+  }
+
+  .vault-row-meta .vault-plain {
+    color: var(--text-faint);
+  }
+
+  .vault-cipher {
+    color: var(--brand);
+    letter-spacing: 0.04em;
+    animation: vault-cipher 9s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.78s);
+  }
+
+  /* The sweep. A hairline of brand colour with a soft field ahead of it, so
+     the flip below reads as something the line did. */
+  .vault-scan {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--brand), transparent);
+    box-shadow: 0 0 18px 2px color-mix(in srgb, var(--brand) 45%, transparent);
+    opacity: 0;
+    animation: vault-scan 9s ease-in-out infinite;
+  }
+
+  @keyframes vault-plain {
+    0%,
+    13% {
+      opacity: 1;
+    }
+    19%,
+    88% {
+      opacity: 0;
+    }
+    97%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes vault-cipher {
+    0%,
+    13% {
+      opacity: 0;
+    }
+    19%,
+    88% {
+      opacity: 0.85;
+    }
+    97%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes vault-scan {
+    0%,
+    8% {
+      top: -2px;
+      opacity: 0;
+    }
+    14% {
+      opacity: 1;
+    }
+    42% {
+      opacity: 1;
+    }
+    48% {
+      top: 100%;
+      opacity: 0;
+    }
+    100% {
+      top: 100%;
+      opacity: 0;
+    }
+  }
+
+  /* Label pairs run on the same bar but turn over once, after the sweep has
+     finished, so the header confirms what just happened to the list. */
+  .vault-state-open {
+    animation: vault-plain 9s linear infinite;
+    animation-delay: 2.6s;
+  }
+
+  .vault-state-locked {
+    color: var(--brand);
+    animation: vault-cipher 9s linear infinite;
+    animation-delay: 2.6s;
+  }
+
+  /* --- Vault flow rail ---------------------------------------------------- */
+
+  /* One file's journey, set on a rail: the beats stay legible at any width
+     because the rail is vertical at every breakpoint. */
+  .vault-flow {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .vault-flow-rail {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 1px;
+    background: var(--border);
+  }
+
+  /* The travelling packet. `top` rather than a transform because the distance
+     is the rail's height, which only the containing block knows — and it is
+     one 8px dot, so the paint cost is nil. */
+  .vault-flow-pulse {
+    position: absolute;
+    left: 0.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--brand);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
+    transform: translateX(-50%);
+    animation: vault-descend 5.5s ease-in-out infinite;
+  }
+
+  @keyframes vault-descend {
+    0% {
+      top: 0.6rem;
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      top: calc(100% - 0.6rem);
+      opacity: 0;
+    }
+  }
+
+  .vault-flow-step {
+    position: relative;
+    padding-block: 0.9rem;
+  }
+
+  .vault-flow-step + .vault-flow-step {
+    border-top: 1px solid var(--border);
+  }
+
+  .vault-flow-node {
+    position: absolute;
+    left: calc(-2rem + 0.5rem);
+    top: 1.55rem;
+    display: grid;
+    place-items: center;
+    width: 0.95rem;
+    height: 0.95rem;
+    border: 1px solid color-mix(in srgb, var(--brand) 55%, var(--border));
+    border-radius: 999px;
+    background: var(--bg);
+    transform: translate(-50%, -50%);
+  }
+
+  .vault-flow-node::after {
+    content: "";
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 999px;
+    background: var(--brand);
+  }
+
+  /* --- Vault comparison ledger -------------------------------------------- */
+
+  /* Three columns on desktop — the question, the ordinary answer, ours — and
+     stacked pairs on mobile, where three columns of prose would be unreadable.
+     Set as ruled rows rather than cards: it is a register of answers, and the
+     visual echo of the /legal register is deliberate. */
+  .vault-ledger-row {
+    display: grid;
+    gap: 0.35rem 1.5rem;
+    padding: 1rem 1.15rem;
+  }
+
+  .vault-ledger-row + .vault-ledger-row {
+    border-top: 1px solid var(--border);
+  }
+
+  /* The column headings are a desktop affordance only: on mobile each answer
+     carries its own label instead, and the heading row is dropped. It stays in
+     the DOM either way, so the rule below keeps the first data row from
+     drawing a separator under a header nobody can see. */
+  .vault-ledger-head {
+    display: none;
+    /* The ledger cannot use overflow:hidden to clip this row's fill into the
+       container's rounded corners — that would make the container a scroll
+       container, and the rows inside it drive their reveal from view(), which
+       resolves against the nearest scrolling ancestor. So the corners are cut
+       here instead. Inset by the container's 1px border. */
+    border-start-start-radius: calc(var(--radius) - 1px);
+    border-start-end-radius: calc(var(--radius) - 1px);
+  }
+
+  .vault-ledger-head + .vault-ledger-row {
+    border-top: 0;
+  }
+
+  .vault-ledger-answer {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  /* The mobile-only label on each answer. Desktop gets a column header row
+     instead, so this hides rather than repeating it on every line. */
+  .vault-ledger-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  @media (min-width: 768px) {
+    .vault-ledger-row {
+      grid-template-columns: 1.1fr 1fr 1fr;
+      align-items: start;
+    }
+
+    .vault-ledger-head {
+      display: grid;
+      background: var(--bg-subtle);
+      padding-block: 0.7rem;
+    }
+
+    .vault-ledger-head + .vault-ledger-row {
+      border-top: 1px solid var(--border);
+    }
+
+    .vault-ledger-label {
+      display: none;
+    }
+  }
+
+  /* --- Scroll-driven motion ------------------------------------------------
+
+     All of the below is progressive enhancement, gated three ways: on
+     @supports, because Firefox has not shipped scroll-driven animations; on
+     prefers-reduced-motion, because a scroll timeline ignores the global
+     duration collapse and has to be switched off at the source; and — for the
+     hero — on viewport width. Every gate fails to the page as it renders
+     today, fully readable, nothing hidden.
+
+     It is CSS rather than a scroll listener on purpose. These run off the main
+     thread, they cannot jank the scroll, and the page stays a server component:
+     the only client JS on /vault is still the contact dialog. */
+
+  /* Content settles as it arrives. `translate` rather than a transform so it
+     composes with .card-hover's lift instead of overriding it — an animation
+     with a forwards fill outranks the :hover rule, and using the independent
+     property sidesteps that fight entirely. */
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      translate: 0 18px;
+    }
+    to {
+      opacity: 1;
+      translate: none;
+    }
+  }
+
+  /* Read-position hairline. Brand-tinted from whatever scope it sits in, above
+     the sticky header but below the consent banner and the dialog. */
+  .scroll-progress {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 51;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--brand),
+      color-mix(in srgb, var(--brand) 35%, transparent)
+    );
+    transform-origin: 0 50%;
+    scale: 0 1;
+    pointer-events: none;
+  }
+
+  @keyframes scroll-progress {
+    from {
+      scale: 0 1;
+    }
+    to {
+      scale: 1 1;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      /* Ranged over `entry` rather than `cover`, so a block is settled by the
+         time it has climbed far enough to be read. Applied to leaf items —
+         cards, rows, heading blocks — never to a tall grid: `entry` on an
+         element taller than the viewport finishes long after it should. The
+         stagger is free, because items enter one after another. */
+      .reveal {
+        animation-name: reveal-in;
+        animation-duration: auto;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 5% entry 55%;
+      }
+
+      .scroll-progress {
+        animation-name: scroll-progress;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root block);
+      }
+    }
+  }
+
+  /* --- Hero scrub ----------------------------------------------------------
+
+     Above lg the scene sits beside the copy and is on screen at rest, so the
+     encryption is handed to the reader: scroll, and the sweep descends under
+     your thumb while the file names turn over. Driven from the root scroller
+     rather than view(), because at scroll 0 the scene is already in view — a
+     view() timeline would open part-way through, and the whole point is that
+     the first frame is the readable one.
+
+     Below lg the scene is stacked under the copy and half a screen down; the
+     scrub would be over before it was ever visible, so the timed loop stays.
+
+     Distances are the same 30px–380px bar for every layer, with each row given
+     the slice of it where the sweep crosses that row. */
+
+  @keyframes vault-scan-scrub {
+    0% {
+      top: 0;
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      top: 100%;
+      opacity: 0;
+    }
+  }
+
+  @keyframes vault-plain-scrub {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes vault-cipher-scrub {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 0.85;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    @supports (animation-timeline: scroll()) {
+      @media (prefers-reduced-motion: no-preference) {
+        /* Longhands throughout: the `animation` shorthand resets
+           animation-timeline back to auto, which would quietly undo the line
+           below it. */
+        .vault-scan,
+        .vault-plain,
+        .vault-cipher,
+        .vault-state-open,
+        .vault-state-locked {
+          animation-duration: auto;
+          animation-timing-function: linear;
+          animation-iteration-count: 1;
+          animation-fill-mode: both;
+          animation-delay: 0s;
+          animation-timeline: scroll(root block);
+        }
+
+        .vault-scan {
+          animation-name: vault-scan-scrub;
+          animation-range: 30px 380px;
+        }
+
+        .vault-plain {
+          animation-name: vault-plain-scrub;
+        }
+
+        .vault-cipher {
+          animation-name: vault-cipher-scrub;
+        }
+
+        /* The slice of the bar where the sweep is crossing row --i. */
+        .vault-row .vault-plain,
+        .vault-row .vault-cipher {
+          animation-range: calc(40px + var(--i) * 87px)
+            calc(110px + var(--i) * 87px);
+        }
+
+        /* The labels confirm the change once the sweep has cleared the list. */
+        .vault-state-open {
+          animation-name: vault-plain-scrub;
+          animation-range: 330px 390px;
+        }
+
+        .vault-state-locked {
+          animation-name: vault-cipher-scrub;
+          animation-range: 330px 390px;
+        }
+      }
+    }
+  }
+
   /* --- Legal prose -------------------------------------------------------- */
 
   /* Long-form policy text rendered from `content/legal/*.md`.
@@ -1134,5 +1661,22 @@
   .card-hover:hover,
   .btn:active {
     transform: none;
+  }
+
+  /* The Vault scenes are pinned rather than collapsed. Left to the rule above
+     they would land on whichever frame sits at 100% and, with the per-row
+     stagger, would flash through their opening state on the way there. Both
+     have a correct still — everything locked, the packet gone — so it is set
+     here outright. */
+  .vault-plain,
+  .vault-state-open,
+  .vault-scan,
+  .vault-flow-pulse {
+    opacity: 0;
+  }
+
+  .vault-cipher,
+  .vault-state-locked {
+    opacity: 0.85;
   }
 }

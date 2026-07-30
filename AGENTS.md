@@ -19,7 +19,7 @@
 - `content/legal/*.md`: policy prose. `app/legal/` renders it — index,
   `/legal/website-privacy`, and `/legal/nsqr/[slug]` for the three NSQR
   documents. `app/components/LegalDoc.js` does the reading and rendering.
-- `public/`: static assets, incl. `preview-vault-white-paper.pdf`.
+- `public/`: static assets.
 
 ## Commands
 - `npm run dev` / `npm run build` / `npm run start` / `npm run lint`.

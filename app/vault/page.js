@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowIcon, DocIcon, ExternalIcon, LockIcon } from "../components/Icons";
+import { ArrowIcon, DocIcon, LockIcon } from "../components/Icons";
 import ProductName from "../components/ProductName";
 import RequestAccessLink from "../components/RequestAccessLink";
 import { ContactButton } from "../components/SiteChrome";
@@ -57,15 +57,11 @@ export default function VaultPage() {
             </p>
 
             <div className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row">
-              <a
-                className="btn btn-brand"
-                href={vault.app}
-                target="_blank"
-                rel="noreferrer"
-              >
+              {/* Vault is reachable only once we grant access, so opening it
+                  starts with the request form rather than the app URL. */}
+              <ContactButton className="btn btn-brand" subject="Vault" intent="access">
                 Open Vault
-                <ExternalIcon className="h-3.5 w-3.5" />
-              </a>
+              </ContactButton>
               <a
                 className="btn btn-secondary"
                 href="/preview-vault-white-paper.pdf"
@@ -184,22 +180,21 @@ export default function VaultPage() {
               Put Vault behind your most sensitive work
             </h2>
             <p className="lead mx-auto mt-4 max-w-xl">
-              Open the app to try it, read the white paper for the architecture,
-              or talk to the team about deploying Vault for your organisation.
+              Ask for access to try it, read the white paper for the
+              architecture, or talk to the team about deploying Vault for your
+              organisation.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <ContactButton className="btn btn-brand" subject="Vault">
                 Talk to the team
               </ContactButton>
-              <a
+              <ContactButton
                 className="btn btn-secondary"
-                href={vault.app}
-                target="_blank"
-                rel="noreferrer"
+                subject="Vault"
+                intent="access"
               >
                 Open Vault
-                <ExternalIcon className="h-3.5 w-3.5" />
-              </a>
+              </ContactButton>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <Link className="link-arrow" href="/products">

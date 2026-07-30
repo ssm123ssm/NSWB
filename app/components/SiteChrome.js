@@ -19,7 +19,12 @@ const ContactContext = createContext(null);
 export default function SiteChrome({ children }) {
   const [request, setRequest] = useState(null);
 
-  const open = useCallback((subject = null) => setRequest({ subject }), []);
+  // intent: "access" forces the request-access form for a product that is
+  // otherwise public, for entry points that stand in for opening the app.
+  const open = useCallback(
+    (subject = null, { intent = null } = {}) => setRequest({ subject, intent }),
+    []
+  );
   const close = useCallback(() => setRequest(null), []);
 
   const value = useMemo(() => ({ open, close }), [open, close]);
@@ -30,7 +35,13 @@ export default function SiteChrome({ children }) {
         <SiteHeader />
         {children}
         <SiteFooter />
-        {request && <ContactDialog subject={request.subject} onClose={close} />}
+        {request && (
+          <ContactDialog
+            subject={request.subject}
+            intent={request.intent}
+            onClose={close}
+          />
+        )}
         <CookieBanner />
         <Analytics />
       </ContactContext.Provider>
@@ -49,12 +60,17 @@ export function useContact() {
 /** Convenience trigger so server components can still open the dialog. */
 export function ContactButton({
   subject = null,
+  intent = null,
   className = "btn btn-primary",
   children,
 }) {
   const { open } = useContact();
   return (
-    <button className={className} type="button" onClick={() => open(subject)}>
+    <button
+      className={className}
+      type="button"
+      onClick={() => open(subject, { intent })}
+    >
       {children}
     </button>
   );

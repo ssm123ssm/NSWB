@@ -11,7 +11,7 @@ import ProductName from "./ProductName";
  * name and wording — all resolved from the product entry, so call sites only
  * ever have to name the product.
  */
-export default function ContactDialog({ subject, onClose }) {
+export default function ContactDialog({ subject, intent = null, onClose }) {
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState("");
   const cardRef = useRef(null);
@@ -19,8 +19,14 @@ export default function ContactDialog({ subject, onClose }) {
 
   const product = subject ? getProductByName(subject) : null;
   // Gated products lead with access and documentation; the rest are an open
-  // conversation. An unrecognised subject is treated as gated, as before.
-  const isAccessRequest = product ? product.access === "request" : Boolean(subject);
+  // conversation. An unrecognised subject is treated as gated, as before. A
+  // call site can ask for either shape outright when its own wording implies
+  // one, whatever the product's usual access model.
+  const isAccessRequest = intent
+    ? intent === "access"
+    : product
+      ? product.access === "request"
+      : Boolean(subject);
   const productName = product?.name ?? subject;
 
   useEffect(() => {

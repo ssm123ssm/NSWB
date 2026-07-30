@@ -1,10 +1,14 @@
 import Link from "next/link";
-import NsqrPlate from "./components/NsqrPlate";
+import NsqrReel from "./components/NsqrReel";
 import ProductName from "./components/ProductName";
 import ProductTimeline from "./components/ProductTimeline";
 import { ContactButton } from "./components/SiteChrome";
 import { iconMap } from "./components/Icons";
-import { capabilities, principles, products } from "./data/site";
+import { capabilities, featuredProducts, principles, products } from "./data/site";
+
+// The closing section leads with whatever carries `featured` in the product
+// data, so the capsule names the same product the hero strip emphasises.
+const featured = featuredProducts[0];
 
 export default function HomePage() {
   const live = products.filter((p) => p.status === "live");
@@ -158,9 +162,21 @@ export default function HomePage() {
           Deliberately not #contact: the anchor named a contact prompt, and this
           is a product banner. Contact now runs through the header button and
           the dialog it opens. */}
-      <section className="section">
+      {/* Reduced top padding: the principles section above already closes on its
+          own full .section padding, so the default would stack two of them. */}
+      <section className="section pb-16 pt-10">
         <div className="shell">
-          <NsqrPlate />
+          {/* The capsule is what marks this as a feature rather than one more
+              card: it wears the product's own accent and names it from the
+              data, so it follows whichever product carries `featured`. */}
+          <div
+            className="mb-5 flex justify-center"
+            data-brand={featured.accent}
+          >
+            <p className="badge">Featuring {featured.name}</p>
+          </div>
+
+          <NsqrReel />
         </div>
       </section>
     </main>

@@ -48,7 +48,7 @@ export default function VaultPage() {
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <span className="brand-tag text-base">
-                <ProductName product={vault} hero />
+                <ProductName product={vault} />
               </span>
               <span className="badge">
                 <span className="dot" aria-hidden="true" />

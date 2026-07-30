@@ -3,7 +3,12 @@ import ProductName from "./components/ProductName";
 import ProductTimeline from "./components/ProductTimeline";
 import { ContactButton } from "./components/SiteChrome";
 import { iconMap } from "./components/Icons";
-import { capabilities, principles, products } from "./data/site";
+import { capabilities, featuredProducts, principles, products } from "./data/site";
+
+// The closing CTA leads with whatever carries `featured` in the product data,
+// so it stays in step with the hero instead of drifting the way a hard-coded
+// product did.
+const featured = featuredProducts[0];
 
 export default function HomePage() {
   const live = products.filter((p) => p.status === "live");
@@ -168,9 +173,10 @@ export default function HomePage() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <ContactButton>Start a project</ContactButton>
-                <Link className="btn btn-secondary" href="/vault">
-                  Explore Vault
-                </Link>
+                {/* The one product link in the closing CTA, so it wears its own
+                    mark and the accent that colours it — the section around it
+                    keeps the house accent. */}
+                <FeaturedProductLink product={featured} />
               </div>
             </div>
           </div>
@@ -198,7 +204,7 @@ function HeroProductLink({ product }) {
     ? `${base} bg-[color:var(--brand-soft)] px-3 py-1`
     : `${base} opacity-70 ${href ? "hover:opacity-100" : ""}`;
 
-  const label = <ProductName product={product} hero />;
+  const label = <ProductName product={product} />;
 
   if (!href) {
     return <span className={className}>{label}</span>;
@@ -214,6 +220,56 @@ function HeroProductLink({ product }) {
 
   return (
     <a className={className} href={href} target="_blank" rel="noreferrer">
+      {label}
+    </a>
+  );
+}
+
+/**
+ * The secondary button in the closing CTA. Routes by the same rule as the hero
+ * strip: the detail page where there is one, otherwise straight out to the app.
+ * A proprietary product has neither, so it asks for access instead of offering
+ * a link that goes nowhere.
+ */
+function FeaturedProductLink({ product }) {
+  const label = (
+    <>
+      Explore <ProductName product={product} />
+    </>
+  );
+
+  if (product.access === "request") {
+    return (
+      <ContactButton
+        className="btn btn-secondary"
+        subject={product.name}
+        intent="access"
+      >
+        Request access to <ProductName product={product} />
+      </ContactButton>
+    );
+  }
+
+  if (product.detail) {
+    return (
+      <Link
+        className="btn btn-secondary"
+        href={product.detail}
+        data-brand={product.accent}
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      className="btn btn-secondary"
+      href={product.app}
+      target="_blank"
+      rel="noreferrer"
+      data-brand={product.accent}
+    >
       {label}
     </a>
   );

@@ -13,11 +13,12 @@ export const navLinks = [
   { label: "Approach", href: "/#approach" },
 ];
 
-/** The single inline row of footer links. */
+/**
+ * The single inline row of footer links. Policy links only — the section
+ * shortcuts (Company, Research, Contact) live in the header nav instead, so the
+ * footer stays the place the legal surfaces are reachable from.
+ */
 export const footerLinks = [
-  { label: "Company", href: "/#approach" },
-  { label: "Research", href: "/#capabilities" },
-  { label: "Contact", href: "/#contact" },
   { label: "Privacy", href: "/legal/website-privacy" },
   { label: "Legal", href: "/legal" },
 ];
@@ -123,12 +124,9 @@ export const capabilities = [
  * strip, so keep it on exactly one entry.
  *
  * wordmark: [head, tail] — the name set as a lockup instead of plain text, with
- * the tail in the product accent. Rendered by <ProductName>; `name` stays the
- * canonical spoken/written form.
- *
- * wordmarkScope: "all"  — settled, so the lockup replaces the name everywhere
- *                "hero" — on trial; the lockup shows in the hero strip only and
- *                         every other surface keeps the plain name (default)
+ * the tail in the product accent. Rendered by <ProductName> wherever a product
+ * is named as display type, on every page; `name` stays the canonical
+ * spoken/written form, and is what prose and metadata use.
  */
 export const products = [
   {
@@ -136,7 +134,6 @@ export const products = [
     motif: "qr",
     name: "NSQR",
     wordmark: ["ns", "qr"],
-    wordmarkScope: "all",
     tagline: "QR codes you can edit, track, and brand.",
     description:
       "Dynamic QR codes whose destination stays editable after printing, with scan analytics by time, location, and device — plus branded design control across seven content types.",

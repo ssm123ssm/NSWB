@@ -1,14 +1,10 @@
 import Link from "next/link";
+import NsqrPlate from "./components/NsqrPlate";
 import ProductName from "./components/ProductName";
 import ProductTimeline from "./components/ProductTimeline";
 import { ContactButton } from "./components/SiteChrome";
 import { iconMap } from "./components/Icons";
-import { capabilities, featuredProducts, principles, products } from "./data/site";
-
-// The closing CTA leads with whatever carries `featured` in the product data,
-// so it stays in step with the hero instead of drifting the way a hard-coded
-// product did.
-const featured = featuredProducts[0];
+import { capabilities, principles, products } from "./data/site";
 
 export default function HomePage() {
   const live = products.filter((p) => p.status === "live");
@@ -157,29 +153,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---------------------------------------------------------- Contact */}
-      <section className="section" id="contact">
+      {/* ------------------------------------------------------------ NSQR */}
+      {/* The page closes on the featured product rather than a contact card.
+          Deliberately not #contact: the anchor named a contact prompt, and this
+          is a product banner. Contact now runs through the header button and
+          the dialog it opens. */}
+      <section className="section">
         <div className="shell">
-          <div className="card relative overflow-hidden px-6 py-14 text-center sm:px-12">
-            <div
-              className="glow left-1/2 top-full h-[20rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 bg-[color:var(--accent)]"
-              aria-hidden="true"
-            />
-            <div className="relative">
-              <h2 className="section-title">Tell us what you&apos;d like to build</h2>
-              <p className="lead mx-auto mt-4 max-w-xl">
-                Share your idea or challenge, and we will help shape it into a
-                clear plan with the right tech and timeline.
-              </p>
-              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <ContactButton>Start a project</ContactButton>
-                {/* The one product link in the closing CTA, so it wears its own
-                    mark and the accent that colours it — the section around it
-                    keeps the house accent. */}
-                <FeaturedProductLink product={featured} />
-              </div>
-            </div>
-          </div>
+          <NsqrPlate />
         </div>
       </section>
     </main>
@@ -220,56 +201,6 @@ function HeroProductLink({ product }) {
 
   return (
     <a className={className} href={href} target="_blank" rel="noreferrer">
-      {label}
-    </a>
-  );
-}
-
-/**
- * The secondary button in the closing CTA. Routes by the same rule as the hero
- * strip: the detail page where there is one, otherwise straight out to the app.
- * A proprietary product has neither, so it asks for access instead of offering
- * a link that goes nowhere.
- */
-function FeaturedProductLink({ product }) {
-  const label = (
-    <>
-      Explore <ProductName product={product} />
-    </>
-  );
-
-  if (product.access === "request") {
-    return (
-      <ContactButton
-        className="btn btn-secondary"
-        subject={product.name}
-        intent="access"
-      >
-        Request access to <ProductName product={product} />
-      </ContactButton>
-    );
-  }
-
-  if (product.detail) {
-    return (
-      <Link
-        className="btn btn-secondary"
-        href={product.detail}
-        data-brand={product.accent}
-      >
-        {label}
-      </Link>
-    );
-  }
-
-  return (
-    <a
-      className="btn btn-secondary"
-      href={product.app}
-      target="_blank"
-      rel="noreferrer"
-      data-brand={product.accent}
-    >
       {label}
     </a>
   );

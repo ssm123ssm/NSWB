@@ -3,7 +3,7 @@ import path from "node:path";
 import Link from "next/link";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArrowIcon } from "./Icons";
+import RequestAccessLink from "./RequestAccessLink";
 
 const LEGAL_DIR = path.join(process.cwd(), "content", "legal");
 
@@ -96,10 +96,9 @@ export default function LegalDoc({ doc }) {
 
           <p className="legal-measure mt-14 border-t border-[color:var(--border)] pt-8 text-sm text-faint">
             Questions about this document?{" "}
-            <Link className="link-arrow text-sm" href="/#contact">
-              Get in touch
-              <ArrowIcon />
-            </Link>
+            {/* Opens the contact dialog rather than linking to /#contact: the
+                home page closes on the NSQR plate now, so that anchor is gone. */}
+            <RequestAccessLink className="link-arrow text-sm" label="Get in touch" />
           </p>
         </div>
       </section>

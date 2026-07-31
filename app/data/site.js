@@ -160,7 +160,10 @@ export const products = [
     status: "live",
     accent: "cyan",
     detail: "/vault",
-    app: "https://vault.neurasense.io/dashboard",
+    // The app's sign-in, told where to land once it knows who you are. Access
+    // is granted by request, so this page is where anyone we have not set up
+    // stops.
+    app: "https://vault.neurasense.io/auth/signin?callbackUrl=https%3A%2F%2Fvault.neurasense.io%2Fdashboard",
     highlights: [
       "Client-side encryption",
       "Encrypted manifests",

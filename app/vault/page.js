@@ -73,16 +73,17 @@ export default function VaultPage() {
             </p>
 
             <div className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row">
-              {/* Vault is reachable only once we grant access, so opening it
-                  starts with the request form rather than the app URL.
+              {/* Straight to the app's sign-in. Access is still granted by
+                  request — the sign-in page is the gate, so people we have not
+                  set up land there rather than inside a project.
 
                   The white paper is confidential and is deliberately not served
                   from this site. It goes out through a passcode-gated NSQR
                   link, so this navigates there and the gate lives on that page
                   rather than this one. Do not restore a direct file link. */}
-              <ContactButton className="btn btn-brand" subject="Vault" intent="access">
-                Request access
-              </ContactButton>
+              <a className="btn btn-brand-soft" href={vault.app}>
+                Open <ProductName product={vault} />
+              </a>
               <a
                 className="btn btn-secondary"
                 href="https://nsqr.neurasense.io/r/yfnxruz5"
@@ -388,9 +389,9 @@ export default function VaultPage() {
               team through the design.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <ContactButton className="btn btn-brand" subject="Vault" intent="access">
-                Request access
-              </ContactButton>
+              <a className="btn btn-brand-soft" href={vault.app}>
+                Open <ProductName product={vault} />
+              </a>
               <ContactButton className="btn btn-secondary" subject="Vault">
                 Talk to the team
               </ContactButton>

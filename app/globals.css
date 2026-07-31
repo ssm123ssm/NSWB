@@ -339,6 +339,21 @@
     background: var(--brand-hover);
   }
 
+  /* The lockup's own chip turned into a button. A solid fill flattens the mark
+     to a single colour, so a CTA whose label is a product name wears the brand
+     as a tint instead and lets the mark keep its face: head in --text, tail in
+     --brand. Quieter than .btn-brand by design — reach for it only where the
+     product name is the label. */
+  .btn-brand-soft {
+    background: var(--brand-soft);
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--brand) 20%, transparent);
+  }
+  .btn-brand-soft:hover {
+    background: color-mix(in srgb, var(--brand) 8%, var(--brand-soft));
+    border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+  }
+
   .btn-secondary {
     background: var(--surface);
     color: var(--text);
@@ -361,6 +376,17 @@
   .btn-sm {
     padding: 0.48rem 0.95rem;
     font-size: 0.875rem;
+  }
+
+  /* A filled button already sits on the accent, so the lockup's own colours
+     have nowhere to land — the head would go dark and the tail would vanish
+     into the fill. Inside one, the mark wears the button's foreground and
+     keeps only its lowercase, tightened setting. */
+  .btn-primary .wordmark,
+  .btn-primary .wordmark-tail,
+  .btn-brand .wordmark,
+  .btn-brand .wordmark-tail {
+    color: inherit;
   }
 
   /* --- Surfaces ---------------------------------------------------------- */

@@ -4,28 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { navLinks, site } from "../data/site";
+import { navLinks, pageHeaders, site } from "../data/site";
 import { CloseIcon, MenuIcon } from "./Icons";
 import ThemeToggle from "./ThemeToggle";
 import { useContact } from "./SiteChrome";
-
-/**
- * Pages that carry their own call to action and want nothing competing with
- * it. On these the header keeps the wordmark and the theme toggle and drops
- * everything else — no nav, no "Start a project", no burger, because there is
- * no menu left to open.
- *
- * Scoped to a list rather than a flag on the page, because the header renders
- * above the route and cannot ask it anything.
- */
-const BARE_HEADER = new Set(["/nsqr"]);
 
 export default function SiteHeader() {
   const [stuck, setStuck] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const { open } = useContact();
-  const bare = BARE_HEADER.has(pathname);
+  // Product pages run a stripped header carrying their own action instead of
+  // the site nav. See `pageHeaders` for what that means and why it is keyed by
+  // path.
+  const override = pageHeaders[pathname];
+  const bare = Boolean(override);
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 8);
@@ -68,6 +61,18 @@ export default function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          {override?.cta && (
+            <a
+              className="btn btn-brand btn-sm"
+              data-brand={override.brand}
+              href={override.cta.href}
+              {...(override.cta.external
+                ? { target: "_blank", rel: "noreferrer" }
+                : {})}
+            >
+              {override.cta.label}
+            </a>
+          )}
           {!bare && (
             <>
               <button

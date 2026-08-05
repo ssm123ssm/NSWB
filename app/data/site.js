@@ -344,16 +344,22 @@ export const nsqrCapabilities = [
   },
 ];
 
-/** The eight things a code can carry, as a chip row. Names only, by design. */
+/**
+ * The eight things a code can carry, with a glyph key from `contentIconMap`.
+ * Rendered as a panel beside the capabilities rather than as a chip row under
+ * them — the list answers "what kind of code can I make", which is a different
+ * question from "what can a code do", and standing them side by side is what
+ * makes that legible.
+ */
 export const nsqrContentTypes = [
-  "Website",
-  "Text",
-  "Email",
-  "Phone",
-  "SMS",
-  "Wi-Fi",
-  "vCard",
-  "Lost & Found",
+  { name: "Website", icon: "globe" },
+  { name: "Text", icon: "text" },
+  { name: "Email", icon: "mail" },
+  { name: "Phone", icon: "phone" },
+  { name: "SMS", icon: "chat" },
+  { name: "Wi-Fi", icon: "wifi" },
+  { name: "vCard", icon: "contact" },
+  { name: "Lost & Found", icon: "pin" },
 ];
 
 /**
@@ -667,3 +673,20 @@ export const vaultAudiences = [
     capabilities: ["Encrypted File Sharing", "Hosted App Access Control"],
   },
 ];
+
+/* --------------------------------------------------------- Page chrome --
+ *
+ * Per-page header overrides. A product page carries its own call to action and
+ * wants nothing competing with it, so the header drops the site nav, the
+ * "Start a project" button and the burger, and puts that page's own action in
+ * the top-right corner instead.
+ *
+ * Keyed by pathname because the header renders above the route and cannot ask
+ * it anything. Any page not listed here gets the full header.
+ */
+export const pageHeaders = {
+  "/nsqr": {
+    brand: "violet",
+    cta: { label: "Start free", href: nsqrLinks.register, external: true },
+  },
+};

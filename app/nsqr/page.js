@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { Fragment } from "react";
-import { ArrowIcon, CheckIcon, CloseIcon, ExternalIcon, featureIconMap } from "../components/Icons";
+import {
+  ArrowIcon,
+  CheckIcon,
+  CloseIcon,
+  contentIconMap,
+  ExternalIcon,
+  featureIconMap,
+} from "../components/Icons";
 import NsqrScene from "../components/NsqrScene";
 import ProductName from "../components/ProductName";
 import { ContactButton } from "../components/SiteChrome";
@@ -67,31 +74,15 @@ export default function NsqrPage() {
               A QR code that stays yours after it goes to print — re-point it,
               lock it, pause it, and watch every scan arrive.
             </p>
-
-            <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:flex-row">
-              <a
-                className="btn btn-brand-soft"
-                href={nsqrLinks.register}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Start free
-              </a>
-              <a
-                className="btn btn-secondary"
-                href={nsqrLinks.generator}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Try the generator
-                <ExternalIcon className="h-3.5 w-3.5" />
-              </a>
-            </div>
           </div>
 
           {/* Thirteen seconds, six beats, and the page's whole explanation of
-              what NSQR does. Everything below is a caption on it. */}
-          <div className="mx-auto mt-10 max-w-4xl">
+              what NSQR does. Everything below is a caption on it.
+
+              The hero carries no buttons: the header's Start free sits directly
+              above this, and a second copy of it here would have been two calls
+              to action inside one screen. */}
+          <div className="mx-auto mt-10 max-w-3xl">
             <NsqrScene />
           </div>
         </div>
@@ -147,40 +138,62 @@ export default function NsqrPage() {
       </section>
 
       {/* ----------------------------------------------------- Capabilities */}
+      {/* Two questions, side by side: what a code can do, and what kind of code
+          you can make. They used to be stacked, which read as one long list of
+          fourteen things rather than as two lists of six and eight. */}
       <section className="section-tight">
-        <div className="shell">
-          <div className="reveal max-w-2xl">
-            <p className="eyebrow">What you get</p>
-            <h2 className="section-title mt-3">Six things, one code</h2>
-          </div>
+        <div className="shell grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
+          <div>
+            <div className="reveal">
+              <p className="eyebrow">What you get</p>
+              <h2 className="section-title mt-3">Six things, one code</h2>
+            </div>
 
-          <div className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-            {nsqrCapabilities.map((capability) => {
-              const Icon = featureIconMap[capability.icon];
-              return (
-                <div className="reveal flex gap-3.5" key={capability.title}>
-                  <span className="icon-tile h-9 w-9 shrink-0 rounded-lg">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <h3 className="text-[0.95rem] leading-snug">{capability.title}</h3>
-                    <p className="mt-1 text-[0.875rem] leading-relaxed text-muted">
-                      {capability.description}
-                    </p>
+            <div className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+              {nsqrCapabilities.map((capability) => {
+                const Icon = featureIconMap[capability.icon];
+                return (
+                  <div className="reveal flex gap-3.5" key={capability.title}>
+                    <span className="icon-tile h-9 w-9 shrink-0 rounded-lg">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <h3 className="text-[0.95rem] leading-snug">{capability.title}</h3>
+                      <p className="mt-1 text-[0.875rem] leading-relaxed text-muted">
+                        {capability.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
-          <div className="reveal mt-9 flex flex-wrap items-center gap-x-2.5 gap-y-2 border-t border-[color:var(--border)] pt-7">
-            <span className="text-sm text-faint">A code can hold</span>
-            {nsqrContentTypes.map((type) => (
-              <span className="badge badge-outline" key={type}>
-                {type}
-              </span>
-            ))}
-          </div>
+          {/* Separators are the container's own background showing through a
+              1px gap, rather than a border per cell doubling up at the edge. */}
+          <aside className="reveal self-start rounded-[var(--radius)] border border-[color:var(--border)] bg-[color:var(--surface)] p-5 sm:p-6">
+            <p className="eyebrow">Eight kinds</p>
+            <h3 className="mt-2.5 text-base">What a code can hold</h3>
+            <p className="mt-2 text-[0.85rem] leading-relaxed text-muted">
+              Most resolve on the scanner&rsquo;s own phone, so they work with no
+              connection at all.
+            </p>
+
+            <ul className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-[calc(var(--radius)-0.35rem)] border border-[color:var(--border)] bg-[color:var(--border)]">
+              {nsqrContentTypes.map((type) => {
+                const Icon = contentIconMap[type.icon];
+                return (
+                  <li
+                    className="flex items-center gap-2.5 bg-[color:var(--surface)] px-3 py-3"
+                    key={type.name}
+                  >
+                    <Icon className="h-4 w-4 shrink-0 text-[color:var(--brand)]" />
+                    <span className="text-[0.82rem] leading-tight">{type.name}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
         </div>
       </section>
 

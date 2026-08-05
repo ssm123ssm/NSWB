@@ -204,6 +204,96 @@ export const featureIconMap = {
   pause: PauseIcon,
 };
 
+/* --- Content-type glyphs -------------------------------------------------- */
+
+/**
+ * One per kind of code NSQR can make. Drawn a little lighter than the feature
+ * glyphs above — they label a list rather than head a row — but on the same
+ * box, so the two sets can sit on one screen without arguing.
+ */
+
+export function GlobeIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.5 2.6 2.5 15 0 18-2.5-3-2.5-15.4 0-18Z" />
+    </svg>
+  );
+}
+
+export function TextIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M5 5h14M5 10h14M5 15h9M5 20h5" />
+    </svg>
+  );
+}
+
+export function MailIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2.5" />
+      <path d="m3.5 7 8.5 6 8.5-6" />
+    </svg>
+  );
+}
+
+export function PhoneIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+      <path d="M10.5 17.5h3" />
+    </svg>
+  );
+}
+
+export function ChatIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M20 15a2 2 0 0 1-2 2H9l-4 3.5V6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v9Z" />
+    </svg>
+  );
+}
+
+export function WifiIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M2.5 9a15 15 0 0 1 19 0M6 12.5a10 10 0 0 1 12 0M9.5 16a5 5 0 0 1 5 0" />
+      <circle cx="12" cy="19.5" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function ContactIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
+      <circle cx="9" cy="10.5" r="2.2" />
+      <path d="M5.5 16c.6-1.7 2-2.4 3.5-2.4s2.9.7 3.5 2.4M15.5 10h3.5M15.5 13.5h3.5" />
+    </svg>
+  );
+}
+
+export function PinIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </svg>
+  );
+}
+
+export const contentIconMap = {
+  globe: GlobeIcon,
+  text: TextIcon,
+  mail: MailIcon,
+  phone: PhoneIcon,
+  chat: ChatIcon,
+  wifi: WifiIcon,
+  contact: ContactIcon,
+  pin: PinIcon,
+};
+
 /* --- Product motifs ------------------------------------------------------- */
 
 /**

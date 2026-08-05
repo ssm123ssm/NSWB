@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NSQR — animated LinkedIn post (1080×1080)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+  :root{
+    --ink:#080C18;
+    --ink-2:#111A31;
+    --line:#27324F;
+    --bone:#EFEDE6;
+    --bone-dim:#8E96AC;
+    --violet:#6E5BFF;
+    --signal:#FFB020;
+    --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#04060D;overflow:hidden}
+  body{display:grid;place-items:center}
+
+  .stage{position:relative}
+
+  /* ---------- 1080 x 1080 canvas, scaled to viewport ---------- */
+  .canvas{
+    width:1080px;height:1080px;transform-origin:center center;
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 12% 4%, #17224180 0%, transparent 58%),
+      radial-gradient(90% 70% at 96% 100%, #2a1f5e55 0%, transparent 60%),
+      var(--ink);
+    color:var(--bone);
+    font-family:var(--sans);
+    padding:56px 60px 52px;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+  }
+  /* faint engineering grid, part of the "instrument" feel */
+  .canvas::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:60px 60px;opacity:.14;
+    mask-image:radial-gradient(85% 70% at 50% 45%,#000 30%,transparent 100%);
+  }
+
+  /* ---------- top bar ---------- */
+  .top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+  .brand{display:flex;align-items:baseline;gap:14px}
+  .brand .mark{
+    font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:-.03em;
+  }
+  .brand .mark span{color:var(--violet)}
+  .brand .sub{font-family:var(--mono);font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--bone-dim)}
+  .by{font-family:var(--mono);font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--bone-dim)}
+  .by b{color:var(--bone);font-weight:500}
+  .rule{grid-row:1;height:1px;background:var(--line)}
+
+  /* ---------- middle: code panel + narration ---------- */
+  .body{
+    display:grid;grid-template-columns:472px 1fr;gap:56px;align-items:center;
+    position:relative;z-index:2;
+  }
+
+  .panel{
+    position:relative;width:472px;height:472px;border-radius:26px;
+    background:linear-gradient(160deg,#131D36,#0A1122 62%);
+    border:1px solid var(--line);
+    box-shadow:0 40px 90px -50px #000, inset 0 1px 0 #ffffff12;
+    display:grid;place-items:center;overflow:hidden;
+  }
+  .panel::after{ /* scan sweep */
+    content:"";position:absolute;left:0;right:0;height:38%;
+    background:linear-gradient(180deg,transparent,#6e5bff26 60%,transparent);
+    transform:translateY(-140%);opacity:0;
+  }
+  .canvas[data-beat="1"] .panel::after{opacity:1;animation:sweep 2.6s ease-in-out .3s 1}
+  @keyframes sweep{to{transform:translateY(260%)}}
+
+  .grid{
+    display:grid;grid-template-columns:repeat(25,1fr);grid-template-rows:repeat(25,1fr);
+    width:352px;height:352px;gap:2px;transition:filter .5s ease, opacity .5s ease;
+  }
+  .m{border-radius:2px;background:transparent;opacity:0;transform:scale(.4);
+     transition:opacity .38s ease, transform .38s cubic-bezier(.2,1.3,.4,1), background-color .28s ease}
+  .m.on{background:var(--bone)}
+  .m.fin{background:var(--bone)}
+  .canvas.assembled .m{opacity:1;transform:none}
+  .m.flip{background:var(--violet);transform:scale(1.35);border-radius:1px}
+
+  .canvas[data-beat="3"] .grid,
+  .canvas[data-beat="4"] .grid{filter:blur(3px) saturate(.6);opacity:.34}
+
+  /* passcode overlay */
+  .lock{
+    position:absolute;inset:auto;display:flex;flex-direction:column;align-items:center;gap:18px;
+    opacity:0;transform:translateY(14px) scale(.96);transition:opacity .45s ease,transform .45s ease;
+  }
+  .canvas[data-beat="3"] .lock,
+  .canvas[data-beat="4"] .lock{opacity:1;transform:none}
+  .shackle{
+    width:64px;height:64px;border-radius:16px;border:2px solid var(--bone);
+    display:grid;place-items:center;position:relative;background:#0A1122cc;
+  }
+  .shackle::before{
+    content:"";position:absolute;top:-26px;width:34px;height:34px;border:2px solid var(--bone);
+    border-bottom:none;border-radius:18px 18px 0 0;transform:translateY(10px);
+    transition:transform .5s cubic-bezier(.4,1.6,.4,1);
+  }
+  .canvas[data-beat="3"] .shackle::before,
+  .canvas[data-beat="4"] .shackle::before{transform:translateY(0)}
+  .shackle i{width:8px;height:8px;border-radius:50%;background:var(--bone);display:block}
+  .dots{display:flex;gap:14px}
+  .dots b{width:15px;height:15px;border-radius:50%;border:2px solid #ffffff55;background:transparent;transition:background-color .2s ease,border-color .2s ease}
+  .dots b.fill{background:var(--bone);border-color:var(--bone)}
+  .dots b.bad{background:var(--signal);border-color:var(--signal)}
+  .canvas[data-beat="4"] .lock{animation:shake .5s ease 1}
+  @keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+
+  /* alert card */
+  .alert{
+    position:absolute;left:22px;right:22px;bottom:22px;
+    background:#1A1305ee;border:1px solid #FFB02066;border-left:4px solid var(--signal);
+    border-radius:14px;padding:16px 18px;
+    font-family:var(--mono);font-size:14px;line-height:1.65;color:#FFDFA6;
+    opacity:0;transform:translateY(18px);transition:opacity .4s ease,transform .4s ease;
+    backdrop-filter:blur(3px);
+  }
+  .canvas[data-beat="4"] .alert{opacity:1;transform:none;transition-delay:.35s}
+  .alert .hd{display:flex;align-items:center;gap:9px;color:var(--signal);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px;margin-bottom:4px}
+  .alert .hd em{width:9px;height:9px;border-radius:50%;background:var(--signal);animation:blip 1s steps(1) infinite}
+  @keyframes blip{50%{opacity:.25}}
+
+  /* narration column */
+  .narr{max-width:100%}
+  .step{font-family:var(--mono);font-size:14px;letter-spacing:.26em;color:var(--violet);display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .step .bar{flex:1;height:1px;background:var(--line)}
+  h1{
+    font-family:var(--display);font-weight:800;font-size:66px;line-height:.96;letter-spacing:-.035em;
+    text-wrap:balance;min-height:2.9em;
+  }
+  h1 u{text-decoration:none;color:var(--violet)}
+  .canvas[data-beat="4"] h1 u{color:var(--signal)}
+  .cap{margin-top:24px;font-size:23px;line-height:1.45;color:#C3C8D6;max-width:19em;min-height:3.2em}
+  .read{margin-top:30px;font-family:var(--mono);font-size:16px;color:var(--bone-dim);display:flex;gap:12px;align-items:center}
+  .read s{text-decoration:line-through;opacity:.55}
+  .read k{color:var(--bone)}
+  .arrow{color:var(--violet)}
+
+  .prog{display:flex;gap:8px;margin-top:38px}
+  .prog i{height:3px;flex:1;background:var(--line);border-radius:2px;overflow:hidden;position:relative}
+  .prog i::after{content:"";position:absolute;inset:0;background:var(--violet);transform:scaleX(0);transform-origin:left}
+  .prog i.done::after{transform:scaleX(1)}
+  .prog i.run::after{animation:fill var(--dur) linear forwards}
+  @keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  /* ---------- bottom ---------- */
+  .foot{display:flex;align-items:flex-end;justify-content:space-between;border-top:1px solid var(--line);padding-top:26px;position:relative;z-index:2}
+  .foot .url{font-family:var(--mono);font-size:22px;letter-spacing:-.01em}
+  .foot .url b{color:var(--violet);font-weight:500}
+  .foot .tag{font-family:var(--mono);font-size:14px;color:var(--bone-dim);letter-spacing:.06em;margin-top:6px}
+  .cta{
+    font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.01em;
+    border:1px solid var(--bone);border-radius:999px;padding:14px 26px;white-space:nowrap;
+  }
+  .cta em{font-style:normal;color:var(--violet)}
+
+  /* ---------- helper chrome (not part of the recording) ---------- */
+  .hint{
+    position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+    font-family:var(--mono);font-size:12px;color:#5C6480;letter-spacing:.1em;text-transform:uppercase;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .m,.alert,.lock,.panel::after{transition:none!important;animation:none!important}
+    .prog i::after{animation:none!important}
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="canvas" id="canvas" data-beat="0">
+      <div class="top">
+        <div class="brand">
+          <div class="mark">ns<span>qr</span></div>
+          <div class="sub">dynamic qr codes</div>
+        </div>
+        <div class="by">a <b>neurasense</b> product</div>
+      </div>
+
+      <div class="body">
+        <div class="panel">
+          <div class="grid" id="grid"></div>
+          <div class="lock">
+            <div class="shackle"><i></i></div>
+            <div class="dots" id="dots"><b></b><b></b><b></b><b></b></div>
+          </div>
+          <div class="alert">
+            <div class="hd"><em></em> wrong passcode · attempt 2</div>
+            <div>device &nbsp;·&nbsp; iPhone / Safari</div>
+            <div>location &nbsp;·&nbsp; Lisbon, PT</div>
+            <div>time &nbsp;&nbsp;&nbsp;&nbsp;·&nbsp; 14:02 · emailed to you</div>
+          </div>
+        </div>
+
+        <div class="narr">
+          <div class="step"><span id="stepno">01</span><span class="bar"></span></div>
+          <h1 id="head">Print the code once.</h1>
+          <p class="cap" id="cap">A single QR code on the poster, the menu, the packaging, the badge.</p>
+          <div class="read" id="read"></div>
+          <div class="prog" id="prog"><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div>
+          <div class="url">nsqr.<b>neurasense.io</b></div>
+          <div class="tag">static codes free forever · no card required</div>
+        </div>
+        <div class="cta">Start free <em>→</em></div>
+      </div>
+    </div>
+  </div>
+  <div class="hint">click to replay</div>
+
+<script>
+/* ---------- scale 1080 canvas into the viewport ---------- */
+const canvas = document.getElementById('canvas');
+function fit(){
+  const s = Math.min(window.innerWidth/1080, window.innerHeight/1080);
+  canvas.style.transform = 'scale(' + s + ')';
+  document.querySelector('.stage').style.width = (1080*s)+'px';
+  document.querySelector('.stage').style.height = (1080*s)+'px';
+  canvas.style.position='absolute';canvas.style.left='50%';canvas.style.top='50%';
+  canvas.style.marginLeft='-540px';canvas.style.marginTop='-540px';
+}
+addEventListener('resize', fit); fit();
+
+/* ---------- build a QR-style module pattern (stylised, not scannable) ---------- */
+const N = 25, gridEl = document.getElementById('grid');
+let seed = 20260730;
+const rnd = () => (seed = (seed*1664525 + 1013904223) >>> 0) / 4294967296;
+
+const finder = (r,c,r0,c0) => {
+  const dr = r-r0, dc = c-c0;
+  if (dr<0||dc<0||dr>6||dc>6) return null;
+  const ring = dr===0||dr===6||dc===0||dc===6;
+  const core = dr>=2&&dr<=4&&dc>=2&&dc<=4;
+  return ring||core;
+};
+const align = (r,c) => {
+  const dr=r-16, dc=c-16;
+  if (dr<0||dc<0||dr>4||dc>4) return null;
+  return dr===0||dr===4||dc===0||dc===4||(dr===2&&dc===2);
+};
+const cells = [];
+for (let r=0;r<N;r++){
+  for (let c=0;c<N;c++){
+    let on = null, structural = true;
+    const f = finder(r,c,0,0) ?? finder(r,c,0,18) ?? finder(r,c,18,0);
+    if (f !== null && f !== undefined) on = f;
+    else if (align(r,c) !== null) on = align(r,c);
+    else if (r===6) on = c%2===0;
+    else if (c===6) on = r%2===0;
+    else { on = rnd() > 0.47; structural = false; }
+
+    const d = document.createElement('div');
+    d.className = 'm' + (on ? ' on' : '') ;
+    const dist = Math.hypot(r-12, c-12);
+    d.style.transitionDelay = (dist*44) + 'ms';
+    gridEl.appendChild(d);
+    cells.push({el:d, structural});
+  }
+}
+
+/* ---------- timeline ---------- */
+const beats = [
+  { ms:3600, no:'01', head:'Print the code <u>once.</u>',
+    cap:'One QR on the poster, the menu, the packaging, the badge.',
+    read:'<span class="arrow">▸</span> destination &nbsp;<k>/spring-menu</k>' },
+  { ms:3800, no:'02', head:'Change where it <u>points.</u>',
+    cap:'Dynamic codes let you swap the destination anytime — the printed image never goes stale. Every scan is logged: when, where, which device.',
+    read:'<span class="arrow">▸</span> destination &nbsp;<s>/spring-menu</s> &nbsp;<k>/summer-menu</k>' },
+  { ms:3600, no:'03', head:'Lock it behind a <u>passcode.</u>',
+    cap:'Menus, documents, members-only pages — only the people you share the code with get through.',
+    read:'<span class="arrow">▸</span> access &nbsp;<k>passcode required</k>' },
+  { ms:4400, no:'04', head:'Know the <u>moment</u> someone tries.',
+    cap:'A wrong passcode emails you instantly, with location and device. A live signal of tampering, leaks or a lost item turning up.',
+    read:'<span class="arrow">▸</span> alerts &nbsp;<k>on · email</k>' }
+];
+
+const head = document.getElementById('head'),
+      cap  = document.getElementById('cap'),
+      read = document.getElementById('read'),
+      stepno = document.getElementById('stepno'),
+      segs = [...document.querySelectorAll('#prog i')],
+      dots = [...document.querySelectorAll('#dots b')];
+let timers = [];
+const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+
+function reshuffle(){
+  const pool = cells.filter(c=>!c.structural);
+  for (let i=0;i<130;i++){
+    const c = pool[Math.floor(Math.random()*pool.length)];
+    at(i*7, ()=>{
+      c.el.classList.add('flip');
+      at(230, ()=>{ c.el.classList.remove('flip'); c.el.classList.toggle('on'); });
+    });
+  }
+}
+
+function run(){
+  timers.forEach(clearTimeout); timers = [];
+  canvas.classList.remove('assembled');
+  canvas.dataset.beat = '0';
+  segs.forEach(s=>s.classList.remove('done','run'));
+  dots.forEach(d=>d.classList.remove('fill','bad'));
+
+  at(120, ()=>canvas.classList.add('assembled'));
+
+  let t = 0;
+  beats.forEach((b, i) => {
+    at(t, () => {
+      canvas.dataset.beat = String(i+1);
+      stepno.textContent = b.no;
+      head.innerHTML = b.head;
+      cap.textContent = b.cap;
+      read.innerHTML = b.read;
+      segs.forEach((s,j)=>{ s.classList.toggle('done', j<i); s.classList.remove('run'); });
+      segs[i].style.setProperty('--dur', b.ms+'ms');
+      void segs[i].offsetWidth; segs[i].classList.add('run');
+
+      if (i===1) reshuffle();
+      if (i===2) dots.forEach((d,j)=>at(300+j*260, ()=>d.classList.add('fill')));
+      if (i===3){ dots.forEach(d=>{d.classList.remove('fill');d.classList.add('bad')}); }
+    });
+    t += b.ms;
+  });
+
+  at(t, ()=>{ segs.forEach(s=>s.classList.add('done')); });
+  at(t+900, run);           /* loop */
+}
+
+if (matchMedia('(prefers-reduced-motion: reduce)').matches){
+  canvas.classList.add('assembled');
+  canvas.dataset.beat = '2';
+  stepno.textContent = beats[1].no; head.innerHTML = beats[1].head;
+  cap.textContent = beats[1].cap; read.innerHTML = beats[1].read;
+} else {
+  run();
+}
+addEventListener('click', run);
+</script>
+</body>
+</html>

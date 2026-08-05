@@ -135,6 +135,75 @@ export const iconMap = {
   doc: DocIcon,
 };
 
+/* --- Small feature glyphs ------------------------------------------------- */
+
+/**
+ * One per NSQR capability. Six repeats of the same tick told the reader
+ * nothing, so each of these says what its row is about at a glance. Drawn on
+ * the same 24-unit box and stroke weight as the set above so they sit together.
+ */
+
+export function SwapIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />
+    </svg>
+  );
+}
+
+export function ChartIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M4 20V4M4 20h16M8 20v-6M12.5 20v-10M17 20v-4" />
+    </svg>
+  );
+}
+
+export function TagIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M11.5 3H19a2 2 0 0 1 2 2v7.5a2 2 0 0 1-.6 1.4l-6.5 6.5a2 2 0 0 1-2.8 0l-6.6-6.6a2 2 0 0 1 0-2.8l6.5-6.5A2 2 0 0 1 11.5 3Z" />
+      <circle cx="16.5" cy="7.5" r="1.4" />
+    </svg>
+  );
+}
+
+export function PaletteIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.9 1.8-1.8 0-1.4 1-2 2.2-2H18a3 3 0 0 0 3-3.2A9 9 0 0 0 12 3Z" />
+      <circle cx="8" cy="11" r="1.2" />
+      <circle cx="12" cy="8" r="1.2" />
+      <circle cx="16" cy="11" r="1.2" />
+    </svg>
+  );
+}
+
+export function PauseIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M9 5v14M15 5v14" />
+    </svg>
+  );
+}
+
+export function PlayIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <path d="M7 4.8v14.4L19 12 7 4.8Z" />
+    </svg>
+  );
+}
+
+export const featureIconMap = {
+  swap: SwapIcon,
+  chart: ChartIcon,
+  lock: LockIcon,
+  tag: TagIcon,
+  palette: PaletteIcon,
+  pause: PauseIcon,
+};
+
 /* --- Product motifs ------------------------------------------------------- */
 
 /**

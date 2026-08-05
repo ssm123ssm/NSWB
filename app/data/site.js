@@ -136,16 +136,17 @@ export const products = [
     wordmark: ["ns", "qr"],
     tagline: "QR codes you can edit, track, and brand.",
     description:
-      "Dynamic QR codes whose destination stays editable after printing, with scan analytics by time, location, and device — plus branded design control across seven content types.",
+      "Dynamic QR codes whose destination stays editable after printing, with scan analytics by time, location, and device — plus branded design control across eight content types.",
     discipline: "Software Platforms",
     status: "live",
     featured: true,
     accent: "violet",
+    detail: "/nsqr",
     app: "https://nsqr.neurasense.io/",
     highlights: [
       "Editable after printing",
       "Scan analytics",
-      "Seven content types",
+      "Eight content types",
     ],
   },
   {
@@ -248,6 +249,168 @@ export const principles = [
     title: "Operational clarity",
     description:
       "Systems that stay legible and predictable at scale — for the people who run them, not just build them.",
+  },
+];
+
+/* ----------------------------------------------------------------- NSQR --
+ *
+ * The public account of NSQR, and deliberately a short one. Vault is a
+ * considered purchase and its page argues; NSQR costs $2.99 and is decided in
+ * about a minute, so the page shows rather than argues and the copy here is
+ * cut to what fits on one screen at a time.
+ *
+ * Nothing here is confidential — the product is self-serve and its own site
+ * states all of it. What that buys is an obligation to stay accurate: the
+ * prices, quotas and retention windows below are the ones the app actually
+ * enforces, so when they change in the product they change here the same day.
+ * Do not round a price or soften a limit to make a card balance.
+ */
+
+/** Entry points into the app that the page links to by name. */
+export const nsqrLinks = {
+  register: "https://nsqr.neurasense.io/register",
+  generator: "https://nsqr.neurasense.io/qr-code-generator",
+};
+
+/**
+ * Static against dynamic, in four paired rows. Entries at the same index are
+ * rendered side by side and have to be about the same thing — the page draws
+ * them as one two-column block, so a mismatch reads as a non-sequitur rather
+ * than a comparison.
+ *
+ * Kept to four rows and to phrases rather than sentences. The animation above
+ * has already made the argument; this is the version someone can scan in five
+ * seconds to check they understood it.
+ */
+export const nsqrComparison = [
+  {
+    label: "Where it points",
+    staticCode: "Fixed in the ink. A change means a reprint",
+    dynamic: "Editable any time, from your dashboard",
+  },
+  {
+    label: "Who scanned it",
+    staticCode: "No idea — nothing comes back",
+    dynamic: "Every scan, by day, country and device",
+  },
+  {
+    label: "Who can open it",
+    staticCode: "Anyone with a camera",
+    dynamic: "Everyone, or only a passcode holder",
+  },
+  {
+    label: "Taking it down",
+    staticCode: "It works until the destination dies",
+    dynamic: "Pause it, then resume when you need it",
+  },
+];
+
+/**
+ * One line each, and an icon key from `featureIconMap`. Six repeats of the same
+ * tick told the reader nothing, so every row now carries its own glyph — if a
+ * new capability has no glyph that fits, it probably belongs in an existing row
+ * rather than in a seventh one.
+ */
+export const nsqrCapabilities = [
+  {
+    icon: "swap",
+    title: "Change it anytime",
+    description: "Re-point a code long after it is printed.",
+  },
+  {
+    icon: "chart",
+    title: "See every scan",
+    description: "Daily trends, countries, devices, browsers.",
+  },
+  {
+    icon: "lock",
+    title: "Lock it",
+    description: "Add a passcode, and hear about wrong guesses.",
+  },
+  {
+    icon: "tag",
+    title: "Recover lost things",
+    description: "A finder scans your tag and reaches you privately.",
+  },
+  {
+    icon: "palette",
+    title: "Make it yours",
+    description: "Your colours, your logo, print-ready SVG.",
+  },
+  {
+    icon: "pause",
+    title: "Pause it",
+    description: "Switch a code off between campaigns.",
+  },
+];
+
+/** The eight things a code can carry, as a chip row. Names only, by design. */
+export const nsqrContentTypes = [
+  "Website",
+  "Text",
+  "Email",
+  "Phone",
+  "SMS",
+  "Wi-Fi",
+  "vCard",
+  "Lost & Found",
+];
+
+/**
+ * Plans as the app charges them. `was` carries the regular price the launch
+ * offer is discounted from — drop the field rather than the price when the
+ * offer ends.
+ */
+export const nsqrPlans = [
+  {
+    name: "Free",
+    price: "$0",
+    period: "per month",
+    tag: "Free forever",
+    features: [
+      "25 static QR codes",
+      "1 dynamic code, active for 7 days",
+      "30-day scan analytics",
+      "Your logo and colours",
+      "PNG, SVG, JPEG, WebP",
+    ],
+    cta: "Start free",
+  },
+  {
+    name: "Pro",
+    price: "$2.99",
+    was: "$5",
+    period: "per month",
+    tag: "Launch offer",
+    featured: true,
+    features: [
+      "Everything in Free",
+      "100 always-on dynamic codes",
+      "100 static codes",
+      "12-month scan analytics",
+      "Lost & Found tags with alerts",
+      "Priority email support",
+    ],
+    cta: "Start the 7-day trial",
+  },
+];
+
+/** Three, and only three. The rest are answered by trying it. */
+export const nsqrFaqs = [
+  {
+    question: "Can I edit a code after it is printed?",
+    answer:
+      "A dynamic one, as often as you like. A static one, never — not by you and not by us, because the content is the image itself.",
+  },
+  {
+    question: "Do I need to pay to try it?",
+    answer:
+      "No, and no card. Static codes are free forever, and the free plan adds one dynamic code for seven days.",
+  },
+  {
+    question: "What do the analytics show?",
+    answer:
+      "Total and daily scans, broken down by country, device and browser. 30 days of history on Free, 12 months on Pro.",
   },
 ];
 

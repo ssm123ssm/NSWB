@@ -1,7 +1,13 @@
 export const site = {
   name: "Neurasense",
+  // Set after the name and an em dash in the page title, the OG title and the
+  // Twitter title — so it has to read as a phrase, not a sentence, and stay
+  // short enough to survive a link unfurl.
+  tagline: "for people who can’t afford to guess",
+  // Software first, with AI as one kind of it — the hero says it in this order
+  // too, and this is the copy that shows in search results and link unfurls.
   description:
-    "Neurasense designs AI, data science, and secure software for teams who need high-confidence outcomes.",
+    "Neurasense is a studio for software, cryptography, and applied AI, building products and systems for people who can’t afford to guess.",
   url: "https://neurasense.io",
   linkedin: "https://www.linkedin.com/company/neurasns/?viewAsMember=true",
   github: "https://github.com/neurasense",
@@ -84,6 +90,37 @@ export const legalDocs = [
 /** The three NSQR documents, in the order they are listed on `/legal`. */
 export const nsqrLegalDocs = legalDocs.filter((doc) => doc.product === "NSQR");
 
+/**
+ * The overview that opens the page under the hero — who we are, in our own
+ * voice rather than in positioning language. Deliberately the one place on the
+ * site that sounds spoken.
+ *
+ * One sentence, and it stays one sentence. What we sell is already said in the
+ * hero lead, so this section does not have to carry it — its whole job is the
+ * stance, held long enough to land. Adding a second line would turn a statement
+ * back into a paragraph.
+ *
+ * `body` stays the canonical sentence — it is what prose, metadata and any
+ * copy of this line elsewhere should use. `parts` is the same sentence cut for
+ * display, so the section can set the middle clause apart instead of running
+ * the whole thing as flat text: lead → mark → tail, read in that order, joined
+ * by spaces. Change one and change the other.
+ */
+export const overview = {
+  eyebrow: "Who we are",
+  body: "We spend most of our time thinking about things that go wrong before they happen.",
+  parts: {
+    lead: "We spend most of our time thinking about",
+    mark: "things that go wrong",
+    tail: "before they happen.",
+  },
+};
+
+/**
+ * accent: the palette entry the card wears — icon tile, hairline, hover glow.
+ * Chosen so the three read as one set rather than three unrelated colours, and
+ * kept off the timeline's own hues where a discipline maps to a product.
+ */
 export const capabilities = [
   {
     id: "neural",
@@ -91,6 +128,7 @@ export const capabilities = [
     description:
       "Applied AI and retrieval pipelines engineered for reliability, speed, and clarity under real-world constraints.",
     icon: "neural",
+    accent: "violet",
   },
   {
     id: "crypto",
@@ -98,6 +136,7 @@ export const capabilities = [
     description:
       "Privacy-preserving computation, verifiable storage, and data sovereignty built into every architecture.",
     icon: "lock",
+    accent: "cyan",
   },
   {
     id: "platforms",
@@ -105,6 +144,7 @@ export const capabilities = [
     description:
       "Resilient, production-ready systems with observability, automation, and rigorous security posture.",
     icon: "layers",
+    accent: "emerald",
   },
 ];
 
@@ -231,24 +271,29 @@ export function getProductByName(name) {
   return products.find((p) => p.name === name);
 }
 
+/* accent: as on capabilities — the home page tints each principle with it. The
+   products page lists the same three as plain rows and ignores it. */
 export const principles = [
   {
     label: "01",
     title: "Privacy-first architecture",
     description:
       "Data protection is a design constraint from the first diagram, not a layer added before launch.",
+    accent: "cyan",
   },
   {
     label: "02",
     title: "Secure collaboration",
     description:
       "Shared workflows that stay verifiable end to end, so trust does not depend on the network.",
+    accent: "violet",
   },
   {
     label: "03",
     title: "Operational clarity",
     description:
       "Systems that stay legible and predictable at scale — for the people who run them, not just build them.",
+    accent: "amber",
   },
 ];
 

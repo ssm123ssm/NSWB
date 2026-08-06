@@ -21,8 +21,7 @@ export default function ProductsPage() {
         <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="shell relative grid gap-12 pb-16 pt-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
-            <p className="eyebrow">Products</p>
-            <h1 className="display mt-4 max-w-2xl text-[clamp(2rem,4.6vw,3.25rem)]">
+            <h1 className="display max-w-2xl text-[clamp(2rem,4.6vw,3.25rem)]">
               A focused product line for secure, modern intelligence.
             </h1>
             <p className="lead mt-5 max-w-xl">
@@ -84,8 +83,7 @@ export default function ProductsPage() {
 
       <section className="section section-subtle">
         <div className="shell text-center">
-          <p className="eyebrow">Start a project</p>
-          <h2 className="section-title mt-3">
+          <h2 className="section-title">
             Tell us what you want to build next.
           </h2>
           <p className="lead mx-auto mt-4 max-w-xl">

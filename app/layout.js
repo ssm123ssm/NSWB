@@ -16,15 +16,19 @@ const jetBrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
+// One tagline, read from the site data, so the tab title and both link
+// previews can never drift apart again.
+const siteTitle = `${site.name} — ${site.tagline}`;
+
 export const metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Precision intelligence systems`,
+    default: siteTitle,
     template: `%s | ${site.name}`,
   },
   description: site.description,
   openGraph: {
-    title: `${site.name} — Precision intelligence systems`,
+    title: siteTitle,
     description: site.description,
     url: site.url,
     siteName: site.name,
@@ -32,7 +36,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — Precision intelligence systems`,
+    title: siteTitle,
     description: site.description,
   },
 };

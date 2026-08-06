@@ -44,10 +44,10 @@ export const metadata = {
  * — so the cartoon carries the explanation and the prose stays out of its way.
  *
  * Two rules hold the page together. Every section uses `.section-tight`, so the
- * spacing down the page is even; and every section opens with the same
- * eyebrow-then-title block at the same left edge, so the eye never has to
- * re-find the start of a section. Breaking either one is what made earlier
- * drafts feel like separate pages stapled together.
+ * spacing down the page is even; and every section opens with its title at the
+ * same left edge, so the eye never has to re-find the start of a section.
+ * Breaking either one is what made earlier drafts feel like separate pages
+ * stapled together.
  */
 export default function NsqrPage() {
   return (
@@ -92,8 +92,7 @@ export default function NsqrPage() {
       <section className="section-tight section-subtle">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">The difference</p>
-            <h2 className="section-title mt-3">Static code vs dynamic code</h2>
+            <h2 className="section-title">Static code vs dynamic code</h2>
           </div>
 
           {/* Three columns on desktop — what you are comparing, then the two
@@ -145,8 +144,7 @@ export default function NsqrPage() {
         <div className="shell grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
           <div>
             <div className="reveal">
-              <p className="eyebrow">What you get</p>
-              <h2 className="section-title mt-3">Six things, one code</h2>
+              <h2 className="section-title">Six things, one code</h2>
             </div>
 
             <div className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -172,8 +170,7 @@ export default function NsqrPage() {
           {/* Separators are the container's own background showing through a
               1px gap, rather than a border per cell doubling up at the edge. */}
           <aside className="reveal self-start rounded-[var(--radius)] border border-[color:var(--border)] bg-[color:var(--surface)] p-5 sm:p-6">
-            <p className="eyebrow">Eight kinds</p>
-            <h3 className="mt-2.5 text-base">What a code can hold</h3>
+            <h3 className="text-base">What a code can hold</h3>
             <p className="mt-2 text-[0.85rem] leading-relaxed text-muted">
               Most resolve on the scanner&rsquo;s own phone, so they work with no
               connection at all.
@@ -201,8 +198,7 @@ export default function NsqrPage() {
       <section className="section-tight section-subtle">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">Price</p>
-            <h2 className="section-title mt-3">Free, or the price of a coffee</h2>
+            <h2 className="section-title">Free, or the price of a coffee</h2>
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">

@@ -7,13 +7,11 @@ import { useEffect, useState } from "react";
 import { navLinks, pageHeaders, site } from "../data/site";
 import { CloseIcon, MenuIcon } from "./Icons";
 import ThemeToggle from "./ThemeToggle";
-import { useContact } from "./SiteChrome";
 
 export default function SiteHeader() {
   const [stuck, setStuck] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { open } = useContact();
   // Product pages run a stripped header carrying their own action instead of
   // the site nav. See `pageHeaders` for what that means and why it is keyed by
   // path.
@@ -74,25 +72,16 @@ export default function SiteHeader() {
             </a>
           )}
           {!bare && (
-            <>
-              <button
-                className="btn btn-primary btn-sm hidden sm:inline-flex"
-                type="button"
-                onClick={() => open()}
-              >
-                Start a project
-              </button>
-              <button
-                className="icon-button md:hidden"
-                type="button"
-                onClick={() => setMenuOpen((value) => !value)}
-                aria-expanded={menuOpen}
-                aria-controls="mobile-menu"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-              >
-                {menuOpen ? <CloseIcon className="h-5 w-5" /> : <MenuIcon />}
-              </button>
-            </>
+            <button
+              className="icon-button md:hidden"
+              type="button"
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+            >
+              {menuOpen ? <CloseIcon className="h-5 w-5" /> : <MenuIcon />}
+            </button>
           )}
         </div>
       </div>
@@ -113,16 +102,6 @@ export default function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            <button
-              className="btn btn-primary mt-4 mb-2"
-              type="button"
-              onClick={() => {
-                setMenuOpen(false);
-                open();
-              }}
-            >
-              Start a project
-            </button>
           </nav>
         </div>
       )}

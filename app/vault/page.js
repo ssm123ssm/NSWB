@@ -121,8 +121,7 @@ export default function VaultPage() {
       <section className="section section-subtle">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">The difference</p>
-            <h2 className="section-title mt-3">
+            <h2 className="section-title">
               The questions a security review will ask
             </h2>
             <p className="lead mt-4">
@@ -175,8 +174,7 @@ export default function VaultPage() {
               below goes on the card inside rather than on the wrapper: a
               translate on an ancestor stops sticky from sticking. */}
           <div className="lg:sticky lg:top-24">
-            <p className="eyebrow">How it works</p>
-            <h2 className="section-title mt-3">Three things happen, in order</h2>
+            <h2 className="section-title">Three things happen, in order</h2>
             <p className="lead mt-4">
               No plugins to install for your recipients, and nothing for your
               team to remember beyond a passphrase.
@@ -208,8 +206,7 @@ export default function VaultPage() {
       <section className="section section-subtle">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">Capabilities</p>
-            <h2 className="section-title mt-3">
+            <h2 className="section-title">
               Five ways teams put Vault to work
             </h2>
             <p className="lead mt-4">
@@ -252,8 +249,7 @@ export default function VaultPage() {
       <section className="section">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">Who is it for</p>
-            <h2 className="section-title mt-3">
+            <h2 className="section-title">
               Built for teams that cannot leak
             </h2>
           </div>
@@ -289,8 +285,7 @@ export default function VaultPage() {
       <section className="section section-subtle">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">Who holds the key</p>
-            <h2 className="section-title mt-3">
+            <h2 className="section-title">
               Four answers, chosen per project
             </h2>
             <p className="lead mt-4">
@@ -333,8 +328,7 @@ export default function VaultPage() {
       <section className="section">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">Why enrol</p>
-            <h2 className="section-title mt-3">
+            <h2 className="section-title">
               What you get on the day access opens
             </h2>
           </div>
@@ -359,8 +353,7 @@ export default function VaultPage() {
       <section className="section section-subtle">
         <div className="shell">
           <div className="reveal max-w-2xl">
-            <p className="eyebrow">Questions</p>
-            <h2 className="section-title mt-3">The ones people ask first</h2>
+            <h2 className="section-title">The ones people ask first</h2>
           </div>
 
           <div className="mt-10 grid gap-x-12 gap-y-9 md:grid-cols-2">

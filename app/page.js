@@ -1,5 +1,6 @@
 import Link from "next/link";
 import NsqrReel from "./components/NsqrReel";
+import PrincipleTrack from "./components/PrincipleTrack";
 import ProductName from "./components/ProductName";
 import ProductTimeline from "./components/ProductTimeline";
 import { ArrowIcon } from "./components/Icons";
@@ -164,36 +165,24 @@ export default function HomePage() {
           build on, the row says what holds while we do.
 
           Keeps id="capabilities" and .snap-edge, both of which the nav and the
-          screen sequence above address by name. */}
+          screen sequence above address by name.
+
+          The heading moved inside PrincipleTrack, which holds it still on the
+          left while the three principles pass it, so the centred heading that
+          sat over a centred row is now ranged left with the column it belongs
+          to. This was the last caller of the local SectionHeading helper, which
+          went with it.
+
+          .snap-edge stays and still behaves: it is the far side of the last
+          screen, and snapping here is `proximity`, so landing on this section's
+          start does not then fight the reader scrolling down through it. */}
       <section className="snap-edge section section-subtle" id="capabilities">
         <div className="shell">
-          <SectionHeading
+          <PrincipleTrack
             title="Everything we build on"
             lead="A focused set of disciplines built for secure, scalable intelligence — research depth paired with operational delivery."
+            principles={principles}
           />
-
-          {/* Same three cells as before, each in its own accent: the numeral is
-              already .eyebrow and so takes --brand for free, and
-              .principle-cell adds the bar along the leading edge. */}
-          <ol className="mx-auto mt-12 grid max-w-4xl overflow-hidden rounded-[var(--radius)] border border-[color:var(--border)] sm:grid-cols-3">
-            {principles.map((item, index) => (
-              <li
-                className={`principle-cell reveal p-6 ${
-                  index > 0
-                    ? "border-t border-[color:var(--border)] sm:border-l sm:border-t-0"
-                    : ""
-                }`}
-                data-brand={item.accent}
-                key={item.label}
-              >
-                <p className="eyebrow">{item.label}</p>
-                <h3 className="mt-3 text-base">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {item.description}
-                </p>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
 
@@ -286,14 +275,5 @@ function HeroProductLink({ product }) {
     <a className={className} href={href} target="_blank" rel="noreferrer">
       {label}
     </a>
-  );
-}
-
-function SectionHeading({ title, lead }) {
-  return (
-    <div className="mx-auto max-w-2xl text-center">
-      <h2 className="section-title">{title}</h2>
-      <p className="lead mt-4">{lead}</p>
-    </div>
   );
 }

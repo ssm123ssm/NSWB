@@ -258,9 +258,22 @@ export function getProductByName(name) {
   return products.find((p) => p.name === name);
 }
 
-/* accent: the palette entry each cell wears — the home page tints the numeral
-   and the bar along the cell's leading edge with it. The products page lists
-   the same three as plain rows and ignores it. */
+/* accent: the palette entry each principle wears. The home page track tints the
+   active step's glyph, border and rail marker with it — and because only one
+   step is ever active, the three hues are never seen side by side, which is
+   what let them stay three rather than collapsing to one.
+
+   icon: a key into iconMap, the small tile that labels the card.
+
+   motif: a key into principleMotifMap, the large mark drawn faint across the
+   card. The glyph says which principle this is; the motif draws the shape of
+   the idea, and is what keeps a card holding two sentences from reading as an
+   empty box at the height the track gives it.
+
+   label: the products page prints these as a right-ranged column in its "Core
+   themes" card, and they are the React key in both places. The home page no
+   longer shows them — three peers are not a sequence, and numbering them said
+   otherwise. */
 export const principles = [
   {
     label: "01",
@@ -268,6 +281,8 @@ export const principles = [
     description:
       "Data protection is a design constraint from the first diagram, not a layer added before launch.",
     accent: "cyan",
+    icon: "shield",
+    motif: "boundary",
   },
   {
     label: "02",
@@ -275,6 +290,8 @@ export const principles = [
     description:
       "Shared workflows that stay verifiable end to end, so trust does not depend on the network.",
     accent: "violet",
+    icon: "neural",
+    motif: "mesh",
   },
   {
     label: "03",
@@ -282,6 +299,8 @@ export const principles = [
     description:
       "Systems that stay legible and predictable at scale — for the people who run them, not just build them.",
     accent: "amber",
+    icon: "layers",
+    motif: "measure",
   },
 ];
 

@@ -739,32 +739,221 @@
     color: var(--brand);
   }
 
-  /* One cell of the principles row. The numeral above it is .eyebrow and is
-     already brand-coloured; this adds the bar along the top edge and a wash on
-     hover, so the three read as a set of three colours rather than one grey
-     block. The fill lives here rather than as a utility on the element, or the
-     utility layer would outrank the hover state. */
-  .principle-cell {
+  /* --- Principle track ----------------------------------------------------
+
+     The capabilities section: heading held on the left, three principles
+     moving past it on the right. See PrincipleTrack.js for why.
+
+     Single column and no stickiness below 768px — there is not enough width to
+     hold a column still beside another, and a short viewport makes the whole
+     device pointless. Mobile gets three plain cards, which is what the steps
+     already are. */
+  .principle-track {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  /* Base is a plain vertical list of cards, which is what mobile keeps and
+     what renders without JS. The deck below is the enhancement. */
+  .principle-deck {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .principle-step {
+    display: grid;
+  }
+
+  /* The plate is a two-zone card: copy on one side, mark on the other.
+
+     The mark gets a column of its own rather than the corner watermark the
+     timeline cards use. Those carry enough content to bury a mark behind; this
+     one holds two sentences, so a watermark ends up crossing the copy — which
+     reads as a mistake rather than as texture. In its own column it can also
+     sit at a weight where it is actually legible as a drawing. */
+  .principle-plate {
     position: relative;
-    background: var(--surface);
-    transition: background-color 0.2s ease;
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
   }
 
-  .principle-cell::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      var(--brand),
-      color-mix(in srgb, var(--brand) 18%, transparent)
-    );
+  .principle-motif {
+    --motif-alpha: 0.16;
+
+    justify-self: end;
+    width: 6rem;
+    height: 6rem;
+    color: var(--brand);
+    opacity: var(--motif-alpha);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .principle-cell:hover {
-    background: color-mix(in srgb, var(--brand) 5%, var(--surface));
+  /* Brand accents run brighter in dark mode but the surface is darker still,
+     so the same alpha lands lighter. Matches the timeline's correction. */
+  :root[data-theme="dark"] .principle-motif {
+    --motif-alpha: 0.2;
+  }
+
+  .principle-title {
+    font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  /* Wider than body default and held to a readable measure: at this size the
+     description is the card's main text, not a caption under a heading. */
+  .principle-copy {
+    max-width: 34ch;
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  .principle-rail {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .principle-track {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 4rem;
+      align-items: start;
+    }
+
+    /* 7rem clears the sticky header — html sets scroll-padding-top: 5rem for
+       the same header — and leaves the heading optically centred against the
+       step beside it rather than jammed under the chrome. */
+    .principle-aside {
+      position: sticky;
+      top: 7rem;
+    }
+
+    .principle-aside .section-title,
+    .principle-aside .lead {
+      margin-inline: 0;
+      text-align: start;
+    }
+
+    .principle-plate {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2.5rem;
+    }
+
+    .principle-motif {
+      width: 9.5rem;
+      height: 9.5rem;
+    }
+
+    .principle-rail {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 2.25rem;
+    }
+
+    .principle-rail-item {
+      display: grid;
+      grid-template-columns: 1.5rem minmax(0, 1fr);
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-faint);
+      transition: color 0.35s ease;
+    }
+
+    .principle-rail-item i {
+      height: 1px;
+      background: var(--border-strong);
+      transform-origin: left;
+      transition: transform 0.35s ease, background-color 0.35s ease;
+    }
+
+    .principle-rail-item.is-on {
+      color: var(--text);
+    }
+
+    .principle-rail-item.is-on i {
+      background: var(--brand);
+      transform: scaleX(1.55);
+    }
+  }
+
+  /* Emphasis only once the observer is running, and only where there is room
+     to hold a column still — on mobile every step stays at full strength.
+
+     The dim is 0.82 rather than the half-opacity this reads as in a mockup:
+     the text underneath still has to clear contrast on --bg-subtle, which
+     .section-subtle puts behind it. The border and wash do the rest of the
+     work of saying which one is live. */
+  /* Only one card is ever on screen, so the brand tint is not an emphasis
+     state to be switched on — it is simply how a card looks. It reads the same
+     way in the mobile stack, where the three sit one under another and each
+     wears its own accent rather than three greys. */
+  .principle-plate {
+    border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
+    background: color-mix(in srgb, var(--brand) 4%, var(--surface));
+    box-shadow: 0 18px 42px -30px color-mix(in srgb, var(--brand) 65%, transparent);
+  }
+
+  /* .card-accent keeps its hairline at opacity 0 until hover. There is no
+     hover to wait for here — the card on the stage is the one being read — so
+     it stays lit rather than adding a second device. */
+  .principle-plate.card-accent::before {
+    opacity: 0.9;
+  }
+
+  /* --- The deck ------------------------------------------------------------
+
+     Enhancement only: without JS, and under reduced motion, none of this
+     applies and the section stays the plain list of cards above.
+
+     The scroll block is what makes the section long. The stage is held still
+     inside it, and every card shares one grid cell in the deck, so a card
+     never travels — it fades in where the last one was. `align-items` is left
+     at stretch on purpose: the cell takes the height of the longest card and
+     they all match it, so the silhouette does not jump as the copy changes
+     length. */
+  @media (min-width: 768px) {
+    .principle-track[data-track="on"] .principle-scroll {
+      height: calc(var(--deck-steps, 3) * 80vh);
+    }
+
+    /* Stage and column both fill the screen under the header and centre their
+       own contents in it, so while the section is held the composition is
+       centred rather than pinned to the top with the rest of the screen empty
+       under it. 5rem is the header, the same figure html's scroll-padding-top
+       uses. */
+    .principle-track[data-track="on"] .principle-stage,
+    .principle-track[data-track="on"] .principle-aside {
+      position: sticky;
+      top: 5rem;
+      height: calc(100vh - 5rem);
+      display: grid;
+      align-content: center;
+    }
+
+    .principle-track[data-track="on"] .principle-deck {
+      gap: 0;
+    }
+
+    .principle-track[data-track="on"] .principle-step {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transform: translateY(10px) scale(0.995);
+      pointer-events: none;
+      transition: opacity 0.45s ease,
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .principle-track[data-track="on"] .principle-step.is-on {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
   }
 
   /* --- Statement ----------------------------------------------------------

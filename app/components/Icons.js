@@ -417,3 +417,64 @@ export const motifMap = {
   lipid: LipidMotif,
   score: ScoreMotif,
 };
+
+/* --- Principle marks ------------------------------------------------------
+ *
+ * The set above names products; these name the three principles on the home
+ * page. Same 120-unit box and stroke, so a card carrying one of these sits in
+ * the same family as a timeline card carrying one of those.
+ *
+ * Each restates its principle rather than redrawing the small glyph beside it
+ * at a larger size — the glyph labels the card, the mark says the same thing
+ * in the shape of the idea.
+ */
+
+// Privacy: a boundary drawn around the data, then another inside it. The core
+// is enclosed twice before anything is put in it.
+export function BoundaryMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <rect x="10" y="10" width="100" height="100" rx="20" />
+      <rect x="30" y="30" width="60" height="60" rx="13" />
+      <circle cx="60" cy="60" r="11" />
+      <circle cx="60" cy="60" r="3.5" {...solid} />
+    </Motif>
+  );
+}
+
+// Collaboration: three parties, every link between them sealed. The trust is
+// on the edges, not in the middle.
+export function MeshMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <circle cx="60" cy="20" r="10" />
+      <circle cx="20" cy="90" r="10" />
+      <circle cx="100" cy="90" r="10" />
+      <path d="M54 29 26 81M66 29l28 52M30 90h60" />
+      <circle cx="40" cy="55" r="3.5" {...solid} />
+      <circle cx="80" cy="55" r="3.5" {...solid} />
+      <circle cx="60" cy="90" r="3.5" {...solid} />
+    </Motif>
+  );
+}
+
+// Clarity: an even measure. Rules of differing length off one baseline, each
+// stopped by a mark — a system that can be read off at a glance.
+export function MeasureMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <path d="M18 16v88" />
+      <path d="M18 34h66M18 56h44M18 78h78M18 100h32" />
+      <circle cx="84" cy="34" r="3.5" {...solid} />
+      <circle cx="62" cy="56" r="3.5" {...solid} />
+      <circle cx="96" cy="78" r="3.5" {...solid} />
+      <circle cx="50" cy="100" r="3.5" {...solid} />
+    </Motif>
+  );
+}
+
+export const principleMotifMap = {
+  boundary: BoundaryMotif,
+  mesh: MeshMotif,
+  measure: MeasureMotif,
+};

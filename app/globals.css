@@ -65,6 +65,12 @@
     --radius: 0.875rem;
     --radius-lg: 1.375rem;
 
+    /* The header's real height in flow: the h-16 row inside it plus the 1px
+       bottom border it always carries (transparent until stuck, but always in
+       the box). The first screen subtracts this — see .hero-screen — so keep
+       the two in step if the header row ever changes size. */
+    --header-h: calc(4rem + 1px);
+
     color-scheme: light;
   }
 
@@ -239,6 +245,21 @@
     flex-direction: column;
     justify-content: center;
     min-height: 100svh;
+  }
+
+  /* The first screen is the one that shares the fold with the header. The
+     header is `position: sticky`, so it is in flow above this section and takes
+     its own height off the top of the viewport — a 100svh hero therefore ends
+     one header-height *below* the fold, and everything the layout parks against
+     its bottom edge goes with it. That is what pushed the product strip off the
+     first screen: the strip sat where it was asked to, at the floor of the
+     section, but the floor was under the fold.
+
+     Subtracting the header makes the first screen actually one viewport, so the
+     strip lands on the fold as intended. Only the hero needs this — every later
+     screen arrives with the header scrolled off and wants the full 100svh. */
+  .hero-screen {
+    min-height: calc(100svh - var(--header-h));
   }
 
   /* Where the scroll may rest: on a screen, or fully past it. Nothing in
@@ -977,14 +998,6 @@
      what every visit after the first one is. */
   @media (max-width: 767px) {
     .hero-screen {
-      /* The sticky header is in flow above this section, so a 100svh first
-         screen ends one header-height below the fold and its bottom padding
-         does its work off-screen — which is why reserving the banner's height
-         alone still left the product strip under the card. Trimming the header
-         out makes the first screen actually one viewport, and the reservation
-         below then lands where it is aimed. Only here: every later screen has
-         the header scrolled off and wants the full 100svh. */
-      min-height: calc(100svh - 4rem);
       padding-bottom: var(--consent-height, 0px);
     }
   }

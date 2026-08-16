@@ -53,15 +53,17 @@ export default function HomePage() {
             one stack: the headline block takes the free space and centres
             inside it, and the strip of product marks sits near the bottom
             edge, so the marks are the last thing in the first screen and the
-            thing it hands over to. The top padding clears the sticky header;
-            the bottom one is deliberately much smaller than it, so the strip
-            sits low enough to read as the floor of the screen rather than as a
-            third block floating in the middle of it. */}
-        {/* pt-20 on a phone rather than pt-24: it still clears the 4rem
-            header, and the 1rem it gives back is part of what keeps the
-            product strip above the consent card on a small screen. Full
-            clearance returns at sm, where the card is a floating panel off to
-            one side and overlaps nothing. */}
+            thing it hands over to. That only reads as the floor of the screen
+            because .hero-screen subtracts the header from its height — the
+            header is sticky and therefore in flow, so a plain 100svh hero ends
+            below the fold and takes this strip with it. The bottom padding is
+            deliberately much smaller than the top one, so the strip sits low
+            enough to read as a base rather than as a third block floating in
+            the middle. */}
+        {/* pt-20 on a phone rather than pt-24: the 1rem it gives back is part
+            of what keeps the product strip above the consent card on a small
+            screen. The fuller measure returns at sm, where the card is a
+            floating panel off to one side and overlaps nothing. */}
         <div className="shell relative flex flex-1 flex-col pb-10 pt-20 text-center sm:pb-12 sm:pt-24">
           <div className="flex flex-1 flex-col items-center justify-center">
             <h1 className="display animate-rise max-w-4xl">

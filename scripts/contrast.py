@@ -21,13 +21,16 @@ NEUTRAL = {
     400: "#A0A5AE", 500: "#818691", 600: "#6B727F", 700: "#4C5360",
     800: "#2C3340", 900: "#0D1421",
 }
+# Five chart hues and one that is not: coLab's blue is the product's own colour
+# and replaces chart-2 (#278BDB) in the palette, which sat six degrees of hue
+# away from it. AES took chart-6 when that happened.
 CHART = {
     "violet": "#8B72D7",   # chart-1  -> NSQR
-    "blue":   "#278BDB",   # chart-2  -> AES
+    "blue":   "#0F81BC",   # coLab
     "cyan":   "#1697A3",   # chart-3  -> Vault
     "emerald":"#0C9F69",   # chart-4  -> Presence
     "amber":  "#9E8406",   # chart-5  -> Lipd Hub
-    "clay":   "#D05F43",   # chart-6  -> spare
+    "clay":   "#D05F43",   # chart-6  -> AES
 }
 INK = "#1C2231"
 PAPER = "#F9FAFD"
@@ -157,7 +160,7 @@ for label, fg in (("--text-muted", "#4C5360"), ("--text-faint", "#686E7B")):
 # which is what makes it a regression check instead of a demonstration. Keep in
 # step with the [data-brand] blocks in globals.css.
 SHIPPED_BRAND_TEXT = {
-    "violet": "#6924D0", "blue": "#1E71B3", "cyan": "#117A83",
+    "violet": "#6924D0", "blue": "#0D72A7", "cyan": "#117A83",
     "emerald": "#0A7E53", "amber": "#816C05", "clay": "#B7492D",
 }
 

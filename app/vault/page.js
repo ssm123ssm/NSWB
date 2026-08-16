@@ -3,7 +3,8 @@ import { ArrowIcon, CheckIcon, DocIcon, LockIcon, ShieldIcon } from "../componen
 import ProductName from "../components/ProductName";
 import RequestAccessLink from "../components/RequestAccessLink";
 import { ContactButton } from "../components/SiteChrome";
-import { VaultFlow, VaultScene } from "../components/VaultGraphics";
+import StepRail from "../components/StepRail";
+import { VaultScene } from "../components/VaultGraphics";
 import {
   getProduct,
   vaultAccessModes,
@@ -12,6 +13,7 @@ import {
   vaultCapabilities,
   vaultComparison,
   vaultFaqs,
+  vaultHowItWorks,
   vaultLimits,
 } from "../data/site";
 
@@ -136,7 +138,7 @@ export default function VaultPage() {
               if it became a scroll container. The heading row rounds its own
               top corners instead. */}
           <div className="mt-10 rounded-[var(--radius)] border border-[color:var(--border)] bg-[color:var(--surface)]">
-            <div className="reveal vault-ledger-row vault-ledger-head">
+            <div className="reveal ledger-row ledger-head">
               <span className="text-[0.7rem] uppercase tracking-[0.14em] text-faint">
                 Question
               </span>
@@ -149,14 +151,14 @@ export default function VaultPage() {
             </div>
 
             {vaultComparison.map((row) => (
-              <div className="reveal vault-ledger-row" key={row.question}>
+              <div className="reveal ledger-row" key={row.question}>
                 <p className="text-[0.95rem]">{row.question}</p>
-                <p className="vault-ledger-answer text-[0.9rem] leading-relaxed text-muted">
-                  <span className="vault-ledger-label">Usually</span>
+                <p className="ledger-answer text-[0.9rem] leading-relaxed text-muted">
+                  <span className="ledger-label">Usually</span>
                   <span>{row.ordinary}</span>
                 </p>
-                <p className="vault-ledger-answer text-[0.9rem] leading-relaxed">
-                  <span className="vault-ledger-label">With Vault</span>
+                <p className="ledger-answer text-[0.9rem] leading-relaxed">
+                  <span className="ledger-label">With Vault</span>
                   <span className="flex items-start gap-2">
                     <CheckIcon className="mt-1 h-3.5 w-3.5 shrink-0 text-[color:var(--brand)]" />
                     {row.vault}
@@ -199,7 +201,7 @@ export default function VaultPage() {
             </div>
           </div>
 
-          <VaultFlow />
+          <StepRail steps={vaultHowItWorks} />
         </div>
       </section>
 

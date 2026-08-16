@@ -36,7 +36,12 @@ most of that; resist filling the space.
 - `app/globals.css`: design tokens + all component classes.
 - `app/components/`: shared UI (`SiteChrome`, `SiteHeader`, `SiteFooter`,
   `ContactDialog`, `ProductCard`, `Icons`, …).
-- `app/page.js`, `app/products/page.js`, `app/vault/page.js`: the three pages.
+- `app/page.js`, `app/products/page.js`: the home page and the product index.
+- `app/nsqr/`, `app/vault/`, `app/colab/`: the three product detail pages, each
+  with its own `opengraph-image.js`. NSQR is the short one; Vault and coLab are
+  long-form and share their two structural pieces — `StepRail` (`.flow` in
+  globals) and the comparison ledger (`.ledger-*`). Neither is Vault's any
+  more, so change them with both pages in mind.
 - `app/api/contact/route.js`: contact + access-request intake.
 - `content/legal/*.md`: policy prose. `app/legal/` renders it — index,
   `/legal/website-privacy`, and `/legal/nsqr/[slug]` for the three NSQR

@@ -138,11 +138,13 @@ export const overview = {
  * closing banner borrow, so keep it on exactly one entry.
  *
  * lead: the products the front page argues for, as opposed to the ones it
- * offers as evidence of range. Five products named at equal weight reads as
+ * offers as evidence of range. Six products named at equal weight reads as
  * unfocused from outside — a visitor cannot tell which one we would like them
- * to look at, and two of the five have no public page to look at anyway. These
- * are the two that do: the cheap self-serve one and the considered one, which
- * between them also happen to show both halves of what the studio does.
+ * to look at, and two of the six have no public page to look at anyway. These
+ * are the three that do, which is also the honest test: a product carries
+ * `lead` when there is somewhere to send a stranger. Between them they show
+ * both halves of what the studio does — the cheap self-serve one, the
+ * considered cryptographic one, and the one a team adopts together.
  *
  * The rest are not hidden or diminished in what they claim. They sit at lower
  * emphasis in the hero strip, which is the difference between a line-up and an
@@ -199,6 +201,26 @@ export const products = [
     ],
   },
   {
+    slug: "colab",
+    motif: "plan",
+    name: "coLab",
+    wordmark: ["co", "lab"],
+    tagline: "Project tracking that keeps the reasons.",
+    description:
+      "A milestone timeline with the work planned against each date, tasks that carry their own thread, and a decision log signed by whoever settled it — shared per project, so a guest sees one and nothing else.",
+    discipline: "Software Platforms",
+    status: "live",
+    lead: true,
+    // The product's own blue, which is what `blue` now resolves to. AES moved
+    // to clay when this arrived: chart 2's blue sat six degrees of hue from
+    // this one, and two products that close together read as a printing fault
+    // rather than as two products.
+    accent: "blue",
+    detail: "/colab",
+    app: "https://colab.neurasense.io/",
+    highlights: ["Milestone timeline", "Decision log", "Per-project sharing"],
+  },
+  {
     slug: "presence",
     motif: "checkin",
     name: "Presence",
@@ -237,7 +259,7 @@ export const products = [
     discipline: "Neural Systems",
     status: "live",
     access: "request",
-    accent: "blue",
+    accent: "clay",
     highlights: ["Consistent scoring", "Fast turnaround", "Actionable feedback"],
   },
 ];
@@ -726,6 +748,240 @@ export const vaultAudiences = [
   },
 ];
 
+/* --------------------------------------------------------- coLab --------
+ *
+ * The public account of coLab. Neither of the other two pages' registers fits
+ * it: NSQR is decided in a minute and Vault is decided by a security review,
+ * while coLab is decided by one person who then has to talk a team into it. So
+ * the page is long-form like Vault's, and every claim below is written to be
+ * checkable inside ten minutes of using the product.
+ *
+ * Which means: nothing here describes a feature the app does not have today.
+ * The temptation on a project tracker is to write the category rather than the
+ * product — boards, automations, dependencies, roadmaps — and none of that is
+ * in coLab. When something ships, it is added here; until then the page stays
+ * short of it, and `colabLimits` says so out loud.
+ */
+
+/** Entry points into the app that the page links to by name. */
+export const colabLinks = {
+  app: "https://colab.neurasense.io/",
+  signup: "https://colab.neurasense.io/signup",
+};
+
+/**
+ * The hero scene's task list. Fixed strings rather than anything generated:
+ * the scene renders on the server, so random values would differ on the client
+ * and trip hydration.
+ *
+ * `state` is where the row ends up once the scene has played, and `owner` is a
+ * first name only — a scene is not a testimonial, and full names would read as
+ * a claim about real customers.
+ */
+export const colabSceneMilestones = [
+  { label: "Beta", at: 12 },
+  { label: "Launch", at: 54 },
+  { label: "Review", at: 90 },
+];
+
+export const colabSceneTasks = [
+  { title: "Draft the launch note", owner: "Ann", priority: "high", state: "Done" },
+  { title: "Migrate the staging data", owner: "Sam", priority: "high", state: "Doing" },
+  { title: "Price the annual plan", owner: "Priya", priority: "medium", state: "Doing" },
+  { title: "Book the venue", owner: "Kofi", priority: "low", state: "To do" },
+];
+
+/**
+ * The comparison that does the persuading, and the one section that names the
+ * status quo rather than the product. Read as: here is a question every team
+ * asks itself weekly, here is where the answer usually lives, here is where
+ * coLab keeps it.
+ *
+ * "Usually" is scattered tooling, not a competitor. Naming a rival product in
+ * a column would date the page and pick a fight we are not having.
+ */
+export const colabComparison = [
+  {
+    question: "Where the plan lives",
+    ordinary: "A spreadsheet one person owns, and a chat thread",
+    colab: "A milestone timeline, with the work planned against each date",
+  },
+  {
+    question: "Why you chose it that way",
+    ordinary: "In a thread, three weeks up, if anyone can find it",
+    colab: "In the decision log, signed by whoever settled it",
+  },
+  {
+    question: "What needs a decision today",
+    ordinary: "Whatever the loudest message was about",
+    colab: "High-priority and soon-due work, on the dashboard rail",
+  },
+  {
+    question: "Bringing in one outside collaborator",
+    ordinary: "They see everything, or they see nothing",
+    colab: "Invited to a single project, as editor or viewer",
+  },
+  {
+    question: "Who is already overloaded",
+    ordinary: "You ask, and hope the answer is candid",
+    colab: "Open and overdue counts, beside every name you can assign to",
+  },
+];
+
+/** The three-beat explainer: set the dates, hang the work off them, record what you settled. */
+export const colabHowItWorks = [
+  {
+    title: "Start with the dates",
+    description:
+      "A project opens on its timeline. Add the milestones you are actually working towards, and the work planned against each one is counted underneath it — so a date is never just a note in a calendar.",
+  },
+  {
+    title: "Hang the work off them",
+    description:
+      "Every task carries an assignee, a priority, a due date and its own comment thread. The thread is a link you can send, so pulling someone into a specific decision does not mean re-explaining it.",
+  },
+  {
+    title: "Write down what you settled",
+    description:
+      "When the team lands on something, it goes in the decision log in the words of whoever landed it, signed and timestamped. That is the part a chat thread loses, and the part you need six months later.",
+  },
+];
+
+/**
+ * Six capabilities, one line of glyph each from `colabIconMap`. The rule for
+ * this list is that every entry has to be something you would notice missing —
+ * not a feature inventory, which is what a settings page is for.
+ */
+export const colabCapabilities = [
+  {
+    icon: "calendar",
+    title: "A timeline, not a backlog",
+    description:
+      "Milestones with real dates, each showing the work planned against it. Rename or re-date one straight from the timeline when the plan moves — because it will.",
+  },
+  {
+    icon: "check",
+    title: "Tasks that carry their context",
+    description:
+      "Assignee, priority, due date, status. The dashboard lifts the high-priority and soon-due ones into a rail of their own, labelled with the project they came from.",
+  },
+  {
+    icon: "chat",
+    title: "Threads, and @ that reaches people",
+    description:
+      "Every task has a comment thread. Typing @ offers the people who can see the project, and being named puts the task on your radar — with an email, when mail is set up.",
+  },
+  {
+    icon: "doc",
+    title: "A decision log, not a scratchpad",
+    description:
+      "Entries are never edited, and only the owning team can strike one — a log its author can quietly tidy up is not a log. Newest first, because the question is usually where you landed.",
+  },
+  {
+    icon: "chart",
+    title: "Workloads before you assign",
+    description:
+      "The assignee list says what each person is already carrying — open, and overdue — and the tasks tab opens on the same numbers as bars. Counted across live projects only.",
+  },
+  {
+    icon: "search",
+    title: "The whole workspace, one keystroke away",
+    description:
+      "A floating shortcut opens search, a calendar of what is due, and a timeline across every project you can see — without leaving the one you are in.",
+  },
+];
+
+/**
+ * The three ways into a project, in order of authority. Worth a section of its
+ * own because it is the question that decides whether a team can use coLab
+ * with people outside it, and most trackers answer it badly.
+ */
+export const colabAccessModes = [
+  {
+    name: "Workspace member",
+    tag: "Your team",
+    icon: "users",
+    summary:
+      "Belongs to the workspace the project lives in, and can open and change every project in it. Signing up creates your first workspace with you as its owner; an account can belong to several, and the switcher says which one you are looking at.",
+    bestFor: "The people you work with every day",
+  },
+  {
+    name: "Invited guest",
+    tag: "One project",
+    icon: "contact",
+    summary:
+      "Invited to a single project as editor or viewer, and sees exactly that — not the rest of the workspace. A guest editor can change the project but not who else gets in. Invitations expire in fourteen days and are redeemable once.",
+    bestFor: "A client, a contractor, or a collaborator on one piece of work",
+  },
+  {
+    name: "Public link",
+    tag: "Read-only",
+    icon: "globe",
+    summary:
+      "A share link that opens the project read-only for anyone signed in with any account. Making the project private again — or resetting the link — mints a new token and kills every link already out there.",
+    bestFor: "A status page for a wider audience than you want to invite",
+  },
+];
+
+/**
+ * Stated plainly and on the page, because the alternative is a team adopting
+ * coLab and finding out in week two. The house rule: a product is only
+ * credible if it says where it stops.
+ */
+export const colabLimits = [
+  "It is not a chat app. Threads hang off the work they are about, and that is the whole of the messaging.",
+  "Milestones hold work; they do not schedule it. There are no dependencies and no critical path.",
+  "Access is checked on the server for every change, but a public link is a share rather than a permission — anyone who has it can read the project.",
+];
+
+export const colabAudiences = [
+  {
+    audience: "Product & engineering teams",
+    capabilities: ["Milestone timeline", "Task threads", "Decision log"],
+  },
+  {
+    audience: "Agencies & client work",
+    capabilities: ["Invited guests", "Public links", "Per-project sharing"],
+  },
+  {
+    audience: "Research groups & labs",
+    capabilities: ["Decision log", "Workspaces", "Workloads"],
+  },
+];
+
+export const colabFaqs = [
+  {
+    question: "How is this different from a shared to-do list?",
+    answer:
+      "A to-do list holds what is left. coLab also holds the dates the work is planned against and the record of what the team decided and why — which is the part that is missing when someone new joins, or when the same argument comes back around in March.",
+  },
+  {
+    question: "Can I bring in someone from outside the team?",
+    answer:
+      "Yes, and only into the one project. Invite them as an editor or a viewer and that is all they can open — the rest of the workspace is not visible to them, and it is not something they have to be trusted not to look at.",
+  },
+  {
+    question: "Can a decision be edited afterwards?",
+    answer:
+      "No. Entries are written once and signed with the author's name and the minute they were recorded. The owning team can strike one from the log, but nobody — including the author — can quietly reword what was decided.",
+  },
+  {
+    question: "What happens to a project when it is finished?",
+    answer:
+      "Archive it. It keeps every milestone, task and decision and stops appearing in the grid, the attention rail and the counts. Deleting is separate, sits behind typing the project's name in full, and is checked again on the server.",
+  },
+  {
+    question: "Do we have to remember another password?",
+    answer:
+      "Not after the first time. coLab supports passkeys, so signing in can be your device's own unlock, and there is a password reset by email for the accounts that keep one.",
+  },
+  {
+    question: "How do we get started?",
+    answer:
+      "Create an account. A workspace is created with it, with you as the owner, and you can invite the rest of the team from there. If you would rather be walked through it — or you need it running somewhere specific — talk to us first.",
+  },
+];
+
 /* --------------------------------------------------------- Page chrome --
  *
  * Per-page header overrides. A product page carries its own call to action and
@@ -740,5 +996,9 @@ export const pageHeaders = {
   "/nsqr": {
     brand: "violet",
     cta: { label: "Start free", href: nsqrLinks.register, external: true },
+  },
+  "/colab": {
+    brand: "blue",
+    cta: { label: "Create an account", href: colabLinks.signup, external: true },
   },
 };

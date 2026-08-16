@@ -141,11 +141,15 @@
     --brand-soft: #f5f3ff;
     --brand-text: #6924d0;
   }
+  /* coLab's own blue, which is the product's colour rather than chart 2's
+     #278BDB — the two are six degrees of hue apart, so the palette carries one
+     of them and not both. The chart value is in git if a chart ever wants it
+     back; nothing on the site is drawn in it today. */
   [data-brand="blue"] {
-    --brand: #278bdb; /* chart 2 — AES */
-    --brand-hover: #1f77bc;
+    --brand: #0f81bc; /* coLab */
+    --brand-hover: #0e76ab;
     --brand-soft: #e4f2fd;
-    --brand-text: #1e71b3;
+    --brand-text: #0d72a7;
   }
   [data-brand="cyan"] {
     --brand: #1697a3; /* chart 3 — Vault */
@@ -166,7 +170,7 @@
     --brand-text: #816c05;
   }
   [data-brand="clay"] {
-    --brand: #d05f43; /* chart 6 — unassigned */
+    --brand: #d05f43; /* chart 6 — AES */
     --brand-hover: #c14d30;
     --brand-soft: #feebe9;
     --brand-text: #b7492d;
@@ -183,10 +187,10 @@
     --brand-text: #9a73ff;
   }
   :root[data-theme="dark"] [data-brand="blue"] {
-    --brand: #278bdb;
-    --brand-hover: #4a9fe1;
+    --brand: #0f81bc;
+    --brand-hover: #2e97d1;
     --brand-soft: #12212f;
-    --brand-text: #3291dd;
+    --brand-text: #1194d8;
   }
   :root[data-theme="dark"] [data-brand="cyan"] {
     --brand: #1697a3;
@@ -1560,11 +1564,11 @@
 
   /* --- Vault illustrations -------------------------------------------------
 
-     Two looping scenes carry the Vault page: `.vault-scene`, where a list of
-     files is locked in front of the reader, and `.vault-flow`, which follows
-     one file off the device. Both are markup and CSS rather than image or
-     video assets — they inherit --brand, follow the theme toggle, stay sharp
-     at any width, and cost nothing to download.
+     `.vault-scene` is the looping hero on the Vault page, where a list of
+     files is locked in front of the reader. It is markup and CSS rather than
+     an image or video asset — it inherits --brand, follows the theme toggle,
+     stays sharp at any width, and costs nothing to download. The same is true
+     of `.colab-scene` and `.flow` further down.
 
      Timing is one shared 9s bar. The scan line sweeps the list once, each row
      flips as the line reaches it (via the --i stagger set in the markup), the
@@ -1605,12 +1609,14 @@
   }
 
   /* Both states of a label occupy the same cell and cross-fade in place, so
-     nothing reflows as the scene turns over. */
-  .vault-swap {
+     nothing reflows as the scene turns over. Shared by both product scenes —
+     it is the stacking only; which layer is showing when is the caller's own
+     pair of animations. */
+  .state-swap {
     display: grid;
   }
 
-  .vault-swap > * {
+  .state-swap > * {
     grid-area: 1 / 1;
     display: inline-flex;
     align-items: center;
@@ -1751,16 +1757,288 @@
     animation-delay: 2.6s;
   }
 
-  /* --- Vault flow rail ---------------------------------------------------- */
+  /* --- coLab scene ---------------------------------------------------------
 
-  /* One file's journey, set on a rail: the beats stay legible at any width
-     because the rail is vertical at every breakpoint. */
-  .vault-flow {
+     One project as coLab holds it: dates across the top, the work planned
+     against them underneath, and a week passing over the whole thing. Same
+     construction as the Vault scene above — markup, one shared timing bar, no
+     assets — and the same reason for it.
+
+     Timing is a 12s bar. The milestone fill advances across the first third,
+     each task row turns over as it is reached (the --i stagger, 0.85s a row),
+     and the head and foot counters follow at 3.2s, once every row has moved:
+     the counter is the consequence, so it has to land after the cause. The
+     last beat returns to the opening state so the loop restarts without a jump
+     cut.
+
+     Reduced motion is pinned at the foot of this file rather than left to the
+     global duration collapse — the layers of a swap are stacked in one grid
+     cell and both would otherwise be painted at once. */
+
+  .colab-scene {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+
+  .colab-scene-head,
+  .colab-scene-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0.95rem;
+    color: var(--text-faint);
+  }
+
+  .colab-scene-head {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-subtle);
+  }
+
+  .colab-scene-foot {
+    border-top: 1px solid var(--border);
+  }
+
+  /* The head and foot say what changed rather than what is changing, so they
+     wait for the rows. Set here rather than on the elements so the swap layers
+     keep one definition between them. */
+  .colab-scene-head .colab-before,
+  .colab-scene-head .colab-after,
+  .colab-scene-foot .colab-before,
+  .colab-scene-foot .colab-after {
+    animation-delay: 3.2s;
+  }
+
+  /* --- the milestone rail --- */
+
+  .colab-track {
+    position: relative;
+    height: 3.1rem;
+    margin-inline: 0.95rem;
+  }
+
+  .colab-track-line,
+  .colab-track-fill {
+    position: absolute;
+    left: 0;
+    top: 1.15rem;
+    height: 1px;
+  }
+
+  .colab-track-line {
+    right: 0;
+    background: var(--border);
+  }
+
+  /* Where the project has got to. The scene's one moving accent — the nodes
+     stay neutral so a rail of four brand marks does not read as decoration. */
+  .colab-track-fill {
+    width: 8%;
+    background: var(--brand);
+    box-shadow: 0 0 10px 1px color-mix(in srgb, var(--brand) 40%, transparent);
+    animation: colab-advance 12s ease-in-out infinite;
+  }
+
+  @keyframes colab-advance {
+    0%,
+    8% {
+      width: 8%;
+    }
+    40%,
+    90% {
+      width: 62%;
+    }
+    97%,
+    100% {
+      width: 8%;
+    }
+  }
+
+  /* Positioned from the data as a percentage, so a date can move without this
+     stylesheet knowing anything about it. Top is the line's 1.15rem less half
+     the node, which is what sits the node on the rail rather than beside it. */
+  .colab-milestone {
+    position: absolute;
+    top: 0.9rem;
+    left: var(--at);
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    color: var(--text-faint);
+  }
+
+  .colab-milestone-node {
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  /* --- the work --- */
+
+  .colab-rows {
+    padding-bottom: 0.35rem;
+  }
+
+  .colab-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.42rem 0.95rem;
+  }
+
+  .colab-box {
+    display: grid;
+    place-items: center;
+    width: 0.85rem;
+    height: 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.25rem;
+  }
+
+  .colab-check {
+    opacity: 0;
+    color: var(--brand-text);
+  }
+
+  .colab-row[data-done] .colab-check {
+    animation: colab-after 12s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.85s);
+  }
+
+  .colab-row[data-done] .colab-box {
+    animation: colab-box 12s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.85s);
+  }
+
+  @keyframes colab-box {
+    0%,
+    14% {
+      border-color: var(--border-strong);
+    }
+    20%,
+    90% {
+      border-color: var(--brand);
+    }
+    97%,
+    100% {
+      border-color: var(--border-strong);
+    }
+  }
+
+  /* The titles are the point of the list — they have to be able to shrink
+     without pushing the owner and the state off the card. */
+  .colab-row-title {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--text);
+  }
+
+  .colab-row-owner {
+    color: var(--text-faint);
+  }
+
+  .colab-row-state {
+    justify-items: end;
+  }
+
+  /* Three states, and only two of them are worth a colour: what is moving and
+     what is finished. "To do" is the unremarkable case and stays the plain
+     pill, which is what makes the other two worth noticing. */
+  .colab-state {
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* --brand-text on --brand-soft: the pair is defined against each other, so
+     the label clears 4.5:1 inside the chip in both themes. */
+  .colab-state[data-state="Doing"] {
+    border-color: transparent;
+    background: var(--brand-soft);
+    color: var(--brand-text);
+  }
+
+  .colab-state[data-state="Done"] {
+    border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
+    color: var(--brand-text);
+  }
+
+  .colab-before {
+    animation: colab-before 12s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.85s);
+  }
+
+  .colab-after {
+    animation: colab-after 12s linear infinite;
+    animation-delay: calc(var(--i, 0) * 0.85s);
+  }
+
+  @keyframes colab-before {
+    0%,
+    14% {
+      opacity: 1;
+    }
+    20%,
+    90% {
+      opacity: 0;
+    }
+    97%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes colab-after {
+    0%,
+    14% {
+      opacity: 0;
+    }
+    20%,
+    90% {
+      opacity: 1;
+    }
+    97%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* --- Step rail ----------------------------------------------------------- */
+
+  /* An ordered explainer set on a rail with a packet descending it — Vault's
+     three beats, coLab's three, and whatever comes next. Rendered by
+     <StepRail>. The rail is vertical at every breakpoint, so the beats stay
+     legible at any width, and it borrows the vertical language of the product
+     timeline on the home page so the two read as one family.
+
+     Named for what it is rather than for the page that needed it first: the
+     markup is identical between the two callers, and a second copy of these
+     rules under a colab- prefix would have been the same forty lines twice. */
+  .flow {
     position: relative;
     padding-left: 2rem;
   }
 
-  .vault-flow-rail {
+  .flow-rail {
     position: absolute;
     left: 0.5rem;
     top: 0.6rem;
@@ -1772,7 +2050,7 @@
   /* The travelling packet. `top` rather than a transform because the distance
      is the rail's height, which only the containing block knows — and it is
      one 8px dot, so the paint cost is nil. */
-  .vault-flow-pulse {
+  .flow-pulse {
     position: absolute;
     left: 0.5rem;
     width: 0.5rem;
@@ -1781,10 +2059,10 @@
     background: var(--brand);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
     transform: translateX(-50%);
-    animation: vault-descend 5.5s ease-in-out infinite;
+    animation: flow-descend 5.5s ease-in-out infinite;
   }
 
-  @keyframes vault-descend {
+  @keyframes flow-descend {
     0% {
       top: 0.6rem;
       opacity: 0;
@@ -1801,16 +2079,16 @@
     }
   }
 
-  .vault-flow-step {
+  .flow-step {
     position: relative;
     padding-block: 0.9rem;
   }
 
-  .vault-flow-step + .vault-flow-step {
+  .flow-step + .flow-step {
     border-top: 1px solid var(--border);
   }
 
-  .vault-flow-node {
+  .flow-node {
     position: absolute;
     left: calc(-2rem + 0.5rem);
     top: 1.55rem;
@@ -1824,7 +2102,7 @@
     transform: translate(-50%, -50%);
   }
 
-  .vault-flow-node::after {
+  .flow-node::after {
     content: "";
     width: 0.375rem;
     height: 0.375rem;
@@ -1832,19 +2110,22 @@
     background: var(--brand);
   }
 
-  /* --- Vault comparison ledger -------------------------------------------- */
+  /* --- Comparison ledger --------------------------------------------------- */
 
   /* Three columns on desktop — the question, the ordinary answer, ours — and
      stacked pairs on mobile, where three columns of prose would be unreadable.
      Set as ruled rows rather than cards: it is a register of answers, and the
-     visual echo of the /legal register is deliberate. */
-  .vault-ledger-row {
+     visual echo of the /legal register is deliberate.
+
+     Shared by /vault and /colab, which ask the reader the same kind of
+     question about two entirely different subjects. */
+  .ledger-row {
     display: grid;
     gap: 0.35rem 1.5rem;
     padding: 1rem 1.15rem;
   }
 
-  .vault-ledger-row + .vault-ledger-row {
+  .ledger-row + .ledger-row {
     border-top: 1px solid var(--border);
   }
 
@@ -1852,7 +2133,7 @@
      carries its own label instead, and the heading row is dropped. It stays in
      the DOM either way, so the rule below keeps the first data row from
      drawing a separator under a header nobody can see. */
-  .vault-ledger-head {
+  .ledger-head {
     display: none;
     /* The ledger cannot use overflow:hidden to clip this row's fill into the
        container's rounded corners — that would make the container a scroll
@@ -1863,11 +2144,11 @@
     border-start-end-radius: calc(var(--radius) - 1px);
   }
 
-  .vault-ledger-head + .vault-ledger-row {
+  .ledger-head + .ledger-row {
     border-top: 0;
   }
 
-  .vault-ledger-answer {
+  .ledger-answer {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
@@ -1875,7 +2156,7 @@
 
   /* The mobile-only label on each answer. Desktop gets a column header row
      instead, so this hides rather than repeating it on every line. */
-  .vault-ledger-label {
+  .ledger-label {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.65rem;
     letter-spacing: 0.12em;
@@ -1884,22 +2165,22 @@
   }
 
   @media (min-width: 768px) {
-    .vault-ledger-row {
+    .ledger-row {
       grid-template-columns: 1.1fr 1fr 1fr;
       align-items: start;
     }
 
-    .vault-ledger-head {
+    .ledger-head {
       display: grid;
       background: var(--bg-subtle);
       padding-block: 0.7rem;
     }
 
-    .vault-ledger-head + .vault-ledger-row {
+    .ledger-head + .ledger-row {
       border-top: 1px solid var(--border);
     }
 
-    .vault-ledger-label {
+    .ledger-label {
       display: none;
     }
   }
@@ -2358,20 +2639,37 @@
     transform: none;
   }
 
-  /* The Vault scenes are pinned rather than collapsed. Left to the rule above
+  /* The product scenes are pinned rather than collapsed. Left to the rule above
      they would land on whichever frame sits at 100% and, with the per-row
-     stagger, would flash through their opening state on the way there. Both
-     have a correct still — everything locked, the packet gone — so it is set
-     here outright. */
+     stagger, would flash through their opening state on the way there. Each
+     has a correct still — everything locked, the packet gone, the week over —
+     so it is set here outright. */
   .vault-plain,
   .vault-state-open,
   .vault-scan,
-  .vault-flow-pulse {
+  .flow-pulse {
     opacity: 0;
   }
 
   .vault-cipher,
   .vault-state-locked {
     opacity: 0.85;
+  }
+
+  .colab-before {
+    opacity: 0;
+  }
+
+  .colab-after,
+  .colab-row[data-done] .colab-check {
+    opacity: 1;
+  }
+
+  .colab-row[data-done] .colab-box {
+    border-color: var(--brand);
+  }
+
+  .colab-track-fill {
+    width: 62%;
   }
 }

@@ -8,7 +8,7 @@ import { principles, products } from "../data/site";
 export const metadata = {
   title: "Products",
   description:
-    "Vault, NSQR, Presence, Lipd Hub and AES — a focused product line for secure, modern intelligence.",
+    "NSQR, Vault, coLab, Presence, Lipd Hub and AES — a focused product line for secure, modern intelligence.",
   alternates: { canonical: "/products" },
 };
 

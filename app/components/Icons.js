@@ -294,6 +294,54 @@ export const contentIconMap = {
   pin: PinIcon,
 };
 
+/* --- coLab glyphs --------------------------------------------------------- */
+
+/**
+ * The three the coLab page needs that no other page did. Everything else it
+ * labels — threads, decisions, workloads, sharing — already had a glyph in one
+ * of the sets above, and reusing those is what keeps the icon language on this
+ * site one language rather than one per page.
+ */
+
+export function CalendarIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+      <circle cx="9" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </svg>
+  );
+}
+
+export function UsersIcon({ className = "h-5 w-5" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
+      <circle cx="9.5" cy="8.5" r="3.5" />
+      <path d="M3.5 19c.8-3.2 3.1-4.8 6-4.8s5.2 1.6 6 4.8" />
+      <path d="M16.5 5.6a3.5 3.5 0 0 1 0 5.8M18 14.6c1.6.7 2.7 2.2 3.2 4.4" />
+    </svg>
+  );
+}
+
+export const colabIconMap = {
+  calendar: CalendarIcon,
+  check: CheckIcon,
+  chat: ChatIcon,
+  doc: DocIcon,
+  chart: ChartIcon,
+  search: SearchIcon,
+};
+
 /* --- Product motifs ------------------------------------------------------- */
 
 /**
@@ -302,7 +350,7 @@ export const contentIconMap = {
  * than depict it. The QR motif in particular is deliberately not a real
  * encoded code: a scannable-looking mark that resolves to nothing is a trap.
  *
- * All five share a 120-unit box and the same stroke weight so they read as one
+ * All six share a 120-unit box and the same stroke weight so they read as one
  * set at a glance.
  */
 const motifStroke = {
@@ -410,9 +458,31 @@ export function ScoreMotif({ className }) {
   );
 }
 
+// A dated rail with work hanging off it — the shape of a project plan rather
+// than of a board. Deliberately not columns of cards: coLab's argument is that
+// the work is planned against dates, and a kanban glyph would say the opposite.
+export function PlanMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <path d="M14 92h92" />
+      {[[14, 40], [56, 24], [92, 56]].map(([x, top]) => (
+        <g key={x}>
+          <path d={`M${x} 92V${top}`} />
+          <rect x={x - 4} y={top - 8} width="8" height="8" rx="2" {...solid} />
+        </g>
+      ))}
+      <path d="M22 56h26M22 70h18M64 40h30M64 54h20M100 72h6" />
+      <circle cx="14" cy="92" r="4" {...solid} />
+      <circle cx="56" cy="92" r="4" {...solid} />
+      <circle cx="92" cy="92" r="4" {...solid} />
+    </Motif>
+  );
+}
+
 export const motifMap = {
   qr: QrMotif,
   vault: VaultMotif,
+  plan: PlanMotif,
   checkin: CheckInMotif,
   lipid: LipidMotif,
   score: ScoreMotif,

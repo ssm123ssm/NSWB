@@ -159,7 +159,7 @@ function TimelineRow({ product, side, index }) {
           </span>
         </div>
 
-        <p className="mt-3 text-[0.95rem] font-medium">{product.tagline}</p>
+        <p className="mt-3 text-[0.95rem]">{product.tagline}</p>
         <p className="mt-1 text-sm text-faint">{product.discipline}</p>
         <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">
           {product.description}

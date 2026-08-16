@@ -37,11 +37,26 @@ from `localStorage` (`ns-theme`), falling back to the OS setting, and applied
 before first paint by an inline script in `app/layout.js`.
 
 All colours resolve to CSS variables — see `app/globals.css`. Per-product
-accents are applied with `data-brand="cyan | violet | emerald | amber | blue"`
-on any wrapper element.
+accents are applied with
+`data-brand="violet | blue | cyan | emerald | amber | clay"` on any wrapper
+element, giving `--brand` (a fill) and `--brand-text` (its text-safe
+companion).
+
+The palette, type and layout follow the neurasense brand handoff — the four
+rules are summarised in `AGENTS.md`. Every text pair is checked at 4.5:1 by
+`python3 scripts/contrast.py`; run it after changing any colour.
 
 ## Environment
 
+Copy `.env.example` to `.env.local` and fill in.
+
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `CONTACT_WEBHOOK_URL` | Recommended | Slack/Teams incoming webhook that receives contact + access-request submissions. **Without it, submissions are only written to the server log.** |
+| `RESEND_API_KEY` | For email | Resend API key. Enables email delivery of contact + access-request submissions. |
+| `CONTACT_FROM_EMAIL` | With the above | Sender address, on a domain verified with Resend. Email delivery fails without it. |
+| `CONTACT_TO_EMAIL` | No | Where enquiries land. Defaults to `hello@neurasense.io`. |
+| `CONTACT_WEBHOOK_URL` | No | Slack/Teams incoming webhook. Independent of email. |
+
+A submission is sent to every channel configured and succeeds if any one of
+them accepts it, so email and the webhook can run together or on their own.
+**With neither configured, submissions are only written to the server log.**

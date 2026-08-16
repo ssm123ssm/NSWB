@@ -12,7 +12,11 @@ export function generateMetadata({ params }) {
   const doc = nsqrLegalDocs.find((item) => item.slug === params.slug);
   if (!doc) return {};
 
-  return { title: doc.title, description: doc.summary };
+  return {
+    title: doc.title,
+    description: doc.summary,
+    alternates: { canonical: doc.href },
+  };
 }
 
 export default function NsqrLegalPage({ params }) {

@@ -33,6 +33,7 @@ export const metadata = {
       "One printed code, re-pointed as often as you like. Watch the whole thing happen in thirteen seconds.",
     type: "website",
   },
+  alternates: { canonical: "/nsqr" },
 };
 
 /**

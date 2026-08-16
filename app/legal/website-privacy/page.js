@@ -6,6 +6,7 @@ const doc = legalDocs.find((item) => item.slug === "website-privacy");
 export const metadata = {
   title: doc.title,
   description: doc.summary,
+  alternates: { canonical: doc.href },
 };
 
 export default function WebsitePrivacyPage() {

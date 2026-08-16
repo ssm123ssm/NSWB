@@ -13,10 +13,11 @@ export const site = {
   github: "https://github.com/neurasense",
 };
 
+/* Two items, not three: the Approach section was folded into Capabilities, so
+   the link that pointed at #approach had nothing left to scroll to. */
 export const navLinks = [
   { label: "Capabilities", href: "/#capabilities" },
   { label: "Products", href: "/#products" },
-  { label: "Approach", href: "/#approach" },
 ];
 
 /**
@@ -116,37 +117,10 @@ export const overview = {
   },
 };
 
-/**
- * accent: the palette entry the card wears — icon tile, hairline, hover glow.
- * Chosen so the three read as one set rather than three unrelated colours, and
- * kept off the timeline's own hues where a discipline maps to a product.
- */
-export const capabilities = [
-  {
-    id: "neural",
-    title: "Neural Systems",
-    description:
-      "Applied AI and retrieval pipelines engineered for reliability, speed, and clarity under real-world constraints.",
-    icon: "neural",
-    accent: "violet",
-  },
-  {
-    id: "crypto",
-    title: "Cryptographic R&D",
-    description:
-      "Privacy-preserving computation, verifiable storage, and data sovereignty built into every architecture.",
-    icon: "lock",
-    accent: "cyan",
-  },
-  {
-    id: "platforms",
-    title: "Software Platforms",
-    description:
-      "Resilient, production-ready systems with observability, automation, and rigorous security posture.",
-    icon: "layers",
-    accent: "emerald",
-  },
-];
+/* The three capability cards (Neural Systems, Cryptographic R&D, Software
+   Platforms) used to live here. The home section that rendered them now carries
+   the principles row instead, so the data has no reader — removed rather than
+   left as an export nothing imports. In git if it is wanted back. */
 
 /**
  * The one place product facts live. Home, /products and the Vault page all
@@ -160,8 +134,19 @@ export const capabilities = [
  *                     access, so it leads with Request access and carries no
  *                     public link.
  *
- * featured: the single product we lead with. Drives the emphasis in the hero
- * strip, so keep it on exactly one entry.
+ * featured: the single product we lead with. Drives the accent the hero and the
+ * closing banner borrow, so keep it on exactly one entry.
+ *
+ * lead: the products the front page argues for, as opposed to the ones it
+ * offers as evidence of range. Five products named at equal weight reads as
+ * unfocused from outside — a visitor cannot tell which one we would like them
+ * to look at, and two of the five have no public page to look at anyway. These
+ * are the two that do: the cheap self-serve one and the considered one, which
+ * between them also happen to show both halves of what the studio does.
+ *
+ * The rest are not hidden or diminished in what they claim. They sit at lower
+ * emphasis in the hero strip, which is the difference between a line-up and an
+ * argument.
  *
  * wordmark: [head, tail] — the name set as a lockup instead of plain text, with
  * the tail in the product accent. Rendered by <ProductName> wherever a product
@@ -180,6 +165,7 @@ export const products = [
     discipline: "Software Platforms",
     status: "live",
     featured: true,
+    lead: true,
     accent: "violet",
     detail: "/nsqr",
     app: "https://nsqr.neurasense.io/",
@@ -199,6 +185,7 @@ export const products = [
       "End-to-end encrypted file storage where plaintext never touches the server. Encrypted manifests and policy-based access by design.",
     discipline: "Cryptographic R&D",
     status: "live",
+    lead: true,
     accent: "cyan",
     detail: "/vault",
     // The app's sign-in, told where to land once it knows who you are. Access
@@ -271,8 +258,9 @@ export function getProductByName(name) {
   return products.find((p) => p.name === name);
 }
 
-/* accent: as on capabilities — the home page tints each principle with it. The
-   products page lists the same three as plain rows and ignores it. */
+/* accent: the palette entry each cell wears — the home page tints the numeral
+   and the bar along the cell's leading edge with it. The products page lists
+   the same three as plain rows and ignores it. */
 export const principles = [
   {
     label: "01",

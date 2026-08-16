@@ -7,6 +7,7 @@ export const metadata = {
   title: "Legal",
   description:
     "Privacy, terms and refund policies for Neurasense and its products.",
+  alternates: { canonical: "/legal" },
 };
 
 export default function LegalIndexPage() {

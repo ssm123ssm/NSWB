@@ -17,9 +17,9 @@
   --p-dim: var(--text-faint);
   --p-body: var(--text-muted);
   --p-accent: var(--brand);
-  --p-display: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --p-display: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
   --p-mono: var(--font-mono), ui-monospace, Menlo, monospace;
-  --p-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --p-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
 
   position: relative;
   width: 100%;
@@ -116,7 +116,7 @@
 
 .plate h2 {
   font-family: var(--p-display);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(26px, 3.4vw, 40px);
   line-height: 1.02;
   letter-spacing: -0.032em;
@@ -449,7 +449,7 @@
   text-decoration: none;
   white-space: nowrap;
   font-family: var(--p-display);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 16px;
   letter-spacing: -0.01em;
   color: var(--p-paper);

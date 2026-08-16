@@ -27,6 +27,7 @@ export const metadata = {
       "Encrypted file sharing, private research snapshots, protected repositories, synced folders and policy-based app access — on one protection model where plaintext never leaves your device.",
     type: "website",
   },
+  alternates: { canonical: "/vault" },
 };
 
 export default function VaultPage() {
@@ -149,7 +150,7 @@ export default function VaultPage() {
 
             {vaultComparison.map((row) => (
               <div className="reveal vault-ledger-row" key={row.question}>
-                <p className="text-[0.95rem] font-medium">{row.question}</p>
+                <p className="text-[0.95rem]">{row.question}</p>
                 <p className="vault-ledger-answer text-[0.9rem] leading-relaxed text-muted">
                   <span className="vault-ledger-label">Usually</span>
                   <span>{row.ordinary}</span>

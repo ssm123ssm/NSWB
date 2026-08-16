@@ -70,6 +70,9 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
       phone: String(formData.get("phone") ?? "").trim(),
       message: String(formData.get("message") ?? "").trim(),
       subject: subject ?? "General enquiry",
+      // The honeypot below. Sent whatever it holds — the server decides what a
+      // filled one means, and the form stays ignorant of the trick.
+      company: String(formData.get("company") ?? ""),
     };
 
     if (!payload.email && !payload.phone) {
@@ -160,6 +163,22 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
           </div>
         ) : (
           <form className="grid gap-4" onSubmit={handleSubmit}>
+            {/* Not a field. It is taken out of the layout, out of the tab
+                order and out of the accessibility tree, and the browser is
+                told not to fill it — so nothing a person does can put a value
+                in it, and a value in it is a bot. The label is plausible on
+                purpose: "company" is what a scraper expects to find and fill.
+                Left outside the grid gap flow by .honeypot's absolute
+                positioning, so it cannot open a gap in the form either. */}
+            <input
+              className="honeypot"
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+            />
+
             <p className="text-[0.925rem] leading-relaxed text-muted">
               {isAccessRequest
                 ? `Tell us a little about your team and we'll send ${productName} documentation, onboarding steps, and timelines.`

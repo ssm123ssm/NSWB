@@ -9,6 +9,7 @@ export const metadata = {
   title: "Products",
   description:
     "Vault, NSQR, Presence, Lipd Hub and AES — a focused product line for secure, modern intelligence.",
+  alternates: { canonical: "/products" },
 };
 
 export default function ProductsPage() {
@@ -126,7 +127,7 @@ function ProductRow({ product }) {
             )}
           </span>
         </div>
-        <p className="mt-3 text-[0.95rem] font-medium">{product.tagline}</p>
+        <p className="mt-3 text-[0.95rem]">{product.tagline}</p>
         <p className="mt-2 text-sm text-faint">{product.discipline}</p>
       </div>
 

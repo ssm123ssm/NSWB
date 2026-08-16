@@ -1,14 +1,17 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Analytics from "./Analytics";
 import { ConsentProvider } from "./Consent";
+import { ContactContext } from "./ContactContext";
 import ContactDialog from "./ContactDialog";
 import CookieBanner from "./CookieBanner";
 import SiteFooter from "./SiteFooter";
 import SiteHeader from "./SiteHeader";
 
-const ContactContext = createContext(null);
+// Re-exported so the existing `from "./SiteChrome"` imports keep working; both
+// live in ContactContext now. See that file for why.
+export { ContactButton, useContact } from "./ContactContext";
 
 /**
  * Wraps every page so the header, footer, contact dialog and consent banner
@@ -46,32 +49,5 @@ export default function SiteChrome({ children }) {
         <Analytics />
       </ContactContext.Provider>
     </ConsentProvider>
-  );
-}
-
-export function useContact() {
-  const ctx = useContext(ContactContext);
-  if (!ctx) {
-    throw new Error("useContact must be used inside SiteChrome");
-  }
-  return ctx;
-}
-
-/** Convenience trigger so server components can still open the dialog. */
-export function ContactButton({
-  subject = null,
-  intent = null,
-  className = "btn btn-primary",
-  children,
-}) {
-  const { open } = useContact();
-  return (
-    <button
-      className={className}
-      type="button"
-      onClick={() => open(subject, { intent })}
-    >
-      {children}
-    </button>
   );
 }

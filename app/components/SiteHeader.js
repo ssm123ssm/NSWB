@@ -1,14 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { navLinks, pageHeaders, site } from "../data/site";
 import { CloseIcon, MenuIcon } from "./Icons";
+import { useContact } from "./ContactContext";
 import ThemeToggle from "./ThemeToggle";
+import Wordmark from "./Wordmark";
 
 export default function SiteHeader() {
+  const { open: openContact } = useContact();
   const [stuck, setStuck] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -40,11 +42,8 @@ export default function SiteHeader() {
   return (
     <header className="site-header" data-stuck={stuck || menuOpen}>
       <div className="shell flex h-16 items-center justify-between gap-6">
-        <Link className="flex items-center gap-2.5" href="/" aria-label={`${site.name} home`}>
-          <Image src="/logo.svg" alt="" width={26} height={26} priority />
-          <span className="text-[0.95rem] font-semibold tracking-tight">
-            {site.name}
-          </span>
+        <Link className="flex items-center" href="/" aria-label={`${site.name} home`}>
+          <Wordmark />
         </Link>
 
         {!bare && (
@@ -54,6 +53,13 @@ export default function SiteHeader() {
                 {link.label}
               </Link>
             ))}
+            {/* Contact sits with the nav rather than beside the theme toggle:
+                it is a third destination, and a filled button here would be a
+                second accent competing with the hero. It opens the dialog
+                instead of navigating, so it is a button wearing .nav-link. */}
+            <button className="nav-link" type="button" onClick={() => openContact()}>
+              Contact
+            </button>
           </nav>
         )}
 
@@ -102,6 +108,16 @@ export default function SiteHeader() {
                 {link.label}
               </Link>
             ))}
+            <button
+              className="border-b border-[color:var(--border)] py-3.5 text-left text-[0.95rem] last:border-0"
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                openContact();
+              }}
+            >
+              Contact
+            </button>
           </nav>
         </div>
       )}

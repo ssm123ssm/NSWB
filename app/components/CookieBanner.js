@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { useConsent } from "./Consent";
 
 /**
@@ -11,11 +12,52 @@ import { useConsent } from "./Consent";
  */
 export default function CookieBanner() {
   const { consent, decide, visible } = useConsent();
+  const bannerRef = useRef(null);
+
+  /* The banner floats over the page, and on a phone it floats over the bottom
+     of the hero — where the product marks sit. Nothing is unreachable, but the
+     first screen someone sees is the one with a panel across the end of it.
+
+     So it publishes its own height, and the hero subtracts it (see
+     --consent-height in globals.css). Measured rather than assumed: the card's
+     height moves with the text, the font and the "Currently accepted" line that
+     only appears on a reopen, and every guessed constant here would be wrong
+     for one of those. Observed rather than read once, because the card reflows
+     when the viewport is rotated or resized.
+
+     Cleared on unmount, which is what returns the hero to full height the
+     moment the question is answered. */
+  useEffect(() => {
+    const el = bannerRef.current;
+    const root = document.documentElement;
+    if (!visible || !el) {
+      root.style.removeProperty("--consent-height");
+      return;
+    }
+
+    const publish = () => {
+      // The 1rem the banner is inset from the bottom edge is part of what it
+      // occupies, so it is part of what the hero has to clear.
+      root.style.setProperty(
+        "--consent-height",
+        `${Math.ceil(el.getBoundingClientRect().height) + 16}px`
+      );
+    };
+
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--consent-height");
+    };
+  }, [visible, consent]);
 
   if (!visible) return null;
 
   return (
     <div
+      ref={bannerRef}
       className="consent-banner"
       role="region"
       aria-labelledby="consent-banner-title"

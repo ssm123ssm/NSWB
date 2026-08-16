@@ -25,9 +25,9 @@
   --r-line: var(--border);
   --r-accent: var(--brand);
   --r-signal: #b45309;
-  --r-display: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --r-display: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
   --r-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --r-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --r-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
 
   position: relative;
   /* Capped at the width of the principles block above it rather than the full
@@ -113,7 +113,7 @@
 
 .byName {
   color: var(--r-ink);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* ---- middle: panel + narration ---- */
@@ -335,7 +335,7 @@
   align-items: center;
   gap: 7px;
   color: var(--r-signal);
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   font-size: 0.625rem;
@@ -402,7 +402,7 @@
 
 .reel h2 {
   font-family: var(--r-display);
-  font-weight: 800;
+  font-weight: 400;
   font-size: clamp(1.5rem, 3.4vw, 2.35rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
@@ -502,7 +502,7 @@
 }
 .urlBrand {
   color: var(--r-accent);
-  font-weight: 500;
+  font-weight: 400;
 }
 .tag {
   font-family: var(--r-mono);
@@ -514,7 +514,7 @@
 
 .cta {
   font-family: var(--r-display);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 0.9375rem;
   letter-spacing: -0.01em;
   border: 1px solid var(--r-ink);

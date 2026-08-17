@@ -20,6 +20,7 @@ import {
   nsqrLinks,
   nsqrPlans,
 } from "../data/site";
+import { BreakNote } from "../components/BreakNote";
 
 const nsqr = getProduct("nsqr");
 
@@ -52,7 +53,7 @@ export const metadata = {
  */
 export default function NsqrPage() {
   return (
-    <main id="main" data-brand={nsqr.accent}>
+    <main id="main" data-brand={nsqr.accent} data-temper="open">
       {/* Read position. Inside main so it picks up the product accent, and
           invisible until a browser that supports scroll timelines scales it. */}
       <div className="scroll-progress" aria-hidden="true" />
@@ -260,6 +261,9 @@ export default function NsqrPage() {
       </section>
 
       {/* --------------------------------------------------------- Closing */}
+      {/* ------------------------------------------ What would break */}
+      <BreakNote slug="nsqr" />
+
       <section className="section-tight">
         <div className="shell">
           <div className="reveal card flex flex-col items-start gap-6 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-9">

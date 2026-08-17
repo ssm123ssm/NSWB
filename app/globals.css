@@ -20,7 +20,7 @@
     /* Paper is the ground and white is the raised surface, so a card lifts off
        the page by being lighter than it rather than by carrying a shadow. */
     --bg: #f9fafd;
-    --bg-subtle: #f1f3f8;
+    --bg-subtle: #e8ecf5;
     --surface: #ffffff;
     --surface-raised: #ffffff;
 
@@ -36,7 +36,7 @@
        darker of the two grounds it actually meets. */
     --text: #1c2231;
     --text-muted: #4c5360;
-    --text-faint: #686e7b;
+    --text-faint: #636976;
 
     /* The house colour is violet — neurasense's own, and the only hue the
        chrome wears. Rule 2 keeps it to roughly one element per screen, so this
@@ -62,6 +62,22 @@
     --shadow-md: 0 12px 32px -20px rgba(12, 14, 20, 0.28);
     --shadow-lg: 0 28px 70px -32px rgba(12, 14, 20, 0.36);
 
+    /* Semantic colour, kept deliberately separate from --accent and --brand.
+       A green tick must read the same on all six products; if it borrowed the
+       product hue it would turn violet on NSQR and cyan on Vault, and stop
+       being a signal at all.
+
+       No new hues are introduced: these are the emerald, amber and clay text
+       companions the palette already derives, reused for meaning instead of
+       identity. That keeps the site at six hues and keeps every value one the
+       contrast script has already cleared. */
+    --ok: #0a7e53;
+    --ok-soft: #d9fae3;
+    --warn: #816c05;
+    --warn-soft: #ffeed2;
+    --fail: #b7492d;
+    --fail-soft: #feebe9;
+
     --radius: 0.875rem;
     --radius-lg: 1.375rem;
 
@@ -82,8 +98,8 @@
      line is a light-theme rule, and neutral 500 only reaches 4.16:1 on the
      raised surface, so both muted steps move up a rung to 300/400. */
   :root[data-theme="dark"] {
-    --bg: #0d1421;
-    --bg-subtle: #121a29;
+    --bg: #080d19;
+    --bg-subtle: #0e1524;
     --surface: #161f2f;
     --surface-raised: #1c2637;
 
@@ -100,8 +116,16 @@
     --accent: #9a73ff;
     --accent-hover: #c0b0fe;
     --accent-soft: #211a3a;
-    --accent-on: #0d1421;
+    --accent-on: #080d19;
     --accent-text: #9a73ff;
+
+    /* The dark halves of the same three, taken from the same companions. */
+    --ok: #0ca16b;
+    --ok-soft: #0c2419;
+    --warn: #a58a06;
+    --warn-soft: #241e0c;
+    --fail: #d56f55;
+    --fail-soft: #2b1a15;
 
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
     --shadow-md: 0 16px 40px -24px rgba(0, 0, 0, 0.8);
@@ -328,6 +352,28 @@
     }
   }
 
+  /* Below 768px the screen sequence stops paying for itself. Snap is gated at
+     768px in the block above, and ScreenPager — the firmer version of the same
+     idea — was desktop-only too, so a full-viewport section on a phone buys
+     none of the composition the class exists for. What is left is the cost:
+     the statement screen measured 844px tall around four lines of type, 46% of
+     a viewport empty above them and 37% below. At that size the space stops
+     reading as composure and starts reading as content that failed to load.
+
+     The hero is the exception and keeps its height. It is the fold, its bottom
+     edge is what the strip of product marks is parked against, and a first
+     screen that fills the display is the point rather than the cost. Every
+     screen after it falls back to ordinary .section rhythm.
+
+     Relaxing min-height rather than dropping the class: .screen also sets the
+     flex column, and the centring stays harmlessly in place for any later
+     screen whose content does outgrow the box. */
+  @media (max-width: 767px) {
+    .screen:not(.hero-screen) {
+      min-height: 0;
+    }
+  }
+
   /* The fade, as pure decoration over the snap above. Driven by scroll
      position rather than a timer, so it tracks the reader's own movement in
      both directions and cannot fall out of sync with the page.
@@ -373,9 +419,7 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Hierarchy comes from size, space and one accent — never from weight. The
-     two display sizes take 300 because light type needs the room to look
-     deliberate; the smaller two hold 400, where 300 would start to break up. */
+  /* Hierarchy comes from size, space and one accent — never from weight. */
   h1,
   h2,
   h3,
@@ -384,11 +428,29 @@
     text-wrap: balance;
   }
 
+  /* The display face is the mono.
+
+     This is a deliberate departure from the handoff, which set h1/h2 in the
+     sans at 300. The argument for it: a studio whose products deal in
+     ciphertext, signed logs, hashes and scan records has a house face that
+     already says all of that, and was spending it on eyebrows. Setting the
+     headlines in it makes the page look like the things the company builds
+     rather than like every other SaaS geometric sans.
+
+     Two consequences to keep in mind. Weight moves to 400 because Plex Mono
+     ships one weight here — that still honours the no-bold rule, it just means
+     the "300 for display" line no longer applies; never add a heavier mono to
+     get emphasis back. And mono sets much wider than the sans at the same
+     size, so both display steps below are ~30% smaller than their sans
+     equivalents to hold the same measure. Tracking eases from -0.04em to
+     -0.03em for the same reason: monospaced letterforms have their sidebearings
+     built in and over-tightening closes them up. */
   h1,
   h2 {
-    font-weight: 300;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.06;
   }
 
   h3,
@@ -456,15 +518,15 @@
      the strip of product marks has moved to the foot of the page, so it is
      sized to fill that room — light type wants scale, not weight. */
   .display {
-    font-size: clamp(2.75rem, 7.6vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.042em;
+    font-size: clamp(1.95rem, 5.1vw, 3.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
   }
 
   .section-title {
-    font-size: clamp(1.6rem, 3.4vw, 2.35rem);
-    line-height: 1.15;
-    letter-spacing: -0.03em;
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+    line-height: 1.18;
+    letter-spacing: -0.028em;
   }
 
   .lead {
@@ -473,18 +535,20 @@
     line-height: 1.65;
   }
 
-  /* The hero strapline, set in the mono face. Worth knowing that this bends
-     rule 4 — mono is meant to mark machine output, and this is a sentence a
-     person wrote. It earns the exception by sitting under the display line as
-     a strapline rather than a paragraph, where the mono reads as a system
-     label. It is sized well above the 11px the small mono tags use, because a
-     hero subhead still has to be read. */
+  /* The hero strapline. It used to be set in the mono, on the argument that a
+     strapline under a sans display line reads as a system label rather than a
+     paragraph. That argument died when the display line itself became mono:
+     two monospaced blocks stacked have no hierarchy between them, and the
+     exception to rule 4 stopped buying anything.
+
+     So the strapline takes the sans back, and the contrast now runs the other
+     way — machine face above, human face below, which is also the right way
+     round for a sentence a person wrote. */
   .lead-mono {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: clamp(0.8125rem, 1.05vw, 0.9375rem);
+    font-size: clamp(0.9375rem, 1.25vw, 1.0625rem);
     font-weight: 400;
-    letter-spacing: 0.04em;
-    line-height: 1.75;
+    letter-spacing: 0;
+    line-height: 1.7;
     color: var(--text-muted);
     text-wrap: balance;
   }
@@ -1335,6 +1399,35 @@
   /* Rewards attention without shouting; rides the same hover as the card. */
   .timeline-card:hover .timeline-motif {
     opacity: calc(var(--motif-alpha) * 2);
+  }
+
+  /* INTERIM. The 6.25rem above was chosen to clear links that "stack
+     two-deep", and it does not: at 390px the mark renders 94px square and the
+     action row wraps into it, putting 39% of `Open nsqr` on nsqr, 42% on vault
+     and 52% on coLab over the glyph. The mask cannot save it — the opaque end
+     of that gradient is the bottom-right 42%, and the links are in that corner.
+     The mark and the actions are competing for one corner.
+
+     41px clears every card at 390px, and the overlap resolves on its own by
+     560px once the actions fit on one line, which is what this query buys.
+     639px because the constraint is the wrap and the card's padding already
+     steps at Tailwind's sm, so this rides a boundary the component observes.
+
+     What it does NOT fix, both measured:
+       - 430px still collides on two cards (~7% at the worst) because the wrap
+         lands differently there. Shrinking cannot close it; even 26px leaves
+         overlap, since the links reach the corner regardless of mark size.
+       - >=1024px is worse than any phone. The two-side rail halves the card
+         width while --motif-size grows to 9.5rem, so a 143px mark meets a
+         wrapped action row and covers one link outright.
+
+     The real fix is structural: anchor the mark to the card's copy block rather
+     than to the row, so the action band is out of its reach at every width and
+     no breakpoint is needed. Do that and this whole query goes away. */
+  @media (max-width: 639px) {
+    .timeline-motif {
+      --motif-size: 2.75rem;
+    }
   }
 
   .timeline-index {
@@ -2672,4 +2765,441 @@
   .colab-track-fill {
     width: 62%;
   }
+}
+
+/* ==========================================================================
+   Interactive hero scenes
+
+   Both product scenes started as timed loops the reader watched. They are now
+   small client islands the reader drives — a file name that is theirs to type,
+   a lock that is theirs to throw, a milestone that is theirs to open — because
+   the claim each page makes is abstract until someone does it once themselves.
+
+   This block sits outside @layer components on purpose, and it is the one
+   place in this file that does. The reduced-motion rules above are unlayered,
+   so anything layered loses to them by cascade layer regardless of
+   specificity; the interactive states have to beat those rules to stay
+   operable for a reader who asked for less motion. Less motion should cost
+   them the animation, never the control.
+   ========================================================================== */
+
+/* ==========================================================================
+   Temperaments
+
+   Six products, one shell. A colour swap alone is not differentiation — it is
+   a hue, and it left every page reading as the same page with the nouns
+   changed. What actually separates a $2.99 impulse buy from a purchase that
+   goes through a security review is shape: how round the corners are, how
+   tight the boxes sit, how much of the interface is set in the mono.
+
+   So `data-temper` sits on <main> beside `data-brand` and retunes the two
+   radius tokens plus the button shape. Everything else in this stylesheet
+   already resolves through those, so three declarations move the whole page.
+
+     open        NSQR, Presence   — self-serve, decided in under a minute
+     structured  coLab, AES       — a team tool, compared against an incumbent
+     dense       Vault, Lipd Hub  — forwarded to somebody's security team
+
+   Deliberately only three levers. Padding is set per-instance in the JSX and
+   is not worth centralising for this; if a fourth lever is ever added, make it
+   one that every component already reads.
+   ========================================================================== */
+
+[data-temper="open"] {
+  --radius: 1.125rem;
+  --radius-lg: 1.75rem;
+}
+
+[data-temper="structured"] {
+  --radius: 0.625rem;
+  --radius-lg: 1rem;
+}
+
+[data-temper="dense"] {
+  --radius: 0.3125rem;
+  --radius-lg: 0.5rem;
+}
+
+/* The button is the one component with its own hard-coded radius, so it needs
+   telling separately. Open goes fully pill — the shape of a thing you press
+   without reading it twice. Dense goes nearly square, which is what makes the
+   same button read as an instrument rather than an invitation. */
+[data-temper="open"] .btn {
+  border-radius: 999px;
+}
+
+[data-temper="dense"] .btn {
+  border-radius: 0.3125rem;
+}
+
+/* --- "What we thought would break" ----------------------------------------
+
+   Three parts, and the hierarchy runs failure → answer → price. The failure
+   line takes display treatment because it is the sentence a reader recognises
+   themselves in; the answer is ordinary lead prose; the price is set apart in
+   --warn, which is the only place on a product page that colour is used to
+   mean "read this twice".
+
+   The rule down the left is --brand, so the section takes the product's hue
+   without spending the accent on anything louder. */
+
+.break-note {
+  max-width: 46rem;
+  padding-left: clamp(1rem, 3vw, 2rem);
+  border-left: 2px solid var(--brand);
+}
+
+.break-note-failure {
+  margin-top: 0.9rem;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  line-height: 1.15;
+}
+
+.break-note-answer {
+  margin-top: 1.1rem;
+}
+
+.break-note-tradeoff {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 1.6rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  background: var(--warn-soft);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.break-note-tradeoff-label {
+  color: var(--warn);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* --- Vault: the file name is the reader's ---------------------------------
+
+   The field sits in the scene header rather than in row one, because the row
+   layers cross-fade and the reduced-motion still pins them to the locked
+   state. A control inside that stack would be invisible and unreachable for
+   exactly the readers least able to work around it. */
+
+.vault-field-label {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.vault-field {
+  width: 100%;
+  min-width: 0;
+  padding: 0 0 1px;
+  border: 0;
+  border-bottom: 1px dashed var(--border-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  transition: border-color 160ms ease;
+}
+
+.vault-field:hover {
+  border-bottom-color: var(--brand);
+}
+
+.vault-field:focus {
+  border-bottom-style: solid;
+  border-bottom-color: var(--brand);
+  outline: none;
+}
+
+.vault-field:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* State is a fact about the scene now, not a position in a loop. */
+.vault-scene[data-interactive] .vault-scan,
+.vault-scene[data-interactive] .vault-plain,
+.vault-scene[data-interactive] .vault-cipher,
+.vault-scene[data-interactive] .vault-state-open,
+.vault-scene[data-interactive] .vault-state-locked {
+  animation: none;
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
+}
+
+.vault-scene[data-interactive] .vault-plain,
+.vault-scene[data-interactive] .vault-state-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.vault-scene[data-interactive] .vault-cipher,
+.vault-scene[data-interactive] .vault-state-locked {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.vault-scene[data-interactive][data-locked] .vault-plain,
+.vault-scene[data-interactive][data-locked] .vault-state-open {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.vault-scene[data-interactive][data-locked] .vault-cipher {
+  opacity: 0.85;
+  visibility: visible;
+}
+
+.vault-scene[data-interactive][data-locked] .vault-state-locked {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* One sweep per lock. React remounts the element to restart it, so this runs
+   on mount and never repeats — no infinite clock left running behind the
+   copy. */
+.vault-scene[data-interactive][data-locked] .vault-scan {
+  animation: vault-scan-once 760ms ease-in-out 1;
+}
+
+@keyframes vault-scan-once {
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  to {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vault-scene[data-interactive][data-locked] .vault-scan {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.vault-toggle {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  white-space: nowrap;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.vault-toggle:hover {
+  border-color: var(--brand);
+  color: var(--brand-text);
+}
+
+.vault-toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* --- coLab: the milestones are the reader's ------------------------------- */
+
+.colab-milestone {
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.colab-milestone:hover {
+  color: var(--text-muted);
+}
+
+.colab-milestone[aria-pressed="true"] {
+  color: var(--brand-text);
+}
+
+.colab-milestone:hover .colab-milestone-node {
+  border-color: var(--brand);
+}
+
+.colab-milestone[aria-pressed="true"] .colab-milestone-node {
+  border-color: var(--brand);
+  background: var(--brand);
+}
+
+.colab-milestone:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+
+/* The fill stops where the reader is, so its width comes from the markup. */
+.colab-scene .colab-track-fill {
+  animation: none;
+  transition: width 320ms ease;
+}
+
+/* The work below the rail is scenery now — it should be settled, not mid-loop,
+   while attention is on the log. */
+.colab-scene .colab-row[data-done] .colab-check {
+  animation: none;
+  opacity: 1;
+}
+
+.colab-scene .colab-row[data-done] .colab-box {
+  animation: none;
+  border-color: var(--brand);
+}
+
+/* --- coLab: the decision log --------------------------------------------- */
+
+.colab-decision {
+  border-top: 1px solid var(--border);
+}
+
+.colab-decision-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0.95rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+}
+
+.colab-decision-lock {
+  padding: 0.05rem 0.45rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.colab-decision-lock[data-state="locked"] {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+
+/* A refusal is a state, not an error, so it takes --warn rather than --fail:
+   nothing has gone wrong, the product is declining on purpose. The chip alone
+   carries the colour and the explanation below stays neutral — colouring both
+   would read as an alarm, which is the wrong note for a deliberate constraint. */
+.colab-decision-lock[data-state="refused"] {
+  border-color: transparent;
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.colab-decision-body {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem 0.95rem 1rem;
+}
+
+/* Rule 4, applied: the question and the reasoning are things a person wrote,
+   so they are set in the sans inside an otherwise monospaced scene. The
+   signature line underneath is the machine's and stays mono. */
+.colab-decision-question,
+.colab-decision-answer,
+.colab-decision-supersedes,
+.colab-decision-refusal {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: normal;
+}
+
+.colab-decision-question {
+  color: var(--text);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.colab-decision-answer {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.colab-decision-supersedes {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.colab-decision-sig {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-faint);
+}
+
+.colab-decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.colab-decision-btn {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.colab-decision-btn:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand-text);
+}
+
+.colab-decision-btn:disabled {
+  border-style: dashed;
+  color: var(--text-faint);
+  cursor: default;
+}
+
+.colab-decision-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.colab-decision-refusal {
+  padding: 0.55rem 0.7rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+/* The failure line on a product card. Mono, because it is quoting the note on
+   the product's own page rather than describing it, and dimmer than the
+   tagline so it reads as a footnote to the name rather than competing with
+   it. */
+.product-card-break {
+  margin-top: 0.85rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--border);
+  color: var(--text-faint);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.55;
 }

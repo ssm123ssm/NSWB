@@ -672,6 +672,30 @@
   animation-play-state: paused !important;
 }
 
+/* Seeking.
+
+   Every animation in the scene runs on the one --T clock and starts together,
+   and nothing else in this file sets a delay — so a single negative delay on
+   all of them moves the whole cartoon to a chosen moment. That is what lets
+   the reader jump straight to the beat the product is actually about (the
+   destination swapping under a code that does not change) instead of waiting
+   out the loop to see it.
+
+   This one does need the specificity that the transform-box rule above gives
+   up. Every animated element sets the `animation` shorthand, and a shorthand
+   declares animation-delay:0s along with everything else — so a zero-specificity
+   rule here is silently overridden by each of them and the seek does nothing.
+   `.stage svg *` (0,1,1) clears `.destB` (0,1,0) and lands.
+
+   Safe in a way a broader override would not be: this sets one longhand that
+   no rule in this file sets deliberately. Do not add more properties here —
+   that is exactly how the transform-origin bug the comment above describes
+   would come back. Not !important either, so the reduced-motion block below
+   keeps winning. */
+.stage svg * {
+  animation-delay: var(--seek, 0s);
+}
+
 /* Under prefers-reduced-motion nothing moves: the scene is composed as a
    still, holding the verified beat, which is the frame that carries the point.
    .isMotion is only added when a reduced-motion visitor presses play, so the
@@ -701,4 +725,33 @@
   .stage:not(.isMotion) .destB { opacity: 0 }
   .stage:not(.isMotion) .screen { fill: var(--mint) }
   .stage:not(.isMotion) .screenCheck { stroke-dashoffset: 0; opacity: 1 }
+}
+
+/* The seek control. Sits under the stage rather than inside it: the transport
+   in the corner is chrome for a loop that started without asking, while this
+   is an invitation to look at something, and the two should not read as a
+   pair. */
+.jump {
+  display: block;
+  margin: 0.9rem auto 0;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.jump:hover {
+  border-color: var(--brand);
+  color: var(--brand-text);
+}
+
+.jump:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeroReveal from "./components/HeroReveal";
 import NsqrReel from "./components/NsqrReel";
 import PrincipleTrack from "./components/PrincipleTrack";
 import ProductName from "./components/ProductName";
@@ -44,11 +45,16 @@ export default function HomePage() {
         className="hero-screen screen relative overflow-hidden"
         data-brand={featured.accent}
       >
-        <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
         <div
           className="glow left-1/2 top-[-10rem] h-[26rem] w-[36rem] -translate-x-1/2 bg-[color:var(--brand)]"
           aria-hidden="true"
         />
+        {/* The hero's ground, in place of the grid: product surfaces held just
+            under legibility, with a light that moves over them with the
+            pointer. Decoration only — it restates the strip of names below and
+            carries no information of its own, so it is hidden from assistive
+            technology and absent entirely without a pointer. */}
+        <HeroReveal products={live} />
 
         {/* .screen sets the one-viewport height; this fills it. Two bands, not
             one stack: the headline block takes the free space and centres

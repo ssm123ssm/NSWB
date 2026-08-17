@@ -1628,6 +1628,165 @@
     );
   }
 
+  /* The hero's ground, and the light that moves over it. HeroReveal explains
+     the mechanism; this is only its surface.
+
+     Two copies of one field of tiles, the second masked to a circle at the
+     pointer. The layers differ only in which tokens they resolve — a hairline
+     and no fill below, a stronger line over --surface above — so the lit copy
+     is the same panel a shade closer to the reader rather than a second design.
+     That is the light theme's own rule about how a card lifts, and it holds in
+     dark without a separate palette.
+
+     Nothing here is text, and nothing is sized to be read: these are the shape
+     of a product surface at the size a real one would be, cropped by the edges
+     of the screen. Only the motif in each head takes --brand, which is what
+     lets six of them stay clear of the one-accent-per-screen rule — at this
+     weight they are washes, not accents. */
+  .hero-reveal {
+    --reveal-r: 24rem;
+    --rx: 50%;
+    --ry: 42%;
+
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* The resting field has to sit far enough back that the light has somewhere
+     to bring it — a ground the reader reads past, not a second thing to look
+     at. Held down with opacity rather than fainter tokens so the lit copy can
+     be the same tiles at full strength instead of a different drawing. */
+  .hero-reveal-layer {
+    --tile-line: var(--border);
+    --tile-fill: transparent;
+    --tile-mark: 0.35;
+
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+  }
+
+  /* Dark carries a touch more, the way every other wash on the site does: the
+     ground is darker than paper is light, so the same alpha lands quieter.
+     Scoped to the resting copy with :not() on purpose — unscoped, this sits at
+     one specificity point above the rule below and pins the lit layer at a
+     fixed opacity, which takes the pointer out of the effect entirely in dark
+     mode and in dark mode only. */
+  :root[data-theme="dark"] .hero-reveal-layer:not([data-lit]) {
+    opacity: 0.6;
+  }
+
+  /* `--hero-lit` is the only thing the pointer sets besides the two
+     coordinates: 0 with the pointer away, 1 with it over the hero. Multiplying
+     rather than toggling keeps the fade in the transition, and a snap at the
+     hero's edge is the tell that gives this effect away. */
+  .hero-reveal-layer[data-lit] {
+    --tile-line: var(--border-strong);
+    --tile-fill: var(--surface);
+    --tile-mark: 0.85;
+
+    opacity: var(--hero-lit, 0);
+    transition: opacity 0.45s ease;
+    -webkit-mask-image: radial-gradient(
+      var(--reveal-r) circle at var(--rx) var(--ry),
+      #000 0%,
+      rgba(0, 0, 0, 0.6) 58%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      var(--reveal-r) circle at var(--rx) var(--ry),
+      #000 0%,
+      rgba(0, 0, 0, 0.6) 58%,
+      transparent 100%
+    );
+  }
+
+  .hero-tile {
+    position: absolute;
+    left: var(--at-x);
+    top: var(--at-y);
+    display: flex;
+    width: var(--at-w);
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 0.9rem;
+    border: 1px solid var(--tile-line);
+    border-radius: var(--radius);
+    background: var(--tile-fill);
+  }
+
+  /* The lift itself. A card on this site rises by being lighter than the page
+     and casting a little; the lit copy does both, which is what makes a tile
+     read as coming forward under the light rather than merely brightening —
+     and it is most of what the effect has to work with on paper, where a white
+     card on near-white ground has little else to say. */
+  .hero-reveal-layer[data-lit] .hero-tile {
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-tile-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .hero-tile-mark {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: none;
+    color: var(--brand);
+    opacity: var(--tile-mark);
+  }
+
+  .hero-tile-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hero-tile-bar,
+  .hero-tile-line {
+    width: var(--w);
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--tile-line);
+  }
+
+  /* A column of states rather than rows of text — the other shape a product
+     surface takes, and what keeps the six tiles from reading as one component
+     repeated. */
+  .hero-tile[data-shape="chips"] .hero-tile-line {
+    height: 1.4rem;
+    border: 1px solid var(--tile-line);
+    border-radius: 0.5rem;
+    background: transparent;
+  }
+
+  .hero-tile[data-shape="chart"] .hero-tile-body {
+    height: 3.75rem;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.4rem;
+  }
+
+  .hero-tile[data-shape="chart"] .hero-tile-line {
+    width: auto;
+    height: var(--h);
+    flex: 1;
+    border-radius: 0.25rem 0.25rem 0.125rem 0.125rem;
+  }
+
+  /* A phone has no pointer to light the field with, and the hero is tight
+     enough there that six panels would crowd the headline. Two stay, as the
+     texture the grid used to be. */
+  @media (max-width: 767px) {
+    .hero-tile:nth-child(n + 3) {
+      display: none;
+    }
+  }
+
   /* Held down to wash strength on purpose. A hero already spends its one
      accent on the headline phrase and its chrome on the primary button; at
      full strength this would be a third violet in the same view, which is the

@@ -49,28 +49,13 @@ export const metadata = {
   alternates: { canonical: "/" },
 };
 
+// One theme, so one colour — matching --bg. The site has no dark mode: there
+// is nothing for a (prefers-color-scheme: dark) entry here to point at, and
+// declaring one would put the browser's chrome in a palette the page never
+// wears.
 export const viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9fafd" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d1421" },
-  ],
+  themeColor: "#f9fafd",
 };
-
-/**
- * Runs before first paint so a dark-theme visitor never sees a white flash.
- */
-const themeScript = `
-(function () {
-  try {
-    var stored = localStorage.getItem("ns-theme");
-    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.dataset.theme =
-      stored || (prefersDark ? "dark" : "light");
-  } catch (e) {
-    document.documentElement.dataset.theme = "light";
-  }
-})();
-`;
 
 /**
  * What the company is, in the vocabulary search engines parse rather than the
@@ -93,9 +78,8 @@ const organizationSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

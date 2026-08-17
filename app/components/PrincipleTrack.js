@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { iconMap, principleMotifMap } from "./Icons";
+import { ArrowIcon, iconMap, principleMotifMap } from "./Icons";
 
 /**
  * The principles as a sticky split: the heading holds still on the left while
- * the three steps move past it on the right, one at a time, the one being read
- * coming forward.
+ * the steps move past it on the right, one at a time, the one being read coming
+ * forward.
  *
  * What it replaces was a three-column row of equal cells divided by hairlines —
  * a spec sheet, read as one grey block, sitting in a section whose height it
@@ -122,8 +123,8 @@ export default function PrincipleTrack({ title, lead, principles }) {
       </div>
 
       {/* The scroll block gives the section its length; the stage is what gets
-          held still inside it; the deck puts all three cards in one grid cell
-          so they occupy the same place on screen and swap there.
+          held still inside it; the deck puts every card in one grid cell so
+          they occupy the same place on screen and swap there.
 
           Cards that each own a slot have to travel through it, which is what
           made the second one look like it was being dragged up from under the
@@ -158,6 +159,19 @@ export default function PrincipleTrack({ title, lead, principles }) {
                       <p className="principle-copy mt-4 text-muted">
                         {item.description}
                       </p>
+
+                      {/* Fine print, and the only interactive thing on the
+                          stage. Off-stage cards are hidden outright in CSS
+                          rather than merely faded, so this link cannot be
+                          tabbed to while its card is not the one showing. */}
+                      {item.note && (
+                        <p className="principle-note mt-6">
+                          <Link className="link-arrow" href={item.note.href}>
+                            {item.note.text}
+                            <ArrowIcon />
+                          </Link>
+                        </p>
+                      )}
                     </div>
 
                     {/* After the copy, not before it: this is the second grid

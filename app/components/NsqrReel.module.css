@@ -54,10 +54,6 @@
   gap: clamp(1.25rem, 1.8vw, 1.5rem);
 }
 
-:root[data-theme="dark"] .reel {
-  --r-signal: #ffb020;
-}
-
 .reel * {
   box-sizing: border-box;
 }

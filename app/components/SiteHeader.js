@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { navLinks, pageHeaders, site } from "../data/site";
 import { CloseIcon, MenuIcon } from "./Icons";
 import { useContact } from "./ContactContext";
-import ThemeToggle from "./ThemeToggle";
 import Wordmark from "./Wordmark";
 
 export default function SiteHeader() {
@@ -53,10 +52,11 @@ export default function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            {/* Contact sits with the nav rather than beside the theme toggle:
-                it is a third destination, and a filled button here would be a
-                second accent competing with the hero. It opens the dialog
-                instead of navigating, so it is a button wearing .nav-link. */}
+            {/* Contact sits with the nav rather than with the actions on the
+                right: it is a third destination, and a filled button there
+                would be a second accent competing with the hero. It opens the
+                dialog instead of navigating, so it is a button wearing
+                .nav-link. */}
             <button className="nav-link" type="button" onClick={() => openContact()}>
               Contact
             </button>
@@ -64,7 +64,6 @@ export default function SiteHeader() {
         )}
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
           {override?.cta && (
             <a
               className="btn btn-brand btn-sm"

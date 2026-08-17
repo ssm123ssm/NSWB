@@ -3,7 +3,12 @@
 
 The brand handoff asks for 4.5:1 on every text pair and says to check it
 rather than assume. This derives the text-safe companion for each chart hue
-and audits the semantic tokens in both themes.
+and audits the semantic tokens.
+
+One theme, and it is the light one the handoff specifies. The site carried a
+derived dark theme until it was removed, and the two sections that audited it
+went with it — a checker that reports on colours the stylesheet no longer
+defines is worse than no checker, because it passes.
 
 Run: python3 scripts/contrast.py
 """
@@ -72,18 +77,6 @@ def darken_to(h, bg, target=4.5):
     return "#000000"
 
 
-def lighten_to(h, bg, target=4.5):
-    """Same walk upward, for the dark theme."""
-    r, g, b = rgb(h)
-    hue, light, sat = colorsys.rgb_to_hls(r, g, b)
-    while light < 1:
-        cand = hexof(*colorsys.hls_to_rgb(hue, light, sat))
-        if ratio(cand, bg) >= target:
-            return cand
-        light += 0.005
-    return "#FFFFFF"
-
-
 def show(label, fg, bg, need=4.5):
     r = ratio(fg, bg)
     print(f"  {'PASS' if r >= need else 'FAIL'}  {r:5.2f}:1  {label:<34} {fg} on {bg}")
@@ -107,25 +100,6 @@ for name, fill in CHART.items():
     light_text[name] = companion
     print(f"  {name:<8} fill {fill}  ->  text {companion}", end="")
     print(f"   ({ratio(companion, PAPER):.2f}:1 paper, {ratio(companion, WHITE):.2f}:1 white)")
-
-print("\n=== DARK: derived ground and text ===")
-D_BG, D_SUBTLE = "#0D1421", "#121A29"
-D_SURFACE, D_RAISED = "#161F2F", "#1C2637"
-# Neutral 500 lands at 4.16:1 on the raised surface — the ramp's "600 and
-# darker carries text" line is a light-theme rule and does not invert cleanly,
-# so the dark theme's two muted steps move up one rung to 300/400.
-for label, fg in (("--text n50", NEUTRAL[50]), ("--text-muted n300", NEUTRAL[300]),
-                  ("--text-faint n400", NEUTRAL[400])):
-    ok &= show(f"{label} / raised", fg, D_RAISED)
-ok &= show("violet 400 accent / raised", VIOLET[400], D_RAISED)
-ok &= show("ink on violet 400 (button)", D_BG, VIOLET[400])
-
-print("\n=== DARK: product accents lifted off the raised surface ===")
-for name, fill in CHART.items():
-    companion = lighten_to(fill, D_RAISED)
-    print(f"  {name:<8} text {companion}   ({ratio(companion, D_RAISED):.2f}:1 raised,"
-          f" {ratio(companion, D_BG):.2f}:1 ground)")
-
 
 # --- tinted grounds --------------------------------------------------------
 # The pairs above all sit on paper or white. Two places on the site do not, and

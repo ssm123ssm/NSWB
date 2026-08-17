@@ -22,7 +22,7 @@ are not preferences:
    surfaces, not accents, and do not count. Never place two violets adjacent.
 3. **Contrast is a hard limit.** Every text pair clears 4.5:1. Run
    `python3 scripts/contrast.py` after touching any colour — it derives the
-   text-safe companions and audits both themes.
+   text-safe companions and audits the palette.
 4. **Mono marks what the machine produced** — paths, timestamps, states,
    hashes, IDs, labels. The sans is anything a person wrote.
 
@@ -32,11 +32,17 @@ most of that; resist filling the space.
 ## Key paths
 - `app/data/site.js`: **single source of truth** for products, capabilities,
   principles and Vault content. Every page reads from here.
-- `app/layout.js`: root layout, metadata defaults, pre-paint theme script.
+- `app/layout.js`: root layout, metadata defaults, organization schema.
 - `app/globals.css`: design tokens + all component classes.
 - `app/components/`: shared UI (`SiteChrome`, `SiteHeader`, `SiteFooter`,
   `ContactDialog`, `ProductCard`, `Icons`, …).
 - `app/page.js`, `app/products/page.js`: the home page and the product index.
+- `app/research/page.js`: the publications page, read from `publications` in
+  `site.js`. Adding a paper there is the whole edit. Set as a numbered
+  bibliography (`.pub-*`) under a masthead that carries the page title and
+  nothing else — no eyebrow, no lead. Links are DOIs and
+  arXiv abstracts, never Google Scholar URLs, which carry a profile id and stop
+  resolving; no citation counts, which nothing here can keep current.
 - `app/nsqr/`, `app/vault/`, `app/colab/`: the three product detail pages, each
   with its own `opengraph-image.js`. NSQR is the short one; Vault and coLab are
   long-form and share their two structural pieces — `StepRail` (`.flow` in
@@ -76,18 +82,22 @@ most of that; resist filling the space.
   `neura` in ink and `sense` in violet, never bold, never inverted, never below
   19px. It stands alone — no avatar or logo beside it. `ProductName` is the
   equivalent for products and reads its lockup from `site.js`.
-- **Theming.** Light/dark is driven by `data-theme` on `<html>`, set before
-  first paint by the inline script in `app/layout.js` and toggled by
-  `ThemeToggle`. Any new colour must be declared for both themes.
+- **One theme, and it is white.** The site had a derived dark theme, a
+  `data-theme` attribute on `<html>`, a pre-paint script and a `ThemeToggle`;
+  all four are gone. A colour therefore gets **one** definition. Do not add a
+  `data-theme` selector, a `prefers-color-scheme` block, a second `themeColor`
+  entry, or a dark variant of anything — there is no switch left to serve them,
+  so they would be dead rules that read as live ones. It is all in git if a
+  toggle is ever wanted back.
 - **Per-product accent.** Put `data-brand="violet|blue|cyan|emerald|amber|clay"`
   on a wrapper and `--brand` / `--brand-soft` / `--brand-text` resolve for
   everything inside it. The names are historical; the values are the brand's
   chart set. `violet` is the house violet rather than chart 1 — NSQR shares the
   parent's colour so that two different violets never sit side by side.
-- **Every page follows the light/dark theme.** There are no always-dark
-  sections: a section that needs more weight uses `.section-subtle`, a `.glow`
-  tinted with `var(--brand)`, or `.grid-field` — never a locally pinned dark
-  palette, which would ignore the theme toggle.
+- **The page is white throughout.** There are no dark sections: a section that
+  needs more weight uses `.section-subtle`, a `.glow` tinted with
+  `var(--brand)`, or `.grid-field` — never a locally pinned dark palette, which
+  on a white site is a hole in the page rather than emphasis.
 - **`.brand-tag`** is the product lockup set in a `--brand-soft` chip (home
   hero, Vault hero). Pair it with a `.badge` for status.
 - Pages are server components. Anything needing the contact dialog uses the

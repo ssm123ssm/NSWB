@@ -1,14 +1,32 @@
 import Link from "next/link";
+import HeroReveal from "./components/HeroReveal";
 import NsqrReel from "./components/NsqrReel";
 import PrincipleTrack from "./components/PrincipleTrack";
 import ProductName from "./components/ProductName";
+import ProductShowcase from "./components/ProductShowcase";
 import ProductTimeline from "./components/ProductTimeline";
 import { ArrowIcon } from "./components/Icons";
-import { featuredProducts, overview, principles, products } from "./data/site";
+import {
+  featuredProducts,
+  getProduct,
+  overview,
+  principles,
+  productShowcase,
+  products,
+} from "./data/site";
 
 // The closing section leads with whatever carries `featured` in the product
 // data, so the capsule names the same product the hero strip emphasises.
 const featured = featuredProducts[0];
+
+// The showcase data holds capabilities against a slug and nothing else, so the
+// product facts are resolved from the registry here rather than duplicated
+// there. Done at module scope on the server, which keeps the whole `products`
+// array out of the client island.
+const showcaseItems = productShowcase.map((entry) => ({
+  product: getProduct(entry.slug),
+  capabilities: entry.capabilities,
+}));
 
 export default function HomePage() {
   const live = products.filter((p) => p.status === "live");
@@ -44,11 +62,16 @@ export default function HomePage() {
         className="hero-screen screen relative overflow-hidden"
         data-brand={featured.accent}
       >
-        <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
         <div
           className="glow left-1/2 top-[-10rem] h-[26rem] w-[36rem] -translate-x-1/2 bg-[color:var(--brand)]"
           aria-hidden="true"
         />
+        {/* The hero's ground, in place of the grid: product surfaces held just
+            under legibility, with a light that moves over them with the
+            pointer. Decoration only — it restates the strip of names below and
+            carries no information of its own, so it is hidden from assistive
+            technology and absent entirely without a pointer. */}
+        <HeroReveal products={live} />
 
         {/* .screen sets the one-viewport height; this fills it. Two bands, not
             one stack: the headline block takes the free space and centres
@@ -156,6 +179,50 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* --------------------------------------------------------- Showcase */}
+      {/* Four products, each as one app screen with its capabilities beside it.
+          This is the page's first look at the work itself — everything above it
+          is claim, and this is the first thing a visitor can actually look at.
+
+          Four and not six: Lipd Hub and AES are by request and have no screen a
+          stranger may see, so there is nothing here that could honestly be
+          drawn for them. They keep their place in the timeline below.
+
+          Carries .snap-edge, which it takes over from Capabilities. That class
+          marks the far side of the last .screen — the thing the scroll commits
+          to once it leaves the Overview above — and this section is now what
+          sits there. Leaving it on Capabilities would have left the scroll
+          releasing from the last screen into the middle of this section with no
+          resting place either side.
+
+          Plain .section: Overview above is plain and Capabilities below is
+          .section-subtle, so putting a subtle band here would seat two of them
+          together. The panels carry their own surface, which is what separates
+          this section from the page without a band behind it.
+
+          Swept sideways rather than stacked. Four panels this size made a very
+          long section that argued the product line twice over, once here and
+          again in the timeline below; one panel at a time costs a quarter of
+          the height and asks the reader for a gesture rather than a scroll. The
+          horizontal axis snaps `mandatory` while the vertical screens above
+          snap `proximity` — see .showcase-track in globals for why those two
+          answers differ. */}
+      <section className="snap-edge section" id="showcase">
+        <div className="shell">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="section-title">Meet the products</h2>
+            <p className="lead mt-4">
+              Four platforms in daily use. Sweep through them, and pick a
+              capability to see where it lives.
+            </p>
+          </div>
+
+          <div className="mt-12">
+            <ProductShowcase items={showcaseItems} />
+          </div>
+        </div>
+      </section>
+
       {/* ---------------------------------------------------- Capabilities */}
       {/* One section where there were two. The three capability cards and the
           three principles were the same claim told twice — a card naming a
@@ -164,8 +231,7 @@ export default function HomePage() {
           capabilities heading over the principles row: the heading says what we
           build on, the row says what holds while we do.
 
-          Keeps id="capabilities" and .snap-edge, both of which the nav and the
-          screen sequence above address by name.
+          Keeps id="capabilities", which the nav addresses by name.
 
           The heading moved inside PrincipleTrack, which holds it still on the
           left while the three principles pass it, so the centred heading that
@@ -173,16 +239,26 @@ export default function HomePage() {
           to. This was the last caller of the local SectionHeading helper, which
           went with it.
 
-          .snap-edge stays and still behaves: it is the far side of the last
-          screen, and snapping here is `proximity`, so landing on this section's
-          start does not then fight the reader scrolling down through it. */}
-      <section className="snap-edge section section-subtle" id="capabilities">
+          .snap-edge moved to the showcase above when that section was added.
+          The class belongs to whatever directly follows the last .screen, and
+          that is no longer this. */}
+      <section className="section section-subtle" id="capabilities">
         <div className="shell">
           <PrincipleTrack
             title="Everything we build on"
             lead="A focused set of disciplines built for secure, scalable intelligence — research depth paired with operational delivery."
             principles={principles}
           />
+
+          {/* The lead directly above says "research depth", so the pointer to
+              the papers sits here, at the line it refers to. */}
+          <p className="mt-10 text-[0.85rem] leading-relaxed text-faint">
+            Four publications, in PLOS One, BMC Medical Education and on arXiv.{" "}
+            <Link className="link-arrow" href="/research">
+              Publications
+              <ArrowIcon />
+            </Link>
+          </p>
         </div>
       </section>
 

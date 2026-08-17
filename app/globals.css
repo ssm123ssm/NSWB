@@ -4,12 +4,18 @@
 
 /* ==========================================================================
    Design tokens
-   The neurasense brand system, two themes. Every surface, border and text
-   colour on the site resolves to a variable below — nothing hardcodes a hex.
+   The neurasense brand system. Every surface, border and text colour on the
+   site resolves to a variable below — nothing hardcodes a hex.
 
    Values come from the brand handoff: violet at hue 293, a cool neutral ramp
-   at hue 264, and a six-hue chart set. The light theme is the specified
-   system; the dark theme is derived from the same ramps (see below).
+   at hue 264, and a six-hue chart set.
+
+   One theme, and it is the light one the handoff specifies. The site carried a
+   derived dark theme and a toggle until they were removed: the page is white,
+   and a colour therefore needs one definition rather than two. Nothing should
+   reintroduce a `data-theme` attribute, a `prefers-color-scheme` block or a
+   second value for any token here — a section that wants more weight uses
+   `.section-subtle`, a `.glow`, or `.grid-field`.
 
    Every text pair here is checked at 4.5:1 by `scripts/contrast.py` rather
    than assumed — run it after touching any colour.
@@ -72,42 +78,6 @@
     --header-h: calc(4rem + 1px);
 
     color-scheme: light;
-  }
-
-  /* The handoff specifies a light system only. This theme is derived from the
-     same two ramps rather than invented: neutral 900 is the ground, the
-     surfaces step up through 900→800, and the accent is violet 400 — the value
-     the kit already nominates for the wordmark on ink. The one place the ramp
-     does not simply invert is muted text: the "600 and darker carries text"
-     line is a light-theme rule, and neutral 500 only reaches 4.16:1 on the
-     raised surface, so both muted steps move up a rung to 300/400. */
-  :root[data-theme="dark"] {
-    --bg: #0d1421;
-    --bg-subtle: #121a29;
-    --surface: #161f2f;
-    --surface-raised: #1c2637;
-
-    --border: #2c3340;
-    --border-strong: #3a4252;
-
-    --text: #f9fafd;
-    --text-muted: #d1d4db;
-    --text-faint: #a0a5ae;
-
-    /* Violet stays the house colour on ink; only the step changes. 400 is the
-       brand value for dark surfaces, and it takes ink rather than white on top
-       of it — a white label on violet 400 would be the dimmer pairing. */
-    --accent: #9a73ff;
-    --accent-hover: #c0b0fe;
-    --accent-soft: #211a3a;
-    --accent-on: #0d1421;
-    --accent-text: #9a73ff;
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 16px 40px -24px rgba(0, 0, 0, 0.8);
-    --shadow-lg: 0 32px 80px -36px rgba(0, 0, 0, 0.9);
-
-    color-scheme: dark;
   }
 
   /* Product accents, drawn from the handoff's six-hue chart set. Applied with
@@ -174,47 +144,6 @@
     --brand-hover: #c14d30;
     --brand-soft: #feebe9;
     --brand-text: #b7492d;
-  }
-
-  /* On ink the pair inverts: the fill stays the chart value and the text
-     companion is the same hue lifted until it clears 4.5:1 on the raised
-     surface. The soft washes become the dimmest tint of the hue that still
-     reads as coloured rather than as another grey. */
-  :root[data-theme="dark"] [data-brand="violet"] {
-    --brand: #9a73ff;
-    --brand-hover: #c0b0fe;
-    --brand-soft: #211a3a;
-    --brand-text: #9a73ff;
-  }
-  :root[data-theme="dark"] [data-brand="blue"] {
-    --brand: #0f81bc;
-    --brand-hover: #2e97d1;
-    --brand-soft: #12212f;
-    --brand-text: #1194d8;
-  }
-  :root[data-theme="dark"] [data-brand="cyan"] {
-    --brand: #1697a3;
-    --brand-hover: #2eaab5;
-    --brand-soft: #0f2327;
-    --brand-text: #179ba7;
-  }
-  :root[data-theme="dark"] [data-brand="emerald"] {
-    --brand: #0c9f69;
-    --brand-hover: #16b478;
-    --brand-soft: #0c2419;
-    --brand-text: #0ca16b;
-  }
-  :root[data-theme="dark"] [data-brand="amber"] {
-    --brand: #9e8406;
-    --brand-hover: #b8991a;
-    --brand-soft: #241e0c;
-    --brand-text: #a58a06;
-  }
-  :root[data-theme="dark"] [data-brand="clay"] {
-    --brand: #d05f43;
-    --brand-hover: #db7359;
-    --brand-soft: #2b1a15;
-    --brand-text: #d56f55;
   }
 
   * {
@@ -745,12 +674,12 @@
 
   /* --- Principle track ----------------------------------------------------
 
-     The capabilities section: heading held on the left, three principles
-     moving past it on the right. See PrincipleTrack.js for why.
+     The capabilities section: heading held on the left, the principles moving
+     past it on the right. See PrincipleTrack.js for why.
 
      Single column and no stickiness below 768px — there is not enough width to
      hold a column still beside another, and a short viewport makes the whole
-     device pointless. Mobile gets three plain cards, which is what the steps
+     device pointless. Mobile gets a plain card each, which is what the steps
      already are. */
   .principle-track {
     display: grid;
@@ -797,12 +726,6 @@
     transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  /* Brand accents run brighter in dark mode but the surface is darker still,
-     so the same alpha lands lighter. Matches the timeline's correction. */
-  :root[data-theme="dark"] .principle-motif {
-    --motif-alpha: 0.2;
-  }
-
   .principle-title {
     font-size: clamp(1.45rem, 2.6vw, 1.95rem);
     line-height: 1.15;
@@ -816,6 +739,15 @@
     max-width: 34ch;
     font-size: 1.05rem;
     line-height: 1.65;
+  }
+
+  /* Fine print under the copy, and set as fine print: below body size, faint,
+     so it reads as a pointer off the card rather than as a third sentence of
+     it. Only the research principle carries one. */
+  .principle-note {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--text-faint);
   }
 
   .principle-rail {
@@ -895,8 +827,8 @@
      work of saying which one is live. */
   /* Only one card is ever on screen, so the brand tint is not an emphasis
      state to be switched on — it is simply how a card looks. It reads the same
-     way in the mobile stack, where the three sit one under another and each
-     wears its own accent rather than three greys. */
+     way in the mobile stack, where they sit one under another and each wears
+     its own accent rather than a column of greys. */
   .principle-plate {
     border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
     background: color-mix(in srgb, var(--brand) 4%, var(--surface));
@@ -944,19 +876,29 @@
       gap: 0;
     }
 
+    /* visibility, not just opacity: a card off the stage holds a link, and an
+       invisible link that can still be tabbed to is a trap. Hiding it takes it
+       out of the tab order too. The 0s delay lets the fade finish before it
+       goes, so the transition still reads. */
     .principle-track[data-track="on"] .principle-step {
       grid-area: 1 / 1;
       opacity: 0;
       transform: translateY(10px) scale(0.995);
       pointer-events: none;
+      visibility: hidden;
       transition: opacity 0.45s ease,
-        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 0.55s;
     }
 
     .principle-track[data-track="on"] .principle-step.is-on {
       opacity: 1;
       transform: none;
       pointer-events: auto;
+      visibility: visible;
+      transition: opacity 0.45s ease,
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 0s;
     }
   }
 
@@ -1016,13 +958,6 @@
     border-radius: 0.14em;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-  }
-
-  :root[data-theme="dark"] .mark-brand {
-    background-image: linear-gradient(
-      color-mix(in srgb, var(--brand) 22%, transparent),
-      color-mix(in srgb, var(--brand) 22%, transparent)
-    );
   }
 
   /* --- Links ------------------------------------------------------------- */
@@ -1326,12 +1261,6 @@
     transition: opacity 0.45s ease;
   }
 
-  /* Brand accents run brighter in dark mode, but the surface is darker still —
-     it needs a touch more alpha to land at the same visual weight. */
-  :root[data-theme="dark"] .timeline-motif {
-    --motif-alpha: 0.1;
-  }
-
   /* Rewards attention without shouting; rides the same hover as the card. */
   .timeline-card:hover .timeline-motif {
     opacity: calc(var(--motif-alpha) * 2);
@@ -1535,6 +1464,155 @@
     );
   }
 
+  /* The hero's ground, and the light that moves over it. HeroReveal explains
+     the mechanism; this is only its surface.
+
+     Two copies of one field of tiles, the second masked to a circle at the
+     pointer. The layers differ only in which tokens they resolve — a hairline
+     and no fill below, a stronger line over --surface above — so the lit copy
+     is the same panel a shade closer to the reader rather than a second design.
+     That is the light theme's own rule about how a card lifts, and it holds in
+     dark without a separate palette.
+
+     Nothing here is text, and nothing is sized to be read: these are the shape
+     of a product surface at the size a real one would be, cropped by the edges
+     of the screen. Only the motif in each head takes --brand, which is what
+     lets six of them stay clear of the one-accent-per-screen rule — at this
+     weight they are washes, not accents. */
+  .hero-reveal {
+    --reveal-r: 24rem;
+    --rx: 50%;
+    --ry: 42%;
+
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* The resting field has to sit far enough back that the light has somewhere
+     to bring it — a ground the reader reads past, not a second thing to look
+     at. Held down with opacity rather than fainter tokens so the lit copy can
+     be the same tiles at full strength instead of a different drawing. */
+  .hero-reveal-layer {
+    --tile-line: var(--border);
+    --tile-fill: transparent;
+    --tile-mark: 0.35;
+
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+  }
+
+  /* `--hero-lit` is the only thing the pointer sets besides the two
+     coordinates: 0 with the pointer away, 1 with it over the hero. Multiplying
+     rather than toggling keeps the fade in the transition, and a snap at the
+     hero's edge is the tell that gives this effect away. */
+  .hero-reveal-layer[data-lit] {
+    --tile-line: var(--border-strong);
+    --tile-fill: var(--surface);
+    --tile-mark: 0.85;
+
+    opacity: var(--hero-lit, 0);
+    transition: opacity 0.45s ease;
+    -webkit-mask-image: radial-gradient(
+      var(--reveal-r) circle at var(--rx) var(--ry),
+      #000 0%,
+      rgba(0, 0, 0, 0.6) 58%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      var(--reveal-r) circle at var(--rx) var(--ry),
+      #000 0%,
+      rgba(0, 0, 0, 0.6) 58%,
+      transparent 100%
+    );
+  }
+
+  .hero-tile {
+    position: absolute;
+    left: var(--at-x);
+    top: var(--at-y);
+    display: flex;
+    width: var(--at-w);
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 0.9rem;
+    border: 1px solid var(--tile-line);
+    border-radius: var(--radius);
+    background: var(--tile-fill);
+  }
+
+  /* The lift itself. A card on this site rises by being lighter than the page
+     and casting a little; the lit copy does both, which is what makes a tile
+     read as coming forward under the light rather than merely brightening —
+     and it is most of what the effect has to work with on paper, where a white
+     card on near-white ground has little else to say. */
+  .hero-reveal-layer[data-lit] .hero-tile {
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-tile-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .hero-tile-mark {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: none;
+    color: var(--brand);
+    opacity: var(--tile-mark);
+  }
+
+  .hero-tile-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hero-tile-bar,
+  .hero-tile-line {
+    width: var(--w);
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--tile-line);
+  }
+
+  /* A column of states rather than rows of text — the other shape a product
+     surface takes, and what keeps the six tiles from reading as one component
+     repeated. */
+  .hero-tile[data-shape="chips"] .hero-tile-line {
+    height: 1.4rem;
+    border: 1px solid var(--tile-line);
+    border-radius: 0.5rem;
+    background: transparent;
+  }
+
+  .hero-tile[data-shape="chart"] .hero-tile-body {
+    height: 3.75rem;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.4rem;
+  }
+
+  .hero-tile[data-shape="chart"] .hero-tile-line {
+    width: auto;
+    height: var(--h);
+    flex: 1;
+    border-radius: 0.25rem 0.25rem 0.125rem 0.125rem;
+  }
+
+  /* A phone has no pointer to light the field with, and the hero is tight
+     enough there that six panels would crowd the headline. Two stay, as the
+     texture the grid used to be. */
+  @media (max-width: 767px) {
+    .hero-tile:nth-child(n + 3) {
+      display: none;
+    }
+  }
+
   /* Held down to wash strength on purpose. A hero already spends its one
      accent on the headline phrase and its chrome on the primary button; at
      full strength this would be a third violet in the same view, which is the
@@ -1546,10 +1624,6 @@
     filter: blur(150px);
     opacity: 0.07;
     pointer-events: none;
-  }
-
-  :root[data-theme="dark"] .glow {
-    opacity: 0.12;
   }
 
   .rule {
@@ -2020,6 +2094,836 @@
     100% {
       opacity: 0;
     }
+  }
+
+  /* --- Product showcase ----------------------------------------------------
+
+     The home page's four product panels: capabilities down the left, a drawn
+     app screen on the right, swept horizontally one panel at a time. Rendered
+     by `ProductShowcase` over the screens in `ShowcaseShots`.
+
+     COLOUR. This section runs on its own saturated `--pop` scale rather than on
+     the site's `--brand` tokens, and that is deliberate. `--brand` is derived
+     for *text* — every hue was walked down in lightness until it cleared 4.5:1
+     as letterforms on paper — which is exactly right for a link and exactly
+     wrong for a fill. Used as chart bars and tiles those values land grey and
+     tired, which is what made the first version of this section dull.
+
+     So: `--pop` is the vivid fill, `--pop-deep` is the same hue where it is
+     legible as words, `--pop-soft` is a tint for chips, and `--pop-tint` is the
+     panel wash. Text inside a screen takes `--pop-deep`, never `--pop`. The
+     scale is scoped to `.showcase-panel` and leaks nowhere — the rest of the
+     site is untouched by it.
+
+     One panel at a time, one screen per capability. Three regions stacked in a
+     single window meant two of them were always dimmed and none had room; the
+     capture now swaps whole, which is what lets a chart be a chart. */
+
+  .showcase {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  /* The sweep, and it is the browser's own horizontal scroll — the arrows and
+     dots below only call scrollTo on it. Nothing here intercepts the wheel, so
+     the reader's vertical gesture is untouched and the track still works with
+     the component's JS removed entirely.
+
+     `mandatory` rather than `proximity`, which is the opposite of the choice
+     the vertical screens made further up: this axis holds one panel per view
+     and there is no long section to be dragged back into, so a panel left
+     half-shown is only ever a mistake.
+
+     overflow-x on a box forces overflow-y to a scroll value too, which would
+     clip the panels' shadow at the top and bottom edges. The padding is what
+     gives the shadow room inside the scrollport, and the negative inline
+     margins pull it back so the panels still line up with the shell. */
+  .showcase-track {
+    display: flex;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0.75rem 0.75rem 1.5rem;
+    margin-inline: -0.75rem;
+    /* The dots and arrows are the affordance; a scrollbar under a card that is
+       already snapped would be a second one saying the same thing. */
+    scrollbar-width: none;
+  }
+
+  .showcase-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The focus ring belongs on the scrollport rather than nowhere: it is
+     tabbable so the keyboard can reach and scroll it, and a tab stop with no
+     visible focus is the worst of both. */
+  .showcase-track:focus-visible {
+    outline: 2px solid var(--pop, var(--accent));
+    outline-offset: 4px;
+    border-radius: var(--radius-lg);
+  }
+
+  /* One panel fills the track. `stretch` is load-bearing: the panels are a flex
+     row, so they all take the height of the tallest, and the section therefore
+     does not resize as it is swept. */
+  .showcase-panel {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+    align-items: stretch;
+    padding: clamp(1.5rem, 3vw, 2.75rem);
+    border-radius: var(--radius-lg);
+    background: var(--pop-tint);
+  }
+
+  /* The saturated scale. Chosen as fills first and checked as words second,
+     which is the opposite of how --brand was built. */
+  .showcase-panel[data-brand="violet"] {
+    --pop: #7c4dff;
+    --pop-deep: #5b21b6;
+    --pop-soft: #ebe3ff;
+    --pop-tint: #f4f0ff;
+  }
+  .showcase-panel[data-brand="cyan"] {
+    --pop: #00bfa5;
+    --pop-deep: #00695f;
+    --pop-soft: #d3f6f0;
+    --pop-tint: #ebfbf8;
+  }
+  .showcase-panel[data-brand="blue"] {
+    --pop: #2f80ed;
+    --pop-deep: #14539f;
+    --pop-soft: #dceafd;
+    --pop-tint: #eef4fe;
+  }
+  .showcase-panel[data-brand="emerald"] {
+    --pop: #22c55e;
+    --pop-deep: #15703c;
+    --pop-soft: #d6f7e2;
+    --pop-tint: #ecfdf2;
+  }
+
+  @media (min-width: 1024px) {
+    .showcase-panel {
+      grid-template-columns: 0.8fr 1.2fr;
+    }
+  }
+
+  .showcase-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .showcase-name {
+    font-size: clamp(1.6rem, 2.8vw, 2.15rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  /* The lockup's tail takes the vivid hue here rather than --brand-text: at
+     display size the fill is legible, and this is the one place the panel names
+     itself. */
+  .showcase-name .wordmark-tail {
+    color: var(--pop-deep);
+  }
+
+  .showcase-tagline {
+    margin-top: 0.55rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* The capability list sits at the foot of the column so the panel reads the
+     same way at every height — mark at the top, list against the base. */
+  .showcase-tabs {
+    margin-top: auto;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .showcase-tabs > li {
+    border-left: 2px solid transparent;
+    padding-left: 0.9rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .showcase-tabs > li[data-on] {
+    border-left-color: var(--pop);
+  }
+
+  .showcase-tab {
+    display: block;
+    width: 100%;
+    padding-block: 0.5rem;
+    text-align: left;
+    font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+  }
+
+  .showcase-tab:hover {
+    color: var(--text);
+  }
+
+  /* --pop-deep, not --pop: this is a word. */
+  .showcase-tabs > li[data-on] .showcase-tab {
+    color: var(--pop-deep);
+  }
+
+  .showcase-tab-body {
+    padding-bottom: 0.65rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 34ch;
+  }
+
+  .showcase-link {
+    font-size: 0.9rem;
+  }
+
+  .showcase-link .link-arrow {
+    color: var(--pop-deep);
+  }
+
+  /* --- Sweep controls --- */
+
+  .showcase-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .showcase-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .showcase-arrow:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+
+  /* Kept in place rather than hidden at the ends, so the row does not reflow
+     and shift the dots sideways on the first and last panel. */
+  .showcase-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .showcase-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* The hit area is 1.5rem square while the mark is 0.4rem — a 6px dot is an
+     unfair target on a touch screen, and padding it out costs nothing here. */
+  .showcase-dot {
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background-clip: content-box;
+    padding: 0.55rem;
+    background-color: var(--border-strong);
+    transition: background-color 0.2s ease;
+  }
+
+  .showcase-dot:hover {
+    background-color: var(--text-faint);
+  }
+
+  .showcase-dot[data-on] {
+    background-color: var(--text);
+  }
+
+  /* --- The drawn screens ---------------------------------------------------
+
+     One chassis, twelve interiors. The primitives below (rows, people, pairs,
+     tiles, figures) are shared across products so a new screen costs markup
+     rather than a private stylesheet block. */
+
+  .showcase-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  /* A fixed floor so the panel does not resize as capabilities are swapped —
+     the tallest screen sets the height once and the rest sit inside it. */
+  .shot-swapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    animation: shot-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes shot-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  /* Mono across the whole window, as it has always been here. A drawn product
+     screen is machine output end to end — paths, states, names, counts — which
+     is rule 4, and it is also what stops these reading as marketing panels with
+     a border. The colour changed in this pass; the type did not. */
+  .shot {
+    width: 100%;
+    max-width: 32rem;
+    min-height: 20rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    box-shadow: 0 18px 44px -24px rgba(12, 14, 20, 0.35),
+      0 2px 6px -2px rgba(12, 14, 20, 0.08);
+  }
+
+  .shot-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    background: var(--pop-soft);
+  }
+
+  .shot-dots {
+    display: inline-flex;
+    gap: 0.3rem;
+  }
+
+  .shot-dots i {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--pop);
+    opacity: 0.45;
+  }
+
+  .shot-path {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--pop-deep);
+    font-size: 0.63rem;
+  }
+
+  .shot-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.1rem;
+  }
+
+  .shot-title {
+    color: var(--text-faint);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* --- Figures --- */
+
+  /* The one big number on a screen. Light weight at this size reads as a
+     display figure rather than as a stat block shouting. */
+  .shot-figure {
+    color: var(--pop-deep);
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .shot-figure span {
+    color: var(--text-faint);
+    font-size: 0.85rem;
+    letter-spacing: 0;
+  }
+
+  .shot-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: auto;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.55rem;
+    background: var(--pop-soft);
+    color: var(--pop-deep);
+    font-size: 0.78rem;
+  }
+
+  .shot-dot-live {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--pop);
+  }
+
+  .shot-sub {
+    display: block;
+    color: var(--text-faint);
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+
+  .shot-truncate {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .shot-truncate b {
+    display: block;
+    font-weight: 400;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* --- QR --- */
+
+  .shot-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+  }
+
+  .shot-qr {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    gap: 2px;
+    flex-shrink: 0;
+    width: 8.5rem;
+    aspect-ratio: 1;
+    padding: 0.55rem;
+    border-radius: 0.7rem;
+    background: var(--pop-soft);
+  }
+
+  .shot-qr span {
+    border-radius: 1.5px;
+  }
+
+  .shot-qr span[data-on] {
+    background: var(--pop);
+  }
+
+  .shot-swap {
+    min-width: 0;
+    display: grid;
+    gap: 0.3rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  .shot-was {
+    color: var(--text-faint);
+    font-size: 0.82rem;
+    text-decoration: line-through;
+  }
+
+  .shot-now {
+    color: var(--pop-deep);
+    font-size: 1.05rem;
+  }
+
+  .shot-pill {
+    justify-self: start;
+    margin-top: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: var(--pop);
+    color: #fff;
+    font-size: 0.68rem;
+  }
+
+  /* --- Chart --- */
+
+  .shot-chart {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    min-height: 7rem;
+  }
+
+  .shot-bar-col {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.3rem;
+    height: 100%;
+  }
+
+  .shot-bar-value {
+    color: var(--pop-deep);
+    font-size: 0.6rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .shot-bar-fill {
+    width: 100%;
+    height: var(--h, 50%);
+    min-height: 3px;
+    border-radius: 4px 4px 0 0;
+    background: var(--pop);
+  }
+
+  .shot-bar-day {
+    color: var(--text-faint);
+    font-size: 0.62rem;
+    line-height: 1;
+  }
+
+  .shot-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.5rem;
+  }
+
+  .shot-stats > div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .shot-stats dt {
+    color: var(--text-faint);
+    font-size: 0.7rem;
+  }
+
+  .shot-stats dd {
+    color: var(--text);
+    font-size: 0.85rem;
+  }
+
+  /* --- Tiles --- */
+
+  .shot-tiles {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+    align-content: center;
+  }
+
+  @media (min-width: 420px) {
+    .shot-tiles {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .shot-tiles > li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.7rem 0.3rem;
+    border-radius: 0.6rem;
+    background: var(--pop-soft);
+    color: var(--pop-deep);
+    font-size: 0.65rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .shot-tiles > li span {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* The selected type, filled rather than tinted — one tile in the set is what
+     tells you this is a chooser and not a legend. */
+  .shot-tiles > li[data-on] {
+    background: var(--pop);
+    color: #fff;
+  }
+
+  /* --- Files --- */
+
+  .shot-files {
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.73rem;
+  }
+
+  .shot-files > li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 0.5rem;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+  }
+
+  .shot-files .shot-truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .shot-arrow {
+    color: var(--pop);
+    flex-shrink: 0;
+  }
+
+  .shot-cipher {
+    flex-shrink: 0;
+    color: var(--pop-deep);
+    letter-spacing: 0.02em;
+  }
+
+  /* --- People --- */
+
+  .shot-people {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .shot-people > li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.55rem;
+    background: var(--bg-subtle);
+    font-size: 0.82rem;
+  }
+
+  .shot-people > li[data-guest] {
+    background: var(--pop-soft);
+  }
+
+  .shot-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--pop);
+    color: #fff;
+    font-size: 0.7rem;
+  }
+
+  .shot-tag {
+    flex-shrink: 0;
+    padding: 0.18rem 0.5rem;
+    border-radius: 0.4rem;
+    background: var(--surface);
+    color: var(--text-faint);
+    font-size: 0.66rem;
+    white-space: nowrap;
+  }
+
+  /* --- Pairs --- */
+
+  .shot-pairs {
+    flex: 1;
+    display: grid;
+    gap: 0.4rem;
+    align-content: center;
+  }
+
+  .shot-pairs > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 0.5rem;
+    background: var(--bg-subtle);
+  }
+
+  .shot-pairs dt {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .shot-pairs dd {
+    color: var(--text);
+    font-size: 0.8rem;
+    text-align: right;
+  }
+
+  /* Sealed and refused are the two states these screens exist to show, so they
+     are the two that get filled rather than written. */
+  .shot-pairs dd[data-sealed],
+  .shot-pairs dd[data-refused] {
+    padding: 0.12rem 0.5rem;
+    border-radius: 0.4rem;
+    background: var(--pop);
+    color: #fff;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* --- Timeline --- */
+
+  .shot-track {
+    position: relative;
+    flex: 1;
+    min-height: 5rem;
+    margin: 1.5rem 0.5rem 0;
+  }
+
+  .shot-track-line,
+  .shot-track-fill {
+    position: absolute;
+    left: 0;
+    top: 0.7rem;
+    height: 3px;
+    border-radius: 999px;
+  }
+
+  .shot-track-line {
+    right: 0;
+    background: var(--bg-subtle);
+  }
+
+  .shot-track-fill {
+    width: var(--fill, 0%);
+    background: var(--pop);
+  }
+
+  .shot-milestone {
+    position: absolute;
+    top: 0;
+    left: var(--at, 0%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transform: translateX(-50%);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .shot-milestone[data-done] {
+    color: var(--pop-deep);
+  }
+
+  .shot-milestone-node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 50%;
+    border: 2px solid var(--bg-subtle);
+    background: var(--surface);
+    color: #fff;
+  }
+
+  .shot-milestone[data-done] .shot-milestone-node {
+    border-color: var(--pop);
+    background: var(--pop);
+  }
+
+  /* --- Decision log --- */
+
+  .shot-log {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .shot-log > li {
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.55rem;
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--pop);
+  }
+
+  .shot-log-title {
+    color: var(--text);
+    font-size: 0.85rem;
+  }
+
+  .shot-signed {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    color: var(--text-faint);
+    font-size: 0.7rem;
+  }
+
+  .shot-signed .shot-avatar {
+    width: 1.15rem;
+    height: 1.15rem;
+    font-size: 0.6rem;
+  }
+
+  /* --- States --- */
+
+  .shot-state {
+    flex-shrink: 0;
+    padding: 0.2rem 0.55rem;
+    border-radius: 0.4rem;
+    background: var(--bg-subtle);
+    color: var(--text-faint);
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+
+  .shot-state[data-state="In"] {
+    background: var(--pop);
+    color: #fff;
+  }
+
+  .shot-state[data-state="Late"] {
+    background: var(--pop-soft);
+    color: var(--pop-deep);
+  }
+
+  .shot-scopes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .shot-scopes > li {
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.45rem;
+    background: var(--bg-subtle);
+    color: var(--text-faint);
+    font-size: 0.72rem;
+  }
+
+  .shot-scopes > li[data-on] {
+    background: var(--pop);
+    color: #fff;
   }
 
   /* --- Step rail ----------------------------------------------------------- */
@@ -2585,7 +3489,105 @@
     border: 0;
     border-top: 1px solid var(--border);
   }
-}
+
+  /* --- Publications --------------------------------------------------------
+
+     Set as a bibliography rather than a card grid: numbered entries, hanging
+     indent, ruled between.
+
+     Rule 4 does most of the work here. The sans carries the title, the authors
+     and the summary, because a person wrote them. The mono carries the entry
+     number, the venue, the date and the DOI, because they identify a record. */
+  /* The bibliography. Hanging indent via a two-column grid, so a wrapped title
+     lines up under the first word and not under the number. */
+  .pub-list > :last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pub-entry {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0 0.5rem;
+    padding: 1.35rem 0 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .pub-index {
+    color: var(--text-faint);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .pub-title {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.45;
+    letter-spacing: -0.008em;
+    text-wrap: pretty;
+  }
+
+  .pub-authors {
+    margin-top: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  /* The citation line: venue, date and identifier, all mono, on one rule so it
+     reads as the record's spine rather than as more prose. */
+  .pub-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.7rem;
+    margin-top: 0.6rem;
+    padding-top: 0.55rem;
+    border-top: 1px dotted var(--border-strong);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.7rem;
+    color: var(--text-faint);
+  }
+
+  .pub-venue {
+    color: var(--text-muted);
+  }
+
+  .pub-summary {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.87rem;
+    line-height: 1.65;
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  .pub-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 0.1rem;
+    transition: color 0.16s ease, border-color 0.16s ease;
+  }
+
+  .pub-link:hover {
+    color: var(--brand-text);
+    border-color: var(--brand);
+  }
+
+  @media (max-width: 640px) {
+    .pub-entry {
+      grid-template-columns: 1.6rem 1fr;
+    }
+
+    .pub-summary {
+      font-size: 0.85rem;
+    }
+  }}
 
 /* ==========================================================================
    Utilities & motion

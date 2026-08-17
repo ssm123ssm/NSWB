@@ -4,13 +4,13 @@
    Ported from the "nsqr — Scan & Verify" motion study. Two things changed on
    the way in:
 
-   1. Every animated `#id` became a class, because CSS modules localise ids too
-      and the SVG would need a scoped name on each one. Only the four <defs>
-      references (gradients, mask, clip path) are still ids — they are addressed
-      by url() from SVG attributes, never from here.
-   2. Theme switching runs off the site's `data-theme` attribute rather than
-      prefers-color-scheme, so the scene follows the header toggle like
-      everything else.
+   Every animated `#id` became a class on the way in, because CSS modules
+   localise ids too and the SVG would need a scoped name on each one. Only the
+   four <defs> references (gradients, mask, clip path) are still ids — they are
+   addressed by url() from SVG attributes, never from here.
+
+   The scene had a second palette for the site's dark theme; the site has one
+   theme now, so it has one palette. The daylight sky below is the only one.
 
    The palette below stays local on purpose. This is an illustration, not
    chrome: it needs a cartoon ink line, a coral shirt and a mint checkmark, and
@@ -53,15 +53,6 @@
   overflow: hidden;
   background: var(--sky-2);
   box-shadow: 8px 10px 0 0 color-mix(in srgb, var(--stage-edge) 22%, transparent);
-}
-
-:global(html[data-theme="dark"]) .stage {
-  --rule: #322a5e;
-  --stage-edge: #0b0720;
-  --sky-1: #2a2160;
-  --sky-2: #171139;
-  --ground: #2e2569;
-  --ground-2: #241c56;
 }
 
 .stage svg {

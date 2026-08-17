@@ -13,11 +13,14 @@ export const site = {
   github: "https://github.com/neurasense",
 };
 
-/* Two items, not three: the Approach section was folded into Capabilities, so
-   the link that pointed at #approach had nothing left to scroll to. */
+/* The Approach section was folded into Capabilities, so the link that pointed
+   at #approach had nothing left to scroll to and went. Research is a route
+   rather than an anchor — it is the one page a stranger can check against a
+   third party, so it has to be linkable on its own. */
 export const navLinks = [
   { label: "Capabilities", href: "/#capabilities" },
   { label: "Products", href: "/#products" },
+  { label: "Research", href: "/research" },
 ];
 
 /**
@@ -90,6 +93,89 @@ export const legalDocs = [
 
 /** The three NSQR documents, in the order they are listed on `/legal`. */
 export const nsqrLegalDocs = legalDocs.filter((doc) => doc.product === "NSQR");
+
+/**
+ * Published research. Each entry lists the title, where and when it was
+ * published, a summary of what it covers, and a link to the full article.
+ * Newest first.
+ *
+ * `href` is a DOI or an arXiv abstract, never a Google Scholar link: Scholar
+ * URLs carry a profile id, are not citation identifiers, and stop resolving.
+ * `ref` is that same identifier, set in mono as the machine string it is.
+ *
+ * No citation counts. Nothing here refetches them, so a number written today is
+ * out of date within months.
+ *
+ * `authors` is the full list in publication order. Two of the four are
+ * University of Peradeniya work with faculty co-authors, so `affiliation`
+ * records that rather than leaving it to be inferred.
+ */
+export const publications = [
+  {
+    id: "sisu-athwala",
+    title:
+      "Artificial intelligence based personalized student feedback system 'Sisu Athwala' to enhance exam performance of medical undergraduates",
+    authors: [
+      "Thilanka Seneviratne",
+      "Supun Manathunga",
+      "Wathsala Idirisingha",
+      "Kosala Somaratne",
+      "Kosala Marambe",
+      "Udaya Dangahadeniya",
+    ],
+    venue: "PLOS One",
+    detail: "20(12), e0336154",
+    date: "4 December 2025",
+    year: "2025",
+    ref: "10.1371/journal.pone.0336154",
+    href: "https://doi.org/10.1371/journal.pone.0336154",
+    affiliation: "University of Peradeniya",
+    summary:
+      "A feedback system for medical undergraduates, built on retrieval augmented generation over a custom knowledge base to reduce inaccurate answers from the underlying model. It gives each student feedback on their MCQ and SAQ performance, along with guidance on stress management and study strategy. It was evaluated both by expert student mentors and by the students who used it.",
+  },
+  {
+    id: "saq-scoring",
+    title:
+      "Artificial intelligence assisted automated short answer question scoring tool shows high correlation with human examiner markings",
+    authors: ["HMTW Seneviratne", "SS Manathunga"],
+    venue: "BMC Medical Education",
+    detail: "25(1), 1146",
+    date: "5 August 2025",
+    year: "2025",
+    ref: "10.1186/s12909-025-07718-2",
+    href: "https://doi.org/10.1186/s12909-025-07718-2",
+    affiliation: "University of Peradeniya",
+    summary:
+      "A scoring tool that uses a large language model to mark short answer questions. It extracts the key components of a student's answer, applies the scoring rubric supplied by the instructor, and writes individual feedback. It was tested on a systematic pharmacology course, where its marks correlated closely with those of human examiners.",
+  },
+  {
+    id: "clinical-alignment",
+    title: "Aligning large language models for clinical tasks",
+    authors: ["Supun Manathunga", "Isuru Hettigoda"],
+    venue: "arXiv",
+    detail: "arXiv:2309.02884",
+    date: "September 2023",
+    year: "2023",
+    ref: "arXiv:2309.02884",
+    href: "https://arxiv.org/abs/2309.02884",
+    summary:
+      "An alignment method for medical question answering, called expand-guess-refine, which combines instruction tuning with in-prompt techniques. It reached 70.63% accuracy on a subset of the USMLE dataset without additional parameters or training data.",
+  },
+  {
+    id: "rag-summarization",
+    title:
+      "Retrieval augmented generation and representative vector summarization for large unstructured textual data in medical education",
+    authors: ["Supun S Manathunga", "YA Illangasekara"],
+    venue: "arXiv",
+    detail: "arXiv:2308.00479",
+    date: "August 2023",
+    year: "2023",
+    ref: "arXiv:2308.00479",
+    href: "https://arxiv.org/abs/2308.00479",
+    summary:
+      "Sets out retrieval augmented generation as a way to attach a customisable knowledge base to a language model, so that answers in a medical context can be grounded in a known source rather than in the model's own memory. It also presents a combined extractive and abstractive summarisation method for large unstructured text, using representative vectors.",
+  },
+];
 
 /**
  * The overview that opens the page under the hero — who we are, in our own
@@ -280,10 +366,251 @@ export function getProductByName(name) {
   return products.find((p) => p.name === name);
 }
 
+/**
+ * The product showcase on the home page: four products, each shown as one app
+ * screen with three capabilities beside it. Selecting a capability brings its
+ * region of the screen forward and leaves the rest of the screen dimmed.
+ *
+ * Four and not six. Lipd Hub and AES are by request and have no screen a
+ * stranger is allowed to see, so a drawn capture of either would be an
+ * invention rather than a likeness. They keep their place in the timeline
+ * below, which claims nothing visual about them.
+ *
+ * `id` is the tie between a capability and the region of the screen it lights:
+ * it must match a `<Region id>` in that product's shot in `ShowcaseShots.js`,
+ * or the capability selects nothing. `title` is deliberately the same phrase as
+ * the product's `highlights` entry — the chip on the timeline card and the tab
+ * here name the same capability, and letting them drift would be two names for
+ * one thing.
+ *
+ * Descriptions run to roughly two lines. Longer and the left column outgrows
+ * the screen beside it; shorter and the tab reads as a label rather than a
+ * claim.
+ */
+export const productShowcase = [
+  {
+    slug: "nsqr",
+    capabilities: [
+      {
+        id: "destination",
+        title: "Editable after printing",
+        description:
+          "The code on the poster never changes. Where it points does — swap the destination and every copy already printed follows it, with no reprint.",
+      },
+      {
+        id: "analytics",
+        title: "Scan analytics",
+        description:
+          "Every scan is logged with its time, place and device. You find out which poster worked and which one nobody walked past.",
+      },
+      {
+        id: "content",
+        title: "Eight content types",
+        description:
+          "A website, plain text, an email, a phone number, an SMS, Wi-Fi credentials, a vCard or a lost-and-found tag — each in your own colours.",
+      },
+    ],
+  },
+  {
+    slug: "vault",
+    capabilities: [
+      {
+        id: "encryption",
+        title: "Client-side encryption",
+        description:
+          "Files are encrypted on your own device, before anything is sent. Plaintext never reaches our servers, so there is nothing there to leak.",
+      },
+      {
+        id: "manifest",
+        title: "Encrypted manifests",
+        description:
+          "Names, folders and file types are scrambled along with the contents, so even the shape of your work stays private.",
+      },
+      {
+        id: "access",
+        title: "Policy-based access",
+        description:
+          "Give a contractor one project for the length of an engagement and take it back in a click. Access is a policy, not a shared password.",
+      },
+    ],
+  },
+  {
+    slug: "colab",
+    capabilities: [
+      {
+        id: "timeline",
+        title: "Milestone timeline",
+        description:
+          "Dates across the top and the work planned against each one underneath — what is due, what has slipped, and what nobody has started.",
+      },
+      {
+        id: "decisions",
+        title: "Decision log",
+        description:
+          "Every decision recorded with whoever settled it and the day they did. Six months on, the reason is still attached to the outcome.",
+      },
+      {
+        id: "sharing",
+        title: "Per-project sharing",
+        description:
+          "A guest sees one project and nothing else. Sharing is scoped to the work rather than to the workspace around it.",
+      },
+    ],
+  },
+  /* Presence is the one entry written from the outside. It has no detail page
+     and no feature data anywhere in this file, so these three descriptions say
+     only what `tagline`, `description` and `highlights` already claim — a live
+     register, controlled access, an export. They deliberately name no
+     mechanism: whether the session code rotates, whether a check-in is bound to
+     its device, which file formats come out. Fill those in from the app and the
+     copy gets sharper; invent them and the page is lying.
+
+     The same limit shapes its shot, whose `secure` and `exports` regions are
+     drawn general for the same reason. */
+  {
+    slug: "presence",
+    capabilities: [
+      {
+        id: "checkins",
+        title: "Real-time check-ins",
+        description:
+          "The roster fills as people arrive. Who is in the room is a live count, not a sheet somebody types up that evening.",
+      },
+      {
+        id: "secure",
+        title: "Secure access",
+        description:
+          "A session opens to the people it is meant for and to nobody else, so the register cannot be filled in by someone who was never there.",
+      },
+      {
+        id: "exports",
+        title: "Clean exports",
+        description:
+          "Take the register out by session or by date range, in a shape your records office can work with directly.",
+      },
+    ],
+  },
+];
+
+/**
+ * The contents of the four drawn screens. Fixed strings rather than anything
+ * generated: the shots render on the server first, so a random value would
+ * differ on the client and trip hydration.
+ *
+ * These are likenesses, not screenshots — see the note on `ShowcaseShots.js`
+ * for why the site draws its product screens instead of capturing them. Nothing
+ * here should claim a feature the product does not have, and no row should name
+ * a real customer: first names only, and projects named after the kind of work
+ * rather than after anyone's account.
+ *
+ * `qr` is an 11×11 module map for the NSQR shot, drawn by hand rather than
+ * encoded — it carries the three finder squares so it reads as a QR code at a
+ * glance, and decodes to nothing, which is the honest state for a decoration.
+ */
+export const showcaseScenes = {
+  nsqr: {
+    path: "nsqr.neurasense.io/codes/spring-menu",
+    qr: [
+      "11111010101",
+      "10001011001",
+      "10101000110",
+      "10101010011",
+      "10001001101",
+      "11111010101",
+      "00000011000",
+      "11011010110",
+      "00100101011",
+      "10110001101",
+      "01011011111",
+    ],
+    was: "/spring-menu",
+    now: "/summer-menu",
+    scans: [38, 52, 44, 71, 96, 64, 83],
+    days: ["M", "T", "W", "T", "F", "S", "S"],
+    stats: [
+      { label: "scans this week", value: "448" },
+      { label: "top city", value: "Colombo" },
+      { label: "mobile", value: "87%" },
+    ],
+    /* The eight types are not repeated here — the shot reads
+       `nsqrContentTypes` above, which is what /nsqr renders. Two lists of the
+       same eight things is how one of them ends up wrong. */
+  },
+  vault: {
+    path: "vault.neurasense.io/projects/client-delivery",
+    files: [
+      { name: "board-pack-q3.pdf", size: "2.4 MB", cipher: "8f3ac1d94e0b7a2f" },
+      { name: "cohort-2026.csv", size: "18.1 MB", cipher: "b20e7c8a5f1d3906" },
+      { name: "term-sheet.docx", size: "612 KB", cipher: "5d9142fb6c0ea837" },
+    ],
+    manifest: [
+      { key: "entries", value: "24" },
+      { key: "names", value: "sealed" },
+      { key: "tree", value: "sealed" },
+      { key: "digest", value: "e7602b3d…8a94c5f1" },
+    ],
+    policies: [
+      { who: "Ann", scope: "Whole project", expiry: "No expiry" },
+      { who: "Sam", scope: "Read only", expiry: "Ends 30 Sep" },
+      { who: "Contractor", scope: "One folder", expiry: "Ends 12 Sep" },
+    ],
+  },
+  colab: {
+    path: "colab.neurasense.io/p/product-launch",
+    milestones: [
+      { label: "Beta", at: 12 },
+      { label: "Launch", at: 54 },
+      { label: "Review", at: 90 },
+    ],
+    fill: 62,
+    decisions: [
+      {
+        title: "Ship without the import tool",
+        by: "Ann",
+        on: "14 Aug",
+        why: "Two customers asked; neither blocks on it.",
+      },
+      {
+        title: "Annual plan priced at 10×",
+        by: "Priya",
+        on: "09 Aug",
+        why: "Matches what the market already pays.",
+      },
+    ],
+    members: [
+      { who: "Ann", role: "Owner", scope: "All projects" },
+      { who: "Sam", role: "Member", scope: "All projects" },
+      { who: "Guest", role: "Guest", scope: "product-launch" },
+    ],
+  },
+  presence: {
+    path: "presence.neurasense.io/sessions/monday-standup",
+    session: "Monday standup · 09:00",
+    roster: [
+      { who: "Ann", at: "08:52", state: "In" },
+      { who: "Kofi", at: "08:57", state: "In" },
+      { who: "Priya", at: "09:04", state: "Late" },
+      { who: "Sam", at: "—", state: "Absent" },
+    ],
+    present: "3",
+    expected: "4",
+    /* Drawn as "this session is closed to strangers" rather than as a named
+       mechanism — see the note on Presence in `productShowcase`. */
+    access: [
+      { label: "Session", value: "Open · 09:00–09:30" },
+      { label: "Who can check in", value: "Invited members" },
+      { label: "Everyone else", value: "Refused" },
+    ],
+    exportScopes: ["This session", "Date range"],
+    range: "01–17 Aug",
+    rows: "612 rows",
+  },
+};
+
 /* accent: the palette entry each principle wears. The home page track tints the
    active step's glyph, border and rail marker with it — and because only one
-   step is ever active, the three hues are never seen side by side, which is
-   what let them stay three rather than collapsing to one.
+   step is ever active, the hues are never seen side by side, which is what
+   lets each principle keep its own rather than collapsing to one.
 
    icon: a key into iconMap, the small tile that labels the card.
 
@@ -294,7 +621,7 @@ export function getProductByName(name) {
 
    label: the products page prints these as a right-ranged column in its "Core
    themes" card, and they are the React key in both places. The home page no
-   longer shows them — three peers are not a sequence, and numbering them said
+   longer shows them — these are peers, not a sequence, and numbering them said
    otherwise. */
 export const principles = [
   {
@@ -323,6 +650,22 @@ export const principles = [
     accent: "amber",
     icon: "layers",
     motif: "measure",
+  },
+  {
+    label: "04",
+    title: "Research-based",
+    description:
+      "What we ship starts as published work — methods that survived peer review before they became product.",
+    accent: "emerald",
+    icon: "doc",
+    motif: "citation",
+    /* The one principle that can be checked rather than taken on trust, so it
+       is the one that carries a link. `note` is optional and no other principle
+       sets it; PrincipleTrack prints it as fine print under the copy. */
+    note: {
+      text: "Click to see some of our published research",
+      href: "/research",
+    },
   },
 ];
 

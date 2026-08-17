@@ -24,6 +24,7 @@ import {
   colabLinks,
   getProduct,
 } from "../data/site";
+import { BreakNote } from "../components/BreakNote";
 
 const colab = getProduct("colab");
 
@@ -59,7 +60,7 @@ export const metadata = {
  */
 export default function ColabPage() {
   return (
-    <main id="main" data-brand={colab.accent}>
+    <main id="main" data-brand={colab.accent} data-temper="structured">
       {/* Read position. Inside main so it picks up the product accent, and
           invisible until a browser that supports scroll timelines scales it. */}
       <div className="scroll-progress" aria-hidden="true" />
@@ -126,11 +127,14 @@ export default function ColabPage() {
             </ul>
           </div>
 
+          {/* The milestones are buttons, and the Edit button is meant to fail.
+              Both need saying, or the reader watches a still image of the one
+              thing a shared to-do list cannot do. */}
           <div>
             <ColabScene />
             <p className="mt-4 text-center text-[0.82rem] leading-relaxed text-faint">
-              One project over a week: the dates it is working towards, the work
-              planned against them, and what the team settled on the way.
+              Open any milestone to read what was settled that day. Then try to
+              edit it.
             </p>
           </div>
         </div>
@@ -358,6 +362,9 @@ export default function ColabPage() {
       </section>
 
       {/* ---------------------------------------------------------- Closing */}
+      {/* ------------------------------------------ What would break */}
+      <BreakNote slug="colab" />
+
       <section className="section section-subtle">
         <div className="shell">
           <div className="reveal card px-6 py-14 text-center sm:px-12">

@@ -16,6 +16,7 @@ import {
   vaultHowItWorks,
   vaultLimits,
 } from "../data/site";
+import { BreakNote } from "../components/BreakNote";
 
 const vault = getProduct("vault");
 
@@ -34,7 +35,7 @@ export const metadata = {
 
 export default function VaultPage() {
   return (
-    <main id="main" data-brand="cyan">
+    <main id="main" data-brand="cyan" data-temper="dense">
       {/* Read position. Inside main so it picks up the product accent, and
           invisible until a browser that supports scroll timelines scales it. */}
       <div className="scroll-progress" aria-hidden="true" />
@@ -108,13 +109,16 @@ export default function VaultPage() {
             </ul>
           </div>
 
-          {/* The scene runs on a loop: the list is readable, a sweep passes
-              over it, and everything after that is what we would receive. */}
+          {/* The scene locks itself once on arrival, and after that it is the
+              reader's: the file name is theirs to change and the lock is theirs
+              to throw. The caption has to say so — an editable field nobody
+              notices is just a slower version of the old loop. */}
           <div>
             <VaultScene />
             <p className="mt-4 text-center text-[0.82rem] leading-relaxed text-faint">
-              The same project, before and after it leaves your device. The
-              second state is the only one anybody else ever sees.
+              Put your own file name in and watch what we would receive. It
+              stays sixteen characters however long the name is — the length is
+              metadata too.
             </p>
           </div>
         </div>
@@ -373,6 +377,9 @@ export default function VaultPage() {
       </section>
 
       {/* ---------------------------------------------------------- Closing */}
+      {/* ------------------------------------------ What would break */}
+      <BreakNote slug="vault" />
+
       <section className="section">
         <div className="shell">
           <div className="reveal card px-6 py-14 text-center sm:px-12">

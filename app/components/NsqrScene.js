@@ -157,9 +157,18 @@ function buildScene() {
 
 /* --- the scene ------------------------------------------------------------ */
 
+/* Where in the loop the destination swaps under the unchanged code — the beat
+   the whole product is about. destIn holds until 28.5% of --T and has landed by
+   31%, so this drops the reader in just before it starts. */
+const SWAP_AT_MS = 3300;
+
 export default function NsqrScene({ className = "" }) {
   const [playing, setPlaying] = useState(true);
   const [motion, setMotion] = useState(false);
+  /* Bumped to remount the SVG, which is what makes a new --seek take effect
+     from a clean start rather than part-way through the running clock. */
+  const [run, setRun] = useState(0);
+  const [seek, setSeek] = useState(0);
 
   const stageRef = useRef(null);
   const originRef = useRef(0);
@@ -188,6 +197,17 @@ export default function NsqrScene({ className = "" }) {
     });
   }, []);
 
+  /* The reader's shortcut to the point. Without it the argument the scene
+     exists to make is thirteen seconds away, and most people do not wait. */
+  const showSwap = useCallback(() => {
+    setMotion(true);
+    setSeek(SWAP_AT_MS);
+    setRun((n) => n + 1);
+    setPlaying(true);
+    originRef.current = performance.now() - SWAP_AT_MS;
+    frozenRef.current = 0;
+  }, []);
+
   return (
     <div className={className}>
       <div
@@ -195,8 +215,9 @@ export default function NsqrScene({ className = "" }) {
           playing ? "" : styles.isPaused
         }`.trim()}
         ref={stageRef}
+        style={seek ? { "--seek": `-${seek}ms` } : undefined}
       >
-        <SceneSvg />
+        <SceneSvg key={run} />
 
         {/* Small, and inside the frame rather than under it. The loop runs for
             longer than five seconds and starts on its own, so something has to
@@ -212,6 +233,10 @@ export default function NsqrScene({ className = "" }) {
           {playing ? <PauseIcon className="h-3.5 w-3.5" /> : <PlayIcon className="h-3.5 w-3.5" />}
         </button>
       </div>
+
+      <button className={styles.jump} onClick={showSwap} type="button">
+        Skip to the moment it changes
+      </button>
     </div>
   );
 }

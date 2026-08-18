@@ -7,6 +7,39 @@ import {
 } from "./Icons";
 import { nsqrContentTypes, showcaseScenes } from "../data/site";
 
+/* Category colour. A screen's own product hue carries everything that is not a
+   category; anything that *is* one — a state, a role, a content type — takes a
+   hue from this set so the colour does the telling. Keys are the `data-hue`
+   blocks in globals.css. */
+const TYPE_HUES = [
+  "blue",
+  "slate",
+  "rose",
+  "green",
+  "amber",
+  "teal",
+  "purple",
+  "violet",
+];
+
+/* Stable per-person colour, so the same name is the same colour on every
+   screen it appears on. Hashed rather than indexed: a roster reordered in the
+   data should not repaint everyone. */
+const PERSON_HUES = ["violet", "blue", "teal", "amber", "rose", "purple"];
+
+function hueFor(name) {
+  let sum = 0;
+  for (let i = 0; i < name.length; i += 1) sum += name.charCodeAt(i);
+  return PERSON_HUES[sum % PERSON_HUES.length];
+}
+
+/* Expiry read as urgency rather than as text: open-ended is calm, a date is
+   amber, and the soonest one is the one worth noticing. */
+function expiryHue(expiry) {
+  if (/no expiry/i.test(expiry)) return "slate";
+  return /12 sep/i.test(expiry) ? "rose" : "amber";
+}
+
 /**
  * The twelve product screens in the home page showcase — four products, three
  * capabilities each, one screen per capability.
@@ -96,7 +129,7 @@ function NsqrAnalytics({ scene }) {
             <span className="shot-bar-value">{value}</span>
             <span
               className="shot-bar-fill"
-              style={{ "--h": `${Math.round((value / peak) * 100)}%` }}
+              style={{ "--bar-h": `${Math.round((value / peak) * 100)}%` }}
             />
             <span className="shot-bar-day">{scene.days[i]}</span>
           </span>
@@ -121,7 +154,11 @@ function NsqrContent({ scene }) {
         {nsqrContentTypes.map((type, i) => {
           const Icon = contentIconMap[type.icon];
           return (
-            <li key={type.name} data-on={i === 0 ? "" : undefined}>
+            <li
+              key={type.name}
+              data-hue={TYPE_HUES[i % TYPE_HUES.length]}
+              data-on={i === 0 ? "" : undefined}
+            >
               {Icon && <Icon className="h-5 w-5" />}
               <span>{type.name}</span>
             </li>
@@ -178,12 +215,16 @@ function VaultAccess({ scene }) {
       <ul className="shot-people">
         {scene.policies.map((policy) => (
           <li key={policy.who}>
-            <span className="shot-avatar">{policy.who.charAt(0)}</span>
+            <span className="shot-avatar" data-hue={hueFor(policy.who)}>
+              {policy.who.charAt(0)}
+            </span>
             <span className="shot-truncate">
               <b>{policy.who}</b>
               <span className="shot-sub">{policy.scope}</span>
             </span>
-            <span className="shot-tag">{policy.expiry}</span>
+            <span className="chip-soft" data-hue={expiryHue(policy.expiry)}>
+              {policy.expiry}
+            </span>
           </li>
         ))}
       </ul>
@@ -205,6 +246,14 @@ function ColabTimeline({ scene }) {
             key={milestone.label}
             style={{ "--at": `${milestone.at}%` }}
             data-done={milestone.at < scene.fill ? "" : undefined}
+            data-now={
+              milestone.at >= scene.fill &&
+              !scene.milestones.some(
+                (m) => m.at >= scene.fill && m.at < milestone.at
+              )
+                ? ""
+                : undefined
+            }
           >
             <span className="shot-milestone-node">
               {milestone.at < scene.fill && <CheckIcon className="h-3 w-3" />}
@@ -226,11 +275,13 @@ function ColabDecisions({ scene }) {
     <Screen path={scene.path} title="Decision log">
       <ul className="shot-log">
         {scene.decisions.map((decision) => (
-          <li key={decision.title}>
+          <li key={decision.title} data-hue={hueFor(decision.by)}>
             <p className="shot-log-title">{decision.title}</p>
             <p className="shot-sub">{decision.why}</p>
             <p className="shot-signed">
-              <span className="shot-avatar">{decision.by.charAt(0)}</span>
+              <span className="shot-avatar" data-hue={hueFor(decision.by)}>
+                {decision.by.charAt(0)}
+              </span>
               {decision.by} · {decision.on}
             </p>
           </li>
@@ -246,7 +297,7 @@ function ColabSharing({ scene }) {
       <ul className="shot-people">
         {scene.members.map((member) => (
           <li key={member.who} data-guest={member.role === "Guest" ? "" : undefined}>
-            <span className="shot-avatar">
+            <span className="shot-avatar" data-hue={hueFor(member.who)}>
               {member.role === "Guest" ? (
                 <UsersIcon className="h-3.5 w-3.5" />
               ) : (
@@ -257,7 +308,12 @@ function ColabSharing({ scene }) {
               <b>{member.who}</b>
               <span className="shot-sub">{member.role}</span>
             </span>
-            <span className="shot-tag">{member.scope}</span>
+            <span
+              className="chip-soft"
+              data-hue={member.role === "Guest" ? "amber" : "slate"}
+            >
+              {member.scope}
+            </span>
           </li>
         ))}
       </ul>
@@ -277,7 +333,9 @@ function PresenceCheckins({ scene }) {
       <ul className="shot-people">
         {scene.roster.map((entry) => (
           <li key={entry.who}>
-            <span className="shot-avatar">{entry.who.charAt(0)}</span>
+            <span className="shot-avatar" data-hue={hueFor(entry.who)}>
+              {entry.who.charAt(0)}
+            </span>
             <span className="shot-truncate">
               <b>{entry.who}</b>
               <span className="shot-sub">{entry.at}</span>

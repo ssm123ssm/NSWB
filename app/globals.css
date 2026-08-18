@@ -2110,10 +2110,14 @@
      tired, which is what made the first version of this section dull.
 
      So: `--pop` is the vivid fill, `--pop-deep` is the same hue where it is
-     legible as words, `--pop-soft` is a tint for chips, and `--pop-tint` is the
-     panel wash. Text inside a screen takes `--pop-deep`, never `--pop`. The
-     scale is scoped to `.showcase-panel` and leaks nowhere — the rest of the
+     legible as words, and `--pop-soft` is a tint for chips and title bars.
+     Text inside a screen takes `--pop-deep`, never `--pop`. The scale is scoped
+     to `.showcase-panel` and leaks nowhere — the rest of the
      site is untouched by it.
+
+     The panel ground is *not* on this scale. It was, and four differently
+     washed cards fought the screens sitting on them; a neutral card gives the
+     colour more force, which is what the reference does.
 
      One panel at a time, one screen per capability. Three regions stacked in a
      single window meant two of them were always dimmed and none had room; the
@@ -2163,7 +2167,14 @@
     border-radius: var(--radius-lg);
   }
 
-  /* One panel fills the track. `stretch` is load-bearing: the panels are a flex
+  /* Neutral, not tinted. The panel wore a wash of its product's hue and the
+     result was four differently-coloured grounds fighting the screens sitting
+     on them — the colour has more force coming off a neutral card, which is
+     what the reference does. The card stays a half-step off white so the white
+     screen inside it still reads as a raised object; a pure-white card under a
+     pure-white screen loses that edge entirely.
+
+     One panel fills the track. `stretch` is load-bearing: the panels are a flex
      row, so they all take the height of the tallest, and the section therefore
      does not resize as it is swept. */
   .showcase-panel {
@@ -2174,7 +2185,7 @@
     align-items: stretch;
     padding: clamp(1.5rem, 3vw, 2.75rem);
     border-radius: var(--radius-lg);
-    background: var(--pop-tint);
+    background: #f7f8fa;
   }
 
   /* The saturated scale. Chosen as fills first and checked as words second,
@@ -2183,25 +2194,69 @@
     --pop: #7c4dff;
     --pop-deep: #5b21b6;
     --pop-soft: #ebe3ff;
-    --pop-tint: #f4f0ff;
   }
   .showcase-panel[data-brand="cyan"] {
     --pop: #00bfa5;
     --pop-deep: #00695f;
     --pop-soft: #d3f6f0;
-    --pop-tint: #ebfbf8;
   }
   .showcase-panel[data-brand="blue"] {
     --pop: #2f80ed;
     --pop-deep: #14539f;
     --pop-soft: #dceafd;
-    --pop-tint: #eef4fe;
   }
   .showcase-panel[data-brand="emerald"] {
     --pop: #22c55e;
     --pop-deep: #15703c;
     --pop-soft: #d6f7e2;
-    --pop-tint: #ecfdf2;
+  }
+
+  /* --- The screen palette --------------------------------------------------
+
+     A screen is not restricted to its product's hue. A status column where
+     every state is the same colour tells you nothing — the colour has to carry
+     the meaning, which is why "to do", "in progress" and "done" are three hues
+     in every tracker anyone has used. This is the set the screens draw from for
+     anything that is a *category*: states, roles, content types, urgency.
+
+     Each hue is a triple — fill, a text-safe deepening of it, and a tint — so
+     `[data-hue]` can be dropped on any chip, tile or avatar and the three parts
+     resolve together. The product's own `--pop` stays the screen's primary and
+     carries everything that is not a category. */
+  [data-hue="violet"] { --h: #7c4dff; --h-deep: #5b21b6; --h-soft: #ede6ff; }
+  [data-hue="purple"] { --h: #a855f7; --h-deep: #7314bb; --h-soft: #f3e6ff; }
+  [data-hue="blue"]   { --h: #2f80ed; --h-deep: #14539f; --h-soft: #dfeafd; }
+  [data-hue="teal"]   { --h: #00bfa5; --h-deep: #00695f; --h-soft: #d3f6f0; }
+  [data-hue="green"]  { --h: #22c55e; --h-deep: #15703c; --h-soft: #d8f7e3; }
+  [data-hue="amber"]  { --h: #f5a524; --h-deep: #8a5a00; --h-soft: #fdeecd; }
+  [data-hue="rose"]   { --h: #f5576c; --h-deep: #b1132a; --h-soft: #fde2e6; }
+  [data-hue="slate"]  { --h: #94a3b8; --h-deep: #4c5360; --h-soft: #eef1f5; }
+
+  /* A chip that fills with its hue — a state you want read at a glance. */
+  .chip-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.22rem 0.6rem;
+    border-radius: 0.4rem;
+    background: var(--h, var(--pop));
+    color: #fff;
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+
+  /* The quieter half of the pair, for a category that labels rather than
+     alerts. Text takes --h-deep, which is the hue carried to where it reads. */
+  .chip-soft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.22rem 0.6rem;
+    border-radius: 0.4rem;
+    background: var(--h-soft, var(--pop-soft));
+    color: var(--h-deep, var(--pop-deep));
+    font-size: 0.68rem;
+    white-space: nowrap;
   }
 
   @media (min-width: 1024px) {
@@ -2239,19 +2294,26 @@
   /* The capability list sits at the foot of the column so the panel reads the
      same way at every height — mark at the top, list against the base. */
   .showcase-tabs {
+    position: relative;
     margin-top: auto;
     display: grid;
     gap: 0.25rem;
-  }
-
-  .showcase-tabs > li {
-    border-left: 2px solid transparent;
     padding-left: 0.9rem;
-    transition: border-color 0.2s ease;
   }
 
-  .showcase-tabs > li[data-on] {
-    border-left-color: var(--pop);
+  /* One bar that travels, rather than a border on each item that blinks on and
+     off. Position and height are measured in ProductShowcase and applied
+     inline, because the items are different heights — the open one carries its
+     description — so there is no fixed step to animate along. */
+  .showcase-rule {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--pop);
+    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
   }
 
   .showcase-tab {
@@ -2275,12 +2337,35 @@
     color: var(--pop-deep);
   }
 
+  /* The description closes to nothing instead of disappearing. A grid whose
+     single row goes 1fr → 0fr is the one way to animate to intrinsic height
+     without measuring it, and the child carries the overflow so the text is
+     clipped rather than squashed as it goes. */
+  .showcase-tab-fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s ease;
+  }
+
+  .showcase-tabs > li[data-on] .showcase-tab-fold {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
   .showcase-tab-body {
-    padding-bottom: 0.65rem;
+    overflow: hidden;
     color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.6;
     max-width: 34ch;
+  }
+
+  /* The padding lives on the open state only — on a closed fold it would hold
+     the row open at its own height and the collapse would stop short. */
+  .showcase-tabs > li[data-on] .showcase-tab-body {
+    padding-bottom: 0.65rem;
   }
 
   .showcase-link {
@@ -2291,7 +2376,12 @@
     color: var(--pop-deep);
   }
 
-  /* --- Sweep controls --- */
+  /* --- Sweep controls ---
+
+     Arrows and dots, centred under the track. They are a convenience over a
+     scroller that already works without them, which is why they are allowed to
+     be this quiet — and why they carry no accent: the panel behind them is
+     already wearing one. */
 
   .showcase-controls {
     display: flex;
@@ -2587,7 +2677,9 @@
 
   .shot-bar-fill {
     width: 100%;
-    height: var(--h, 50%);
+    /* --bar-h, not --h: --h is the category hue set by [data-hue], and a bar
+       carrying a percentage in the same name would collide with it. */
+    height: var(--bar-h, 50%);
     min-height: 3px;
     border-radius: 4px 4px 0 0;
     background: var(--pop);
@@ -2645,11 +2737,16 @@
     gap: 0.4rem;
     padding: 0.7rem 0.3rem;
     border-radius: 0.6rem;
-    background: var(--pop-soft);
-    color: var(--pop-deep);
+    background: var(--h-soft, var(--pop-soft));
+    color: var(--h-deep, var(--pop-deep));
     font-size: 0.65rem;
     text-align: center;
     overflow: hidden;
+    transition: transform 0.18s ease;
+  }
+
+  .shot-tiles > li:hover {
+    transform: translateY(-2px);
   }
 
   .shot-tiles > li span {
@@ -2662,7 +2759,7 @@
   /* The selected type, filled rather than tinted — one tile in the set is what
      tells you this is a chooser and not a legend. */
   .shot-tiles > li[data-on] {
-    background: var(--pop);
+    background: var(--h, var(--pop));
     color: #fff;
   }
 
@@ -2730,7 +2827,7 @@
     width: 1.6rem;
     height: 1.6rem;
     border-radius: 50%;
-    background: var(--pop);
+    background: var(--h, var(--pop));
     color: #fff;
     font-size: 0.7rem;
   }
@@ -2831,7 +2928,7 @@
   }
 
   .shot-milestone[data-done] {
-    color: var(--pop-deep);
+    color: #15703c;
   }
 
   .shot-milestone-node {
@@ -2847,8 +2944,18 @@
   }
 
   .shot-milestone[data-done] .shot-milestone-node {
-    border-color: var(--pop);
-    background: var(--pop);
+    border-color: #22c55e;
+    background: #22c55e;
+  }
+
+  .shot-milestone[data-now] {
+    color: #8a5a00;
+  }
+
+  .shot-milestone[data-now] .shot-milestone-node {
+    border-color: #f5a524;
+    background: #fff;
+    box-shadow: 0 0 0 3px #fdeecd;
   }
 
   /* --- Decision log --- */
@@ -2862,7 +2969,7 @@
     padding: 0.65rem 0.75rem;
     border-radius: 0.55rem;
     background: var(--bg-subtle);
-    border-left: 3px solid var(--pop);
+    border-left: 3px solid var(--h, var(--pop));
   }
 
   .shot-log-title {
@@ -2898,13 +3005,18 @@
   }
 
   .shot-state[data-state="In"] {
-    background: var(--pop);
+    background: #22c55e;
     color: #fff;
   }
 
   .shot-state[data-state="Late"] {
-    background: var(--pop-soft);
-    color: var(--pop-deep);
+    background: #fdeecd;
+    color: #8a5a00;
+  }
+
+  .shot-state[data-state="Absent"] {
+    background: #fde2e6;
+    color: #b1132a;
   }
 
   .shot-scopes {

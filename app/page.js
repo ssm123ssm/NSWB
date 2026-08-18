@@ -1,6 +1,5 @@
 import Link from "next/link";
 import HeroReveal from "./components/HeroReveal";
-import NsqrReel from "./components/NsqrReel";
 import PrincipleTrack from "./components/PrincipleTrack";
 import ProductName from "./components/ProductName";
 import ProductShowcase from "./components/ProductShowcase";
@@ -27,6 +26,7 @@ const showcaseItems = productShowcase.map((entry) => ({
   product: getProduct(entry.slug),
   capabilities: entry.capabilities,
 }));
+
 
 export default function HomePage() {
   const live = products.filter((p) => p.status === "live");
@@ -278,31 +278,6 @@ export default function HomePage() {
           <div className="mt-12">
             <ProductTimeline products={ordered} />
           </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------ NSQR */}
-      {/* The page closes on the featured product rather than a contact card.
-          Deliberately not #contact: the anchor named a contact prompt, and this
-          is a product banner. Contact now runs through the header button and
-          the dialog it opens. */}
-      {/* Reduced top padding: the principles section above already closes on its
-          own full .section padding, so the default would stack two of them. */}
-      <section className="section pb-16 pt-10">
-        <div className="shell">
-          {/* The capsule is what marks this as a feature rather than one more
-              card: it wears the product's own accent and names it from the
-              data, so it follows whichever product carries `featured`. */}
-          <div
-            className="mb-5 flex justify-center"
-            data-brand={featured.accent}
-          >
-            <p className="badge">
-              Featuring <ProductName product={featured} />
-            </p>
-          </div>
-
-          <NsqrReel />
         </div>
       </section>
 

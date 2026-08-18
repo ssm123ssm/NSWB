@@ -842,17 +842,28 @@
     opacity: 0.9;
   }
 
-  /* --- The deck ------------------------------------------------------------
+  /* --- The reel ------------------------------------------------------------
 
      Enhancement only: without JS, and under reduced motion, none of this
      applies and the section stays the plain list of cards above.
 
-     The scroll block is what makes the section long. The stage is held still
-     inside it, and every card shares one grid cell in the deck, so a card
-     never travels — it fades in where the last one was. `align-items` is left
-     at stretch on purpose: the cell takes the height of the longest card and
-     they all match it, so the silhouette does not jump as the copy changes
-     length. */
+     The scroll block is what makes the section long and the stage is held
+     still inside it — both unchanged. What changed is the deck: the cards used
+     to share one grid cell and cross-fade in place, and now they sit in a row
+     and travel across it, right to left, driven by how far through the block
+     the stage has been held.
+
+     The trade is dwell for continuity. Cross-fading held the reader on exactly
+     one principle at a time, which was the point of the original; a reel shows
+     the seam between two cards at the midpoints instead. What it buys is that
+     the movement now matches the gesture — scrolling down pulls the row along
+     — so the section reads as one thing being swept rather than four things
+     being swapped. It also puts it in the same language as the showcase that
+     closes the page, which sweeps sideways for the same reason.
+
+     `align-items` is left at stretch on purpose: every card takes the height
+     of the tallest, so the silhouette does not jump as the row moves and the
+     copy changes length. */
   @media (min-width: 768px) {
     .principle-track[data-track="on"] .principle-scroll {
       height: calc(var(--deck-steps, 3) * 80vh);
@@ -862,7 +873,15 @@
        own contents in it, so while the section is held the composition is
        centred rather than pinned to the top with the rest of the screen empty
        under it. 5rem is the header, the same figure html's scroll-padding-top
-       uses. */
+       uses.
+
+       overflow: hidden is what makes it a reel rather than a row spilling
+       across the page — it is the window the cards pass behind. It clips at
+       the padding box, and the stage has no padding, so the window is exactly
+       the column. Safe for the plate's shadow: at 42px blur against -30px
+       spread the shadow has no horizontal reach at all, and the card is
+       centred in a full-height stage so its 9px of bottom reach is nowhere
+       near the clip either. */
     .principle-track[data-track="on"] .principle-stage,
     .principle-track[data-track="on"] .principle-aside {
       position: sticky;
@@ -872,33 +891,65 @@
       align-content: center;
     }
 
-    .principle-track[data-track="on"] .principle-deck {
-      gap: 0;
+    .principle-track[data-track="on"] .principle-stage {
+      overflow: hidden;
+      /* minmax(0, 1fr) rather than the implicit auto track, for the same
+         reason .principle-plate spells its columns that way: an auto track
+         floors at the min-content of what sits in it, and what sits in it is
+         now a flex row four plates wide. Left implicit, the track ignored the
+         552px column and sized itself to 1192px — the deck grew to fit the row
+         instead of the row overflowing the deck, so there was nothing for
+         overflow: hidden to clip and the cards rendered at more than double
+         their slot. */
+      grid-template-columns: minmax(0, 1fr);
     }
 
-    /* visibility, not just opacity: a card off the stage holds a link, and an
-       invisible link that can still be tabbed to is a trap. Hiding it takes it
-       out of the tab order too. The 0s delay lets the fade finish before it
-       goes, so the transition still reads. */
+    /* The row. --deck-shift is written by PrincipleTrack.js in px, measured
+       from the cards themselves, so nothing here has to agree with the script
+       about slot widths or gap arithmetic — the transform just consumes what
+       the measurement produced.
+
+       No transition on the transform: it is following the scroll position
+       directly, and easing it would put the row behind the reader's own hand.
+       The rail marks on the left are where the easing lives instead. */
+    .principle-track[data-track="on"] .principle-deck {
+      display: flex;
+      gap: 2rem;
+      transform: translate3d(calc(var(--deck-shift, 0px) * -1), 0, 0);
+      will-change: transform;
+    }
+
+    /* One column width each, so a card at rest fills the window exactly and
+       the next one waits just outside it. flex-basis resolves against the
+       deck, which is still the column's width — the cards overflow it to the
+       right and the stage above clips them.
+
+       min-width: 0 is load-bearing, not tidying. A flex item floors at its own
+       min-content width by default, and a plate's min-content is wide: copy at
+       34ch beside a 9.5rem mark, with the plate's padding and gap on top. Left
+       at auto the cards ignored the 100% basis and came out at 1192px in a
+       552px window, so the row was more than twice as long as it should be and
+       a card never sat flush in the window at any scroll position. */
     .principle-track[data-track="on"] .principle-step {
-      grid-area: 1 / 1;
-      opacity: 0;
-      transform: translateY(10px) scale(0.995);
-      pointer-events: none;
-      visibility: hidden;
-      transition: opacity 0.45s ease,
-        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-        visibility 0s linear 0.55s;
+      flex: 0 0 100%;
+      min-width: 0;
+    }
+
+    /* Cards off the window are dimmed rather than hidden — they are really on
+       screen now, half of one shows at every midpoint, and hiding what the
+       reader can see would read as a bug. The card being read comes forward on
+       contrast alone.
+
+       Tabbing is handled in the script, not here: off-window cards are marked
+       inert, so the one link on the stage stays the only reachable one and
+       focus can never drag the clipped row sideways out of its window. */
+    .principle-track[data-track="on"] .principle-step {
+      opacity: 0.55;
+      transition: opacity 0.4s ease;
     }
 
     .principle-track[data-track="on"] .principle-step.is-on {
       opacity: 1;
-      transform: none;
-      pointer-events: auto;
-      visibility: visible;
-      transition: opacity 0.45s ease,
-        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-        visibility 0s linear 0s;
     }
   }
 
@@ -930,15 +981,23 @@
   }
 
   /* Sized to fill its screen rather than to body rhythm. It is the only thing
-     on a full viewport, so at the old scale it read as a stray line of copy in
-     the middle of an empty page; at this one the sentence spans the column and
-     the emptiness around it looks intended. Wraps to three lines at the top of
-     the range, which is what gives the block enough height to hold the screen. */
+     on a full viewport, so at a body-adjacent scale it read as a stray line of
+     copy in the middle of an empty page; at this one the sentence spans the
+     column and the emptiness around it looks intended. With the eyebrow gone
+     the sentence is the whole block, so it carries the screen alone and is set
+     larger again to do it.
+
+     The clamp is tuned per band rather than left to one viewport slope: 2rem
+     on a phone, where the line has ~320px to work with and wraps to four or
+     five lines; 6vw through the tablet range; 4.75rem at the top, which is
+     where the sentence still wraps to three lines inside a 64rem column —
+     three lines is what gives the block enough height to hold the screen, and
+     going further would drop it to two. */
   .statement-body {
-    font-size: clamp(1.75rem, 4.6vw, 3.4rem);
+    font-size: clamp(2rem, 6vw, 4.75rem);
     font-weight: 300;
-    line-height: 1.2;
-    letter-spacing: -0.03em;
+    line-height: 1.14;
+    letter-spacing: -0.035em;
     text-wrap: balance;
   }
 
@@ -2205,10 +2264,16 @@
 
   /* The saturated scale. Chosen as fills first and checked as words second,
      which is the opposite of how --brand was built. */
+  /* NSQR takes the parent's violet rather than a second one. The capsule that
+     names it at the foot of the page is --brand-soft carrying --brand-text,
+     and this is the same product introduced earlier in the page — two violets
+     a few degrees apart across one scroll read as a printing fault, which is
+     the same reason coLab was given its own blue and AES moved to clay.
+     Resolved from the tokens rather than restated, so the pair cannot drift. */
   .showcase-panel[data-brand="violet"] {
-    --pop: #7c4dff;
-    --pop-deep: #5b21b6;
-    --pop-soft: #ebe3ff;
+    --pop: var(--brand);
+    --pop-deep: var(--brand-text);
+    --pop-soft: var(--brand-soft);
   }
   .showcase-panel[data-brand="cyan"] {
     --pop: #00bfa5;
@@ -2278,6 +2343,41 @@
     .showcase-panel {
       grid-template-columns: 0.8fr 1.2fr;
     }
+  }
+
+  /* --- The fifth panel -----------------------------------------------------
+
+     NSQR again, as the reel rather than as a capability list. One column at
+     every width — the reel is a whole composition and has nothing to sit
+     beside — so this overrides the two-column rule above rather than joining
+     it. The attribute is what carries the specificity, so the order of the two
+     does not matter.
+
+     `auto 1fr`: the pager takes its own height at the top and the reel takes
+     the rest. That row is what centres it — the panels are a flex row and all
+     take the height of the tallest, so with `auto auto` the reel would hang
+     from the top of a card the capability panels had stretched. */
+  .showcase-panel[data-feature] {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .showcase-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.9rem, 1.6vw, 1.25rem);
+    min-width: 0;
+  }
+
+  /* The reel caps itself at 56rem and centres, so this only hands it the
+     column. Its own surface, border and shadow do the rest — the panel ground
+     is a half-step off paper, which is what the reel needs behind it to read as
+     a raised object, the same way the drawn screens do on the other four. */
+  .showcase-feature-reel {
+    width: 100%;
   }
 
   .showcase-copy {
@@ -2381,6 +2481,82 @@
      the row open at its own height and the collapse would stop short. */
   .showcase-tabs > li[data-on] .showcase-tab-body {
     padding-bottom: 0.65rem;
+  }
+
+  /* --- The capability clock ------------------------------------------------
+
+     `NsqrReel`'s beat bar, brought onto the other four panels. Same shape and
+     same three states — filled, filling, waiting — because it is answering the
+     same question there and here: this thing is on a timer, here is where it
+     has got to.
+
+     Under the list rather than over it. The open capability carries its
+     description and the closed ones do not, so the list changes height every
+     time it advances and its top edge travels with it; the foot does not. A bar
+     above the list would nudge up and down on the same clock it is reporting.
+
+     Aligned to the capability titles rather than the column, so it starts where
+     the words start — the 0.9rem is the room `.showcase-tabs` leaves for the
+     travelling rule, and the two are read as one control.
+
+     Not a duplicate of that rule. The rule says which capability is open; this
+     says how long it stays that way, and only this one is any use for knowing a
+     panel is about to move. */
+  .showcase-prog {
+    display: flex;
+    gap: 0.5rem;
+    padding-left: 0.9rem;
+  }
+
+  .showcase-prog i {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+
+  /* The fill is a scaled pseudo-element rather than an animated width, so the
+     sweep runs on the compositor and a panel holding four of these costs
+     nothing. `--pop` keeps each bar in its product's colour; the `--brand`
+     fallback is there because an undefined `--pop` would leave a track that
+     never fills, which reads as broken rather than as unstyled. */
+  .showcase-prog i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--pop, var(--brand));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .showcase-prog i.is-fill::after {
+    transform: scaleX(1);
+  }
+
+  .showcase-prog i.is-run::after {
+    animation: showcase-fill var(--hold, 8000ms) linear forwards;
+  }
+
+  @keyframes showcase-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Reduced motion stops the rotation outright in the component, so there is no
+     clock left to report — the open segment fills and the bar stays a position
+     marker, which is what the reel does under the same query. */
+  @media (prefers-reduced-motion: reduce) {
+    .showcase-prog i.is-run::after {
+      animation: none;
+      transform: scaleX(1);
+    }
   }
 
   .showcase-link {
@@ -2583,7 +2759,33 @@
   /* Mono across the whole window, as it has always been here. A drawn product
      screen is machine output end to end — paths, states, names, counts — which
      is rule 4, and it is also what stops these reading as marketing panels with
-     a border. The colour changed in this pass; the type did not. */
+     a border. The colour changed in this pass; the type did not.
+
+     SURFACE. This is the reel's surface recipe from `NsqrReel.module.css`,
+     lifted here so the four drawn screens sit at the same weight as the fifth
+     panel rather than a step behind it. Flat `--surface` with no border was
+     what put them there: on a `#f7f8fa` ground a white rectangle has no edge,
+     so the shadow was doing the whole job of lifting it and the card read soft
+     while the reel beside it read solid.
+
+     Three parts, and each answers one of those:
+       - the 1px `--border` gives the edge the shadow alone was implying;
+       - the first radial is a `--bg-subtle` wash from the top-left that falls
+         to transparent, so the ground shows through the screen rather than
+         being sealed off by it;
+       - the second is the product's own accent at 12%, pooled bottom-right.
+
+     `--pop` rather than the reel's fixed `--brand`: the recipe is shared, the
+     hue is not, so vault stays teal, colab blue and presence green and each
+     card is washed in the colour it already had. Nothing here restates a
+     colour value — swap a panel's `--pop` above and its screen follows.
+
+     The `transparent` fallback is load-bearing rather than tidy. Only four
+     brands carry a `--pop`, and a `color-mix()` over an undefined custom
+     property is invalid at computed-value time — which takes the whole
+     `background` with it, not just the one layer, and the screen would lose
+     its surface and render clear. A fifth product joining the sweep on an
+     undeclared brand should cost it this wash and nothing else. */
   .shot {
     width: 100%;
     max-width: 32rem;
@@ -2591,8 +2793,15 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: var(--surface);
+    background: radial-gradient(120% 90% at 12% 4%, var(--bg-subtle) 0%, transparent 58%),
+      radial-gradient(
+        90% 70% at 96% 100%,
+        color-mix(in srgb, var(--pop, transparent) 12%, transparent) 0%,
+        transparent 60%
+      ),
+      var(--surface);
     font-family: var(--font-mono), ui-monospace, monospace;
     box-shadow: 0 18px 44px -24px rgba(12, 14, 20, 0.35),
       0 2px 6px -2px rgba(12, 14, 20, 0.08);

@@ -30,8 +30,25 @@ export default function PrincipleTrack({ title, lead, principles }) {
     const marks = Array.from(root.querySelectorAll("[data-track-mark]"));
     if (!steps.length) return;
 
+    // The reel is a wide-viewport device — below this the stylesheet drops the
+    // whole thing and the cards are a plain stack, every one of them on screen
+    // and every one of them meant to be reachable. Same figure the media query
+    // in globals.css uses.
+    const wide = window.matchMedia("(min-width: 768px)");
+
     const setActive = (index) => {
-      steps.forEach((step, n) => step.classList.toggle("is-on", n === index));
+      steps.forEach((step, n) => {
+        const on = n === index;
+        step.classList.toggle("is-on", on);
+        // The cards off the window are still rendered and still partly
+        // visible, so they cannot be hidden — but their link must not be
+        // tabbable, or focus would scroll the clipped row sideways inside its
+        // own window and leave the reel out of register with the scroll.
+        // A DOM property rather than a JSX attribute: React 18 does not pass
+        // `inert` through, and browsers without it simply keep the old
+        // behaviour rather than breaking.
+        step.inert = wide.matches && !on;
+      });
       marks.forEach((mark, n) => mark.classList.toggle("is-on", n === index));
     };
 
@@ -40,7 +57,10 @@ export default function PrincipleTrack({ title, lead, principles }) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       root.dataset.track = "static";
-      steps.forEach((step) => step.classList.add("is-on"));
+      steps.forEach((step) => {
+        step.classList.add("is-on");
+        step.inert = false;
+      });
       marks.forEach((mark) => mark.classList.add("is-on"));
       return undefined;
     }
@@ -71,8 +91,22 @@ export default function PrincipleTrack({ title, lead, principles }) {
       const progress = distance > 0
         ? Math.min(1, Math.max(0, (held.top - block.top) / distance))
         : 0;
-      // Equal shares of the scroll each, and the last card keeps the end.
-      const index = Math.min(steps.length - 1, Math.floor(progress * steps.length));
+
+      // How far the row has to move for the last card to land in the window.
+      // Measured off the cards rather than computed from a slot width and a
+      // gap, so the script never has to agree with the stylesheet about either
+      // — and read as a difference of two rects, which makes it immune to the
+      // transform already sitting on the row: both edges carry it equally, so
+      // it cancels.
+      const first = steps[0].getBoundingClientRect();
+      const last = steps[steps.length - 1].getBoundingClientRect();
+      const travel = Math.max(0, last.right - first.left - stage.clientWidth);
+      root.style.setProperty("--deck-shift", `${(progress * travel).toFixed(2)}px`);
+
+      // Which card the rail should mark: the one nearest the window, not the
+      // one whose share of the scroll we are inside. At progress 1 the last
+      // card is fully landed, so the run is over steps - 1 gaps, not steps.
+      const index = Math.round(progress * (steps.length - 1));
       if (index !== current) {
         current = index;
         setActive(index);
@@ -83,13 +117,24 @@ export default function PrincipleTrack({ title, lead, principles }) {
       if (!frame) frame = requestAnimationFrame(update);
     };
 
+    // A resize alone goes through update(), which only touches the cards when
+    // the index moves. Crossing the breakpoint usually does not move it, and
+    // the thing that changed is whether inert should be set at all — so drop
+    // the cached index and let the next update rewrite the state from scratch.
+    const onBreakpoint = () => {
+      current = -1;
+      onScroll();
+    };
+
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    wide.addEventListener("change", onBreakpoint);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      wide.removeEventListener("change", onBreakpoint);
       if (frame) cancelAnimationFrame(frame);
     };
   }, [principles]);

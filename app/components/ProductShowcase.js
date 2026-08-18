@@ -3,12 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowIcon, ExternalIcon } from "./Icons";
+import NsqrReel from "./NsqrReel";
 import ProductName from "./ProductName";
 import ShowcaseShot from "./ShowcaseShots";
 
 /**
  * The product showcase: one panel per product, swept horizontally, with the
  * product's capabilities down the left and a drawn app screen on the right.
+ *
+ * Five panels, four products. The last one is NSQR a second time and carries no
+ * capabilities — it is the reel the page closes on, brought into the sweep so
+ * the card a reader arrives at last is the featured product running rather than
+ * a fifth list of features. Which kind a panel is comes from `feature` on its
+ * entry; everything else here treats the two alike, and the dots, the count and
+ * the edge buttons all count to five.
  *
  * Three of the four behaviours of the reference section this was modelled on
  * (cake.com, "Meet our tools") are here:
@@ -32,7 +40,7 @@ import ShowcaseShot from "./ShowcaseShots";
  * said "there are three more of these". So it moved, in two halves:
  *
  *   - the *where am I* half is now inside the panel, at the head of the copy
- *     column — four dots and an `01 / 04` count, read before the product name.
+ *     column — five dots and an `01 / 05` count, read before the product name.
  *     Each panel knows its own index, so this is static per panel and does not
  *     wait on the scroll position to be right;
  *   - the *there is more* half sits on the track's two edges, as a button that
@@ -133,16 +141,22 @@ export default function ProductShowcase({ items }) {
         role="group"
         tabIndex={0}
       >
-        {items.map((item, i) => (
-          <ShowcasePanel
-            key={item.product.slug}
-            {...item}
-            current={index}
-            index={i}
-            items={items}
-            onGo={goTo}
-          />
-        ))}
+        {/* Keyed on `id` rather than the slug: NSQR is on the track twice, so
+            the slug is no longer unique across the list. */}
+        {items.map((item, i) => {
+          const Panel = item.feature ? ShowcaseFeature : ShowcasePanel;
+
+          return (
+            <Panel
+              key={item.id}
+              {...item}
+              current={index}
+              index={i}
+              items={items}
+              onGo={goTo}
+            />
+          );
+        })}
       </div>
 
       {/* One per end, and only where there is somewhere to go. A disabled
@@ -150,14 +164,14 @@ export default function ProductShowcase({ items }) {
           place or the dots beside it would shift — and these have no row to
           keep, so the honest thing is to leave. */}
       <ShowcaseEdge
+        item={index > 0 ? items[index - 1] : null}
         onGo={goTo}
-        product={index > 0 ? items[index - 1].product : null}
         side="prev"
         target={index - 1}
       />
       <ShowcaseEdge
+        item={index < last ? items[index + 1] : null}
         onGo={goTo}
-        product={index < last ? items[index + 1].product : null}
         side="next"
         target={index + 1}
       />
@@ -175,9 +189,16 @@ export default function ProductShowcase({ items }) {
  * The label is hidden from assistive tech and the name is spoken through the
  * button's own label instead, so the control is announced once rather than as a
  * button followed by a loose word.
+ *
+ * The reel panel is NSQR a second time, so the spoken label says which NSQR it
+ * is going to — "next: featuring NSQR" rather than a second "next product:
+ * NSQR" that sounds like the sweep has looped.
  */
-function ShowcaseEdge({ onGo, product, side, target }) {
-  if (!product) return null;
+function ShowcaseEdge({ item, onGo, side, target }) {
+  if (!item) return null;
+
+  const { feature, product } = item;
+  const direction = side === "prev" ? "Previous" : "Next";
 
   return (
     <div
@@ -186,9 +207,11 @@ function ShowcaseEdge({ onGo, product, side, target }) {
       data-side={side}
     >
       <button
-        aria-label={`${side === "prev" ? "Previous" : "Next"} product: ${
-          product.name
-        }`}
+        aria-label={
+          feature
+            ? `${direction}: featuring ${product.name}`
+            : `${direction} product: ${product.name}`
+        }
         className="showcase-edge-button"
         onClick={() => onGo(target)}
         type="button"
@@ -225,6 +248,12 @@ function ShowcasePanel({ capabilities, current, index, items, onGo, product }) {
     observer.observe(panel);
     return () => observer.disconnect();
   }, []);
+
+  // The one condition the rotation and the bar under it both read, so the two
+  // cannot disagree about whether this panel is running. Reduced motion is not
+  // in here: the effect below returns before starting a timer, and the bar
+  // answers the same query in CSS, where it can fill the open segment and stop.
+  const rotating = seen && !stopped;
 
   useEffect(() => {
     if (stopped || !seen) return;
@@ -273,40 +302,12 @@ function ShowcasePanel({ capabilities, current, index, items, onGo, product }) {
       ref={panelRef}
     >
       <div className="showcase-copy">
-        {/* The card's own pager, and the reason it is *in* the card: a reader
-            who has stopped on one panel is looking at the panel, and four dots
-            above the product's name say "one of four" at the moment the name is
-            read. The same four dots under the section said it to nobody.
-
-            Static per panel — this one is index 2 whatever the scroll is doing
-            — so it is right before hydration and cannot flicker to the wrong
-            mark while the observer catches up. */}
-        {/* Only the panel in view offers its pager. Four panels each carrying
-            four dots is sixteen tab stops for what is one control, and fifteen
-            of them are on cards nobody is looking at — so the three panels off
-            screen drop out of the tab order and out of the accessibility tree,
-            and the row a reader can actually see behaves exactly as the single
-            row under the section used to. */}
-        <div aria-hidden={index !== current} className="showcase-pager">
-          <ul className="showcase-dots">
-            {items.map((entry, i) => (
-              <li key={entry.product.slug}>
-                <button
-                  aria-current={i === index}
-                  aria-label={entry.product.name}
-                  className="showcase-dot"
-                  data-on={i === index ? "" : undefined}
-                  onClick={() => onGo(i)}
-                  tabIndex={index === current ? undefined : -1}
-                  type="button"
-                />
-              </li>
-            ))}
-          </ul>
-          <span aria-hidden="true" className="showcase-count">
-            {pad(index + 1)} / {pad(items.length)}
-          </span>
-        </div>
+        <ShowcasePager
+          current={current}
+          index={index}
+          items={items}
+          onGo={onGo}
+        />
 
         <div>
           <h3 className="showcase-name">
@@ -360,6 +361,44 @@ function ShowcasePanel({ capabilities, current, index, items, onGo, product }) {
           })}
         </ul>
 
+        {/* The same segmented bar the reel closes on, and here for the same
+            reason: the list above advances on a clock the reader cannot see.
+            A capability swapping itself out with no warning reads as the page
+            twitching; a bar filling under it says the panel is running and
+            roughly how long is left on the one being read.
+
+            One segment per capability, so it doubles as the position in a list
+            whose open item is the only one showing its description.
+
+            It has to tell the truth about a panel that stops. Rotation runs
+            only while the panel is in view and only until the reader picks a
+            capability, so `rotating` gates the animation on both — stopped or
+            off screen, the open segment sits filled rather than sweeping
+            towards a change that is not coming.
+
+            Keyed on all three so the fill restarts with the interval rather
+            than resuming mid-sweep. A panel swept away and returned to gets a
+            fresh `HOLD_MS`, and a bar carrying on from where it paused would
+            be reading out the wrong clock. Three empty <i> elements, so the
+            remount costs nothing.
+
+            `--hold` is handed down from HOLD_MS rather than restated in CSS,
+            which keeps one definition of how long a capability holds. */}
+        <div
+          aria-hidden="true"
+          className="showcase-prog"
+          key={`${active}-${seen}-${stopped}`}
+          style={{ "--hold": `${HOLD_MS}ms` }}
+        >
+          {capabilities.map((capability, i) => {
+            const at = capabilities.findIndex((c) => c.id === active);
+            const state =
+              i < at ? "is-fill" : i === at ? (rotating ? "is-run" : "is-fill") : "";
+
+            return <i className={state} key={capability.id} />;
+          })}
+        </div>
+
         {/* One link out per panel. Products with a detail page send people
             there — the app link lives on that page, so the panel does not carry
             both and make the reader choose. Presence has no detail page, so its
@@ -391,6 +430,100 @@ function ShowcasePanel({ capabilities, current, index, items, onGo, product }) {
           which is what lets each one have the full frame. */}
       <div className="showcase-stage">
         <ShowcaseShot capability={active} slug={product.slug} />
+      </div>
+    </article>
+  );
+}
+
+/**
+ * The card's own pager: a row of dots and an `01 / 05` count. The reason it is
+ * *in* the card is that a reader who has stopped on one panel is looking at the
+ * panel, and five dots above the product's name say "one of five" at the moment
+ * the name is read. The same five dots under the section said it to nobody.
+ *
+ * Static per panel — this one is index 2 whatever the scroll is doing — so it
+ * is right before hydration and cannot flicker to the wrong mark while the
+ * observer catches up.
+ *
+ * Only the panel in view offers its pager. Five panels each carrying five dots
+ * is twenty-five tab stops for what is one control, and twenty of them are on
+ * cards nobody is looking at — so the four panels off screen drop out of the
+ * tab order and out of the accessibility tree, and the row a reader can
+ * actually see behaves exactly as the single row under the section used to.
+ *
+ * Shared by both kinds of panel. The reel at the end is a card on the same
+ * track and has to say where it sits in the same words the others do.
+ */
+function ShowcasePager({ current, index, items, onGo }) {
+  return (
+    <div aria-hidden={index !== current} className="showcase-pager">
+      <ul className="showcase-dots">
+        {items.map((entry, i) => {
+          // Two dots would otherwise both announce "NSQR" and read as one card
+          // listed twice rather than as two different cards.
+          const label = entry.feature
+            ? `Featuring ${entry.product.name}`
+            : entry.product.name;
+
+          return (
+            <li key={entry.id}>
+              <button
+                aria-current={i === index}
+                aria-label={label}
+                className="showcase-dot"
+                data-on={i === index ? "" : undefined}
+                onClick={() => onGo(i)}
+                tabIndex={index === current ? undefined : -1}
+                type="button"
+              />
+            </li>
+          );
+        })}
+      </ul>
+      <span aria-hidden="true" className="showcase-count">
+        {pad(index + 1)} / {pad(items.length)}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * The fifth panel: NSQR again, and this time working rather than described.
+ *
+ * It holds the same reel the page closes on — `NsqrReel`, unchanged and
+ * unforked — under the capsule that names it, so the sweep ends on the featured
+ * product going through its four beats. Nothing is duplicated to put it here:
+ * the component runs its own clock, pauses on hover and drops to a still under
+ * reduced motion wherever it is mounted.
+ *
+ * No capability list, no drawn screen, and so no rotation and no travelling
+ * rule — the reel is one composition and cutting it into tabs would be pulling
+ * apart the thing that makes it worth showing. What it keeps from the other
+ * panels is the pager, because a card on this track has to say where it sits.
+ */
+function ShowcaseFeature({ current, index, items, onGo, product }) {
+  return (
+    <article
+      className="showcase-panel"
+      data-brand={product.accent}
+      data-feature=""
+    >
+      <ShowcasePager
+        current={current}
+        index={index}
+        items={items}
+        onGo={onGo}
+      />
+
+      {/* The capsule is what marks this as a feature rather than one more
+          product card, and it is the same one that opens the closing section at
+          the foot of the page. */}
+      <div className="showcase-feature">
+        <p className="badge">
+          Featuring <ProductName product={product} />
+        </p>
+
+        <NsqrReel className="showcase-feature-reel" />
       </div>
     </article>
   );

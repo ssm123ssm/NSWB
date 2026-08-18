@@ -1,6 +1,5 @@
 import Link from "next/link";
 import HeroReveal from "./components/HeroReveal";
-import NsqrReel from "./components/NsqrReel";
 import PrincipleTrack from "./components/PrincipleTrack";
 import ProductName from "./components/ProductName";
 import ProductShowcase from "./components/ProductShowcase";
@@ -15,17 +14,26 @@ import {
   products,
 } from "./data/site";
 
-// The closing section leads with whatever carries `featured` in the product
-// data, so the capsule names the same product the hero strip emphasises.
+// Whichever product carries `featured` in the product data is the accent the
+// page borrows wherever it needs one — the hero and the Overview statement —
+// so both emphasise the same product the hero strip does, from one place. The
+// closing showcase used to read it too, for the mark in its lead; that lead is
+// gone and its panels carry their own accents.
 const featured = featuredProducts[0];
 
 // The showcase data holds capabilities against a slug and nothing else, so the
 // product facts are resolved from the registry here rather than duplicated
 // there. Done at module scope on the server, which keeps the whole `products`
 // array out of the client island.
+//
+// `id` rather than the slug as the React key: NSQR appears twice on the track —
+// once as its capability panel, once as the closing reel — so the slug is no
+// longer unique across the list.
 const showcaseItems = productShowcase.map((entry) => ({
+  id: entry.feature ? `${entry.slug}-feature` : entry.slug,
   product: getProduct(entry.slug),
   capabilities: entry.capabilities,
+  feature: entry.feature ?? false,
 }));
 
 
@@ -58,7 +66,7 @@ export default function HomePage() {
       {/* The house colour is neutral, so the hero borrows the featured
           product's accent for its two coloured elements — the headline span and
           the glow. It follows whichever product carries `featured`, the same
-          way the closing banner does. */}
+          way the Overview and the closing showcase do. */}
       <section
         className="hero-screen screen relative overflow-hidden"
         data-brand={featured.accent}
@@ -169,57 +177,12 @@ export default function HomePage() {
         data-brand={featured.accent}
       >
         <div className="shell">
-          <div className="statement reveal mx-auto max-w-4xl">
-            <p className="eyebrow">{overview.eyebrow}</p>
-            <p className="statement-body mt-6">
+          <div className="statement reveal mx-auto max-w-5xl">
+            <p className="statement-body">
               {overview.parts.lead}{" "}
               <span className="mark-brand">{overview.parts.mark}</span>{" "}
               {overview.parts.tail}
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* --------------------------------------------------------- Showcase */}
-      {/* Four products, each as one app screen with its capabilities beside it.
-          This is the page's first look at the work itself — everything above it
-          is claim, and this is the first thing a visitor can actually look at.
-
-          Four and not six: Lipd Hub and AES are by request and have no screen a
-          stranger may see, so there is nothing here that could honestly be
-          drawn for them. They keep their place in the timeline below.
-
-          Carries .snap-edge, which it takes over from Capabilities. That class
-          marks the far side of the last .screen — the thing the scroll commits
-          to once it leaves the Overview above — and this section is now what
-          sits there. Leaving it on Capabilities would have left the scroll
-          releasing from the last screen into the middle of this section with no
-          resting place either side.
-
-          Plain .section: Overview above is plain and Capabilities below is
-          .section-subtle, so putting a subtle band here would seat two of them
-          together. The panels carry their own surface, which is what separates
-          this section from the page without a band behind it.
-
-          Swept sideways rather than stacked. Four panels this size made a very
-          long section that argued the product line twice over, once here and
-          again in the timeline below; one panel at a time costs a quarter of
-          the height and asks the reader for a gesture rather than a scroll. The
-          horizontal axis snaps `mandatory` while the vertical screens above
-          snap `proximity` — see .showcase-track in globals for why those two
-          answers differ. */}
-      <section className="snap-edge section" id="showcase">
-        <div className="shell">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="section-title">Meet the products</h2>
-            <p className="lead mt-4">
-              Four platforms in daily use. Sweep through them, and pick a
-              capability to see where it lives.
-            </p>
-          </div>
-
-          <div className="mt-12">
-            <ProductShowcase items={showcaseItems} />
           </div>
         </div>
       </section>
@@ -240,10 +203,13 @@ export default function HomePage() {
           to. This was the last caller of the local SectionHeading helper, which
           went with it.
 
-          .snap-edge moved to the showcase above when that section was added.
-          The class belongs to whatever directly follows the last .screen, and
-          that is no longer this. */}
-      <section className="section section-subtle" id="capabilities">
+          .snap-edge is back here. The class belongs to whatever directly
+          follows the last .screen, so that the scroll leaving the Overview
+          commits to a section edge rather than releasing into the middle of
+          one. The showcase held it while it sat in this slot; now that the
+          showcase closes the page, this is the section that follows the
+          screens again. */}
+      <section className="snap-edge section section-subtle" id="capabilities">
         <div className="shell">
           <PrincipleTrack
             title="Everything we build on"
@@ -264,7 +230,13 @@ export default function HomePage() {
       </section>
 
       {/* --------------------------------------------------------- Products */}
-      <section className="section" id="products">
+      {/* Trimmed bottom padding: the showcase below has no heading of its own
+          and opens straight onto its panels, so it reads as the continuation of
+          this section rather than as a new one — and a full .section bottom
+          here plus a full top there would have put a screen of nothing between
+          the timeline and the reel it hands over to. The gap is the sum of the
+          two, so it is set from both sides: 80px here, nothing there. */}
+      <section className="section pb-20" id="products">
         <div className="shell">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="section-title">
@@ -282,28 +254,55 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ------------------------------------------------------------ NSQR */}
-      {/* The page closes on the featured product rather than a contact card.
-          Deliberately not #contact: the anchor named a contact prompt, and this
-          is a product banner. Contact now runs through the header button and
-          the dialog it opens. */}
-      {/* Reduced top padding: the principles section above already closes on its
-          own full .section padding, so the default would stack two of them. */}
-      <section className="section pb-16 pt-10">
-        <div className="shell">
-          {/* The capsule is what marks this as a feature rather than one more
-              card: it wears the product's own accent and names it from the
-              data, so it follows whichever product carries `featured`. */}
-          <div
-            className="mb-5 flex justify-center"
-            data-brand={featured.accent}
-          >
-            <p className="badge">
-              Featuring <ProductName product={featured} />
-            </p>
-          </div>
+      {/* --------------------------------------------------------- Showcase */}
+      {/* Four products, each as one app screen with its capabilities beside it,
+          and a fifth panel that is NSQR again as the reel.
 
-          <NsqrReel />
+          This closes the page. It used to open the work, sitting directly under
+          the Overview, and a separate "Featuring NSQR" banner closed instead —
+          which meant the reel was reached twice, once as this section's fifth
+          card and again as the banner a screen later. The banner is gone and
+          this section took its slot: the page now argues before it shows, and
+          the reel is the last thing on the page exactly once.
+
+          The fifth card is a repeat on purpose. Four capability panels end on
+          Presence, which is the quietest of them and the one with the least to
+          show; ending on the featured product actually running is a better last
+          thing to reach, and now that this section is the foot of the page it
+          is also the note the whole page goes out on. Nothing announces that
+          card any more — the lead used to promise it — so it is a thing found
+          at the end of the sweep rather than a thing advertised before it.
+
+          Four and not six: Lipd Hub and AES are by request and have no screen a
+          stranger may see, so there is nothing here that could honestly be
+          drawn for them. They keep their place in the timeline above.
+
+          No heading and no lead. It had both — "Meet the products" over a
+          sentence explaining the gesture — and they were the third centred
+          heading block in a row, saying about the panels what the panels say
+          themselves the moment they are looked at. Without them the section
+          opens straight onto the work, which is the one thing here that is not
+          a claim about the work.
+
+          That is also why there is no top padding: with nothing to introduce,
+          the reel is the continuation of the timeline above rather than a new
+          section, and the whole seam is set by the trimmed bottom padding
+          there. See the note on the Products section.
+
+          Plain .section rather than .section-subtle: Products directly above is
+          plain too, but the panels carry their own surface, which is what
+          separates this section from the page without a band behind it.
+
+          Swept sideways rather than stacked. Four panels this size made a very
+          long section that argued the product line twice over, once here and
+          again in the timeline; one panel at a time costs a quarter of
+          the height and asks the reader for a gesture rather than a scroll. The
+          horizontal axis snaps `mandatory` while the vertical screens above
+          snap `proximity` — see .showcase-track in globals for why those two
+          answers differ. */}
+      <section className="section pb-16 pt-0" id="showcase">
+        <div className="shell">
+          <ProductShowcase items={showcaseItems} />
         </div>
       </section>
 

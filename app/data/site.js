@@ -194,7 +194,6 @@ export const publications = [
  * by spaces. Change one and change the other.
  */
 export const overview = {
-  eyebrow: "Who we are",
   body: "We spend most of our time thinking about things that go wrong before they happen.",
   parts: {
     lead: "We spend most of our time thinking about",
@@ -376,6 +375,12 @@ export function getProductByName(name) {
  * invention rather than a likeness. They keep their place in the timeline
  * below, which claims nothing visual about them.
  *
+ * Five entries, four products. The last one carries `feature` instead of
+ * capabilities: it is NSQR a second time, as the reel that closes the page,
+ * and the sweep ends on the featured product running end to end rather than on
+ * one more capability list. A `feature` entry names a slug and nothing else —
+ * what it draws is decided by the component, not here.
+ *
  * `id` is the tie between a capability and the region of the screen it lights:
  * it must match a `<Region id>` in that product's shot in `ShowcaseShots.js`,
  * or the capability selects nothing. `title` is deliberately the same phrase as
@@ -490,6 +495,12 @@ export const productShowcase = [
       },
     ],
   },
+  /* The fifth panel. No capabilities: this is the NSQR reel, the same component
+     the page closes on, brought into the sweep so the last card a reader
+     reaches is the featured product working rather than described. It stays at
+     the foot of the page as well — the two are the same four beats, met once on
+     the way past and once at the end. */
+  { slug: "nsqr", feature: true },
 ];
 
 /**

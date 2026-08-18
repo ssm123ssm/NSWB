@@ -22,8 +22,27 @@ import ShowcaseShot from "./ShowcaseShots";
  * and converts vertical scroll into horizontal movement; here the sweep is the
  * browser's own horizontal scroll, so the wheel, the trackpad and a finger all
  * do what they already did and the vertical gesture is never taken. That is the
- * pattern ScreenPager was removed for, and the arrows and dots below are what
- * stand in for it.
+ * pattern ScreenPager was removed for, and the edge arrows are what stand in
+ * for it.
+ *
+ * Where the navigation lives is the part that was got wrong first. It was a row
+ * of arrows and dots centred *under* the track, which is the one place a reader
+ * looking at a card does not look: the card is a self-contained thing, the row
+ * below it reads as belonging to the section, and nothing inside the panel ever
+ * said "there are three more of these". So it moved, in two halves:
+ *
+ *   - the *where am I* half is now inside the panel, at the head of the copy
+ *     column — four dots and an `01 / 04` count, read before the product name.
+ *     Each panel knows its own index, so this is static per panel and does not
+ *     wait on the scroll position to be right;
+ *   - the *there is more* half sits on the track's two edges, as a button that
+ *     names the neighbouring product in its own mark and colour. It is absent
+ *     rather than disabled at the ends, so the right edge going quiet on the
+ *     last panel is itself the signal that the sweep is over.
+ *
+ * Under both, the panels are cut narrower than the track by `--peek` and snap
+ * centred, so a sliver of the next card is always showing. That is the part
+ * that does not depend on noticing a control at all.
  *
  * Everything is decoration over a track that already works: remove this
  * component's JS and a plain overflow-x scroller with snap points remains, with
@@ -40,6 +59,9 @@ import ShowcaseShot from "./ShowcaseShots";
  * not glanced at.
  */
 const HOLD_MS = 8000;
+
+/** `4` reads as a stray number beside a row of dots; `04` reads as a count. */
+const pad = (n) => String(n).padStart(2, "0");
 
 export default function ProductShowcase({ items }) {
   const trackRef = useRef(null);
@@ -79,8 +101,17 @@ export default function ProductShowcase({ items }) {
       panel.getBoundingClientRect().left -
       track.getBoundingClientRect().left;
 
+    /* Centred, because the panels snap centred — they are narrower than the
+       track by --peek so the next one is always showing at the edge. Scrolling
+       to the panel's left edge would land a half-peek off the snap point and
+       leave the browser to drag it back, which reads as the track overshooting
+       every time an arrow is pressed. Clamped because the first and last panels
+       have no room to centre in and stop against the ends instead. */
+    const rest = track.clientWidth - panel.clientWidth;
+    const max = track.scrollWidth - track.clientWidth;
+
     track.scrollTo({
-      left,
+      left: Math.max(0, Math.min(left - rest / 2, max)),
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
         : "smooth",
@@ -102,52 +133,76 @@ export default function ProductShowcase({ items }) {
         role="group"
         tabIndex={0}
       >
-        {items.map((item) => (
-          <ShowcasePanel key={item.product.slug} {...item} />
+        {items.map((item, i) => (
+          <ShowcasePanel
+            key={item.product.slug}
+            {...item}
+            current={index}
+            index={i}
+            items={items}
+            onGo={goTo}
+          />
         ))}
       </div>
 
-      <div className="showcase-controls">
-        <button
-          aria-label="Previous product"
-          className="showcase-arrow"
-          disabled={index === 0}
-          onClick={() => goTo(index - 1)}
-          type="button"
-        >
-          <ArrowIcon className="h-4 w-4 rotate-180" />
-        </button>
-
-        <ul className="showcase-dots">
-          {items.map((item, i) => (
-            <li key={item.product.slug}>
-              <button
-                aria-current={i === index}
-                aria-label={item.product.name}
-                className="showcase-dot"
-                data-on={i === index ? "" : undefined}
-                onClick={() => goTo(i)}
-                type="button"
-              />
-            </li>
-          ))}
-        </ul>
-
-        <button
-          aria-label="Next product"
-          className="showcase-arrow"
-          disabled={index === last}
-          onClick={() => goTo(index + 1)}
-          type="button"
-        >
-          <ArrowIcon className="h-4 w-4" />
-        </button>
-      </div>
+      {/* One per end, and only where there is somewhere to go. A disabled
+          arrow at the ends was the old row's compromise — it had to hold its
+          place or the dots beside it would shift — and these have no row to
+          keep, so the honest thing is to leave. */}
+      <ShowcaseEdge
+        onGo={goTo}
+        product={index > 0 ? items[index - 1].product : null}
+        side="prev"
+        target={index - 1}
+      />
+      <ShowcaseEdge
+        onGo={goTo}
+        product={index < last ? items[index + 1].product : null}
+        side="next"
+        target={index + 1}
+      />
     </div>
   );
 }
 
-function ShowcasePanel({ product, capabilities }) {
+/**
+ * The hint on the track's edge: an arrow with the neighbouring product's own
+ * mark under it, in that product's colour. Naming the destination is the whole
+ * point — an unlabelled arrow says a fourth panel exists, and this says the
+ * fourth panel is coLab, which is the difference between a control and a
+ * reason to press it.
+ *
+ * The label is hidden from assistive tech and the name is spoken through the
+ * button's own label instead, so the control is announced once rather than as a
+ * button followed by a loose word.
+ */
+function ShowcaseEdge({ onGo, product, side, target }) {
+  if (!product) return null;
+
+  return (
+    <div
+      className="showcase-edge"
+      data-brand={product.accent}
+      data-side={side}
+    >
+      <button
+        aria-label={`${side === "prev" ? "Previous" : "Next"} product: ${
+          product.name
+        }`}
+        className="showcase-edge-button"
+        onClick={() => onGo(target)}
+        type="button"
+      >
+        <ArrowIcon className={`h-4 w-4 ${side === "prev" ? "rotate-180" : ""}`} />
+      </button>
+      <span aria-hidden="true" className="showcase-edge-name">
+        <ProductName product={product} />
+      </span>
+    </div>
+  );
+}
+
+function ShowcasePanel({ capabilities, current, index, items, onGo, product }) {
   const [active, setActive] = useState(capabilities[0].id);
   // Set once, by a click, and never unset. Picking a capability says the reader
   // wants that one, so the panel stops advancing on its own from then on — the
@@ -218,6 +273,41 @@ function ShowcasePanel({ product, capabilities }) {
       ref={panelRef}
     >
       <div className="showcase-copy">
+        {/* The card's own pager, and the reason it is *in* the card: a reader
+            who has stopped on one panel is looking at the panel, and four dots
+            above the product's name say "one of four" at the moment the name is
+            read. The same four dots under the section said it to nobody.
+
+            Static per panel — this one is index 2 whatever the scroll is doing
+            — so it is right before hydration and cannot flicker to the wrong
+            mark while the observer catches up. */}
+        {/* Only the panel in view offers its pager. Four panels each carrying
+            four dots is sixteen tab stops for what is one control, and fifteen
+            of them are on cards nobody is looking at — so the three panels off
+            screen drop out of the tab order and out of the accessibility tree,
+            and the row a reader can actually see behaves exactly as the single
+            row under the section used to. */}
+        <div aria-hidden={index !== current} className="showcase-pager">
+          <ul className="showcase-dots">
+            {items.map((entry, i) => (
+              <li key={entry.product.slug}>
+                <button
+                  aria-current={i === index}
+                  aria-label={entry.product.name}
+                  className="showcase-dot"
+                  data-on={i === index ? "" : undefined}
+                  onClick={() => onGo(i)}
+                  tabIndex={index === current ? undefined : -1}
+                  type="button"
+                />
+              </li>
+            ))}
+          </ul>
+          <span aria-hidden="true" className="showcase-count">
+            {pad(index + 1)} / {pad(items.length)}
+          </span>
+        </div>
+
         <div>
           <h3 className="showcase-name">
             <ProductName product={product} />

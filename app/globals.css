@@ -2123,9 +2123,14 @@
      single window meant two of them were always dimmed and none had room; the
      capture now swaps whole, which is what lets a chart be a chart. */
 
+  /* --peek is how much of the track a panel gives up so the *next* panel is
+     always showing at the edge. It is the only cue here that costs the reader
+     nothing to notice — a card cut off at the frame is read as "there is
+     another one" before any control is looked for. Small on a phone, where the
+     same fraction of the width would be a real loss of card. */
   .showcase {
-    display: grid;
-    gap: 1.5rem;
+    position: relative;
+    --peek: clamp(1.5rem, 4vw, 3.5rem);
   }
 
   /* The sweep, and it is the browser's own horizontal scroll — the arrows and
@@ -2136,7 +2141,9 @@
      `mandatory` rather than `proximity`, which is the opposite of the choice
      the vertical screens made further up: this axis holds one panel per view
      and there is no long section to be dragged back into, so a panel left
-     half-shown is only ever a mistake.
+     half-shown is only ever a mistake — the deliberate --peek sliver is a
+     panel's width, not a resting place, and `mandatory` is what keeps it that
+     way.
 
      overflow-x on a box forces overflow-y to a scroll value too, which would
      clip the panels' shadow at the top and bottom edges. The padding is what
@@ -2147,10 +2154,11 @@
     gap: clamp(1rem, 2vw, 1.5rem);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    padding: 0.75rem 0.75rem 1.5rem;
+    padding: 0.75rem;
     margin-inline: -0.75rem;
-    /* The dots and arrows are the affordance; a scrollbar under a card that is
-       already snapped would be a second one saying the same thing. */
+    /* The peek and the edge buttons are the affordance; a scrollbar under a
+       card that is already snapped would be a third one saying the same
+       thing. */
     scrollbar-width: none;
   }
 
@@ -2178,8 +2186,15 @@
      row, so they all take the height of the tallest, and the section therefore
      does not resize as it is swept. */
   .showcase-panel {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
+    /* Short of the track by --peek, so the neighbour is always in frame.
+       `center` rather than `start` is what makes that work at both ends: the
+       first and last panels have no room to centre in, so they stop against the
+       ends and spend their whole peek on their one neighbour, while the middle
+       two split it and show a sliver each side. With `start` the last panel
+       could never reach its snap point and the track would sit permanently a
+       peek short of the end. */
+    flex: 0 0 calc(100% - var(--peek));
+    scroll-snap-align: center;
     display: grid;
     gap: clamp(1.75rem, 3vw, 2.75rem);
     align-items: stretch;
@@ -2378,46 +2393,43 @@
 
   /* --- Sweep controls ---
 
-     Arrows and dots, centred under the track. They are a convenience over a
-     scroller that already works without them, which is why they are allowed to
-     be this quiet — and why they carry no accent: the panel behind them is
-     already wearing one. */
+     There is no row under the track any more. The old one put both jobs in the
+     same place and neither was done: a reader stopped on a card looks at the
+     card, so four dots below the section said "one of four" to nobody, and two
+     arrows in the same row said "there is more" while pointing at nothing in
+     particular. The two jobs split, and each went where its answer is wanted —
+     the count into the panel, the direction onto the edge it points at. */
 
-  .showcase-controls {
+  /* --- The count, inside the panel ---
+
+     Sits at the head of the copy column, above the product's name, so the first
+     thing read on a card is that it is one of four. Rendered by every panel for
+     itself, which is why it needs no accent: the dots are ink and border, and
+     the one coloured thing in this column stays the product's own name. */
+  .showcase-pager {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
+    /* Ranged left and held together rather than spread across the column. The
+       count is a caption on the dots, not a second item in a row — pushed to
+       the far edge it reads as an unrelated number floating beside them. */
+    gap: 0.75rem;
+    /* The list is padded out for touch, so its box is taller than its marks.
+       The negative inline start pulls the first dot's padding off the column
+       edge and lines the row of marks up with the name below it. */
+    margin-inline-start: -0.55rem;
   }
 
-  .showcase-arrow {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-muted);
-    transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-  }
-
-  .showcase-arrow:hover:not(:disabled) {
-    color: var(--text);
-    border-color: var(--border-strong);
-  }
-
-  /* Kept in place rather than hidden at the ends, so the row does not reflow
-     and shift the dots sideways on the first and last panel. */
-  .showcase-arrow:disabled {
-    opacity: 0.35;
-    cursor: default;
+  .showcase-count {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
   }
 
   .showcase-dots {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.15rem;
   }
 
   /* The hit area is 1.5rem square while the mark is 0.4rem — a 6px dot is an
@@ -2430,15 +2442,113 @@
     background-clip: content-box;
     padding: 0.55rem;
     background-color: var(--border-strong);
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
   }
 
   .showcase-dot:hover {
     background-color: var(--text-faint);
   }
 
+  /* The panel's own dot, which is the one that has to read as *here* rather
+     than as one more target. It grows as well as darkens, so the row is legible
+     as a position at a glance and not only on close inspection. */
   .showcase-dot[data-on] {
-    background-color: var(--text);
+    background-color: var(--pop-deep);
+    transform: scale(1.5);
+  }
+
+  /* --- The direction, on the track's edges ---
+
+     A button on each end of the track, over the sliver of the panel it goes to,
+     carrying that product's mark in that product's colour. It sits on the
+     panel's own padding rather than over anything it can cover: the panel pads
+     itself by at least 1.5rem and the button reaches half its width inward, so
+     the copy and the screen are never under it.
+
+     Absolutely positioned, so a missing one at either end costs no layout —
+     which is what lets it be removed rather than greyed out. */
+  .showcase-edge {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    /* Over the peeking card, which is decoration — the strip must not swallow a
+       drag that was meant for the track. Only the button takes the pointer. */
+    pointer-events: none;
+  }
+
+  .showcase-edge[data-side="prev"] {
+    left: 0;
+  }
+
+  .showcase-edge[data-side="next"] {
+    right: 0;
+  }
+
+  .showcase-edge-button {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    /* White and shadowed: it stands on a card, so it has to read as being in
+       front of one rather than printed on it. --surface, not --bg — the panel
+       ground is already a half-step off paper and a button in the same value
+       would sit flat on it. */
+    background: var(--surface);
+    box-shadow: 0 8px 24px -14px rgb(15 23 42 / 0.45);
+    color: var(--text-muted);
+    transition: color 0.2s ease, border-color 0.2s ease,
+      transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .showcase-edge-button:hover {
+    color: var(--brand-text);
+    border-color: var(--brand);
+    box-shadow: 0 12px 28px -14px rgb(15 23 42 / 0.5);
+  }
+
+  .showcase-edge[data-side="prev"] .showcase-edge-button:hover {
+    transform: translateX(-2px);
+  }
+
+  .showcase-edge[data-side="next"] .showcase-edge-button:hover {
+    transform: translateX(2px);
+  }
+
+  /* The destination, named. An arrow says another panel exists; the mark under
+     it says the panel is coLab, which is the difference between a control and a
+     reason to press it. Small type over a card edge, so it carries the panel's
+     ground behind it rather than sitting on whatever it lands over. */
+  .showcase-edge-name {
+    font-size: 0.7rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-faint);
+    box-shadow: 0 8px 24px -18px rgb(15 23 42 / 0.5);
+  }
+
+  /* Under 640px the button is already sitting on most of the panel's padding
+     and a name beside it would reach the copy. The arrow alone carries it, and
+     the dots inside the card still say how many are left. */
+  @media (max-width: 639px) {
+    .showcase-edge-name {
+      display: none;
+    }
+
+    .showcase-edge-button {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
   }
 
   /* --- The drawn screens ---------------------------------------------------

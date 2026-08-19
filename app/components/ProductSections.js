@@ -16,6 +16,7 @@ import {
   TagIcon,
   UsersIcon,
 } from "./Icons";
+import ProductMark from "./ProductMarks";
 import ProductName from "./ProductName";
 
 /**
@@ -48,7 +49,14 @@ export function ProductHero({ product, eyebrow, headline, lead, actions = [] }) 
   return (
     <section className="relative isolate overflow-hidden">
       <div className="shell pb-16 pt-20 md:pb-20 md:pt-24">
-        <div className="flex flex-wrap items-center gap-3">
+        {/* The mark leads the page. It is the one element that identifies the
+            product without relying on hue — three of the six sit at almost
+            identical luminance. */}
+        <span className="icon-tile icon-tile-lg">
+          <ProductMark product={product} className="h-7 w-7" />
+        </span>
+
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <span className="chip">
             <ProductName product={product} />
           </span>
@@ -60,7 +68,7 @@ export function ProductHero({ product, eyebrow, headline, lead, actions = [] }) 
           {eyebrow && <span className="chip chip-neutral">{eyebrow}</span>}
         </div>
 
-        <h1 className="mt-6 max-w-4xl text-[clamp(2.25rem,5.4vw,4rem)]">
+        <h1 className="mt-5 max-w-4xl text-[clamp(2.25rem,5.4vw,4rem)]">
           {headline}
         </h1>
         <p className="lead text-[clamp(1rem,1.5vw,1.1875rem)]">{lead}</p>

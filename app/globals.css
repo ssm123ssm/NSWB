@@ -103,243 +103,86 @@
   }
 
   /* --- Product accents ----------------------------------------------------
-     Steps of the accent's own OKLab lightness ramp — `oklch(from var(--accent)
-     calc(l ± .12) c h)` — which is how their chart colours are built. Static
-     hex is declared first so a browser without relative colour still lands on
-     the right value.
+     Six distinct hues, one per product. This is a deliberate departure from
+     heroui.pro, whose chart hues are steps of one accent ramp — that works for
+     a site selling one thing and made four of these six the same blue.
 
-     This is a faithful duplication and it has a cost: four of the six products
-     are the same blue at different lightnesses, so colour no longer tells them
-     apart. That is workable for a site selling one thing and is the main thing
-     to watch on /products. Six distinct hues are a fifteen-line change here if
-     it stops working. */
+     NSQR keeps the house accent because it is the flagship; the rest are
+     spaced around the wheel. Every fill clears 3:1 against both grounds (the
+     white card and the #f5f5f5 page) and every --brand-text clears 4.5:1
+     against both.
+
+     Note that NSQR, Vault and Presence sit within 0.007 luminance of each
+     other. They are easy to tell apart in colour and nearly identical in
+     greyscale, so colour is not carrying product identity on its own — the
+     mark in the icon tile is. See app/components/ProductMarks.js. */
   [data-brand="violet"] {
-    --brand: #0485f7; /* NSQR, and the house colour */
+    --brand: #0485f7; /* NSQR — the house accent */
     --brand-hover: #0072e2;
-    --brand-text: #0485f7;
-    --grad-from: #0485f7;
-    --grad-to: #005fce;
+    --brand-text: #0067c9; /* 5.55:1 card, 5.09:1 ground */
   }
   [data-brand="cyan"] {
-    --brand: #005fce; /* Vault */
-    --brand: oklch(from #0485f7 calc(l - 0.12) c h);
-    --brand-hover: #005fce;
-    --brand-text: #005fce;
-    --grad-from: #005fce;
-    --grad-to: #0485f7;
+    --brand: #0d9488; /* Vault — teal, pulled off the blue so the two
+                         cryptography-adjacent products do not merge */
+    --brand-hover: #0f766e;
+    --brand-text: #0f766e;
   }
   [data-brand="blue"] {
-    --brand: #42acff; /* coLab */
-    --brand: oklch(from #0485f7 calc(l + 0.12) c h);
-    --brand-hover: #0485f7;
-    --brand-text: #0485f7;
-    --grad-from: #42acff;
-    --grad-to: #0485f7;
+    --brand: #7c3aed; /* coLab — violet */
+    --brand-hover: #6d28d9;
+    --brand-text: #6d28d9;
   }
   [data-brand="emerald"] {
-    --brand: #6cd4ff; /* Presence */
-    --brand: oklch(from #0485f7 calc(l + 0.24) c h);
-    --brand-hover: #42acff;
-    --brand-text: #005fce;
-    --grad-from: #6cd4ff;
-    --grad-to: #42acff;
+    --brand: #059669; /* Presence — green */
+    --brand-hover: #047857;
+    --brand-text: #047857;
   }
-  /* The two status hues they ship, for the products that want to read warm. */
   [data-brand="amber"] {
-    --brand: #f5a524; /* --warning — Lipd Hub */
-    --brand-hover: #c4841d;
-    --brand-text: #f5a524;
-    --grad-from: #f5a524;
-    --grad-to: #db3b3e;
+    --brand: #d47406; /* Lipd Hub — amber, one step down from #d97706, which
+                         measures 2.92:1 as a fill on the grey ground */
+    --brand-hover: #b45309;
+    --brand-text: #b45309;
   }
   [data-brand="clay"] {
-    --brand: #db3b3e; /* --danger — AES */
-    --brand-hover: #c2292c;
-    --brand-text: #db3b3e;
-    --grad-from: #db3b3e;
-    --grad-to: #f5a524;
+    --brand: #e11d48; /* AES — rose */
+    --brand-hover: #be123c;
+    --brand-text: #be123c;
   }
 
-  /* Soft tints follow the accent-mix pattern they use rather than hand-picked
-     50-steps. */
+  /* Each product's gradient is its own hue into its darker step, so a tile
+     reads as one colour with depth rather than as a two-hue blend. */
   [data-brand] {
     --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
+    --grad-from: var(--brand);
+    --grad-to: var(--brand-hover);
   }
 
-  /* --- A. heroui.pro, contrast-corrected ---------------------------------
-     Identical to `mono` except for the values that fail WCAG. Each moves the
-     minimum distance needed and no further:
 
-       --muted   #71717a -> #5f5f68   4.43 -> 5.75 on the ground
-       accent as TEXT    -> #0067c9   3.68 -> 5.02 on a card
-       accent as a FILL  stays #0485f7 — a fill only needs 3:1, and this is
-                         the colour that makes the palette theirs. The split
-                         is the whole trick: you keep their blue everywhere
-                         you can see it and darken it only where it becomes
-                         small type.
-       text on an accent fill -> #ffffff at 14px+ bold, or the darker fill
-       --danger  #db3b3e -> #c42b2e as text
-       success/warning stay as fills only; they are never set on words.
-     ======================================================================= */
+  /* ==========================================================================
+     ALTERNATIVE PALETTE — contrast-corrected
+
+     Not a leftover from choosing. The palette in :root is heroui.pro's,
+     duplicated, and it fails WCAG in the places listed at the top of this
+     file. This is the same design with the smallest corrections that pass, one
+     attribute on <html> away:
+
+         <html lang="en" data-palette="corrected">
+
+     It only touches the chrome. The six product hues above already clear their
+     thresholds on both grounds, so they are untouched — the failures are all
+     in the greys and in the accent used as small type.
+
+     The trick worth keeping: --accent stays #0485f7 as a FILL (a fill needs
+     only 3:1, and it passes), and only --accent-text darkens. So the blue
+     survives everywhere it is actually seen — buttons, tiles, marks — and
+     changes only on link text, which is where it was genuinely hard to read.
+     ========================================================================== */
   [data-palette="corrected"] {
-    --bg: #f5f5f5;
-    --surface: #ffffff;
-    --bg-sunken: #fcfcfc;
-    --bg-subtle: #efeff0;
-    --bg-muted: #eaeaeb;
-    --border: #e4e4e7;
-    --border-strong: #dedee0;
-
-    --text: #18181b;
-    --text-muted: #52525b; /* 7.03:1 on the ground */
+    --text-muted: #52525b; /* 7.03:1 on the ground, was 4.43:1 */
     --text-faint: #5f5f68; /* 5.75:1 */
-
-    /* The fill keeps their blue; only the text step moves. */
-    --accent: #0485f7;
-    --accent-hover: #0072e2;
-    --accent-soft: color-mix(in oklab, #0485f7 12%, transparent);
+    --accent-text: #0067c9; /* 5.02:1 on a card, was 3.68:1 */
     --accent-on: #ffffff;
-    --accent-text: #0067c9; /* 5.02:1 on a card, 4.64:1 on the ground */
-
     --display-muted: #86868f; /* 3.28:1, clears the large-text floor */
-
-    --grad-from: #0067c9;
-    --grad-to: #005fce;
-    --grad-on: #ffffff;
-  }
-
-  [data-palette="corrected"] [data-brand="violet"] {
-    --brand: #0485f7;
-    --brand-hover: #0072e2;
-    --brand-text: #0067c9;
-    --grad-from: #0067c9;
-    --grad-to: #005fce;
-  }
-  [data-palette="corrected"] [data-brand="cyan"] {
-    --brand: #005fce;
-    --brand-hover: #00519f;
-    --brand-text: #005fce;
-    --grad-from: #005fce;
-    --grad-to: #0067c9;
-  }
-  [data-palette="corrected"] [data-brand="blue"] {
-    --brand: #42acff;
-    --brand-hover: #0485f7;
-    --brand-text: #0067c9;
-    --grad-from: #0067c9;
-    --grad-to: #005fce;
-  }
-  [data-palette="corrected"] [data-brand="emerald"] {
-    --brand: #6cd4ff;
-    --brand-hover: #42acff;
-    --brand-text: #005fce;
-    --grad-from: #005fce;
-    --grad-to: #0067c9;
-  }
-  [data-palette="corrected"] [data-brand="amber"] {
-    --brand: #f5a524;
-    --brand-hover: #c4841d;
-    --brand-text: #8a5a00;
-    --grad-from: #a46808;
-    --grad-to: #c42b2e;
-  }
-  [data-palette="corrected"] [data-brand="clay"] {
-    --brand: #db3b3e;
-    --brand-hover: #c2292c;
-    --brand-text: #c42b2e;
-    --grad-from: #c42b2e;
-    --grad-to: #a46808;
-  }
-
-  [data-palette="corrected"] [data-brand] {
-    --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
-  }
-
-  /* --- B. Same palette, six distinct product hues ------------------------
-     The middle ground between the two above, and the one that was briefly
-     lost when `mono` was overwritten with the exact duplication.
-
-     It takes the *structure* of heroui.pro — grey ground, white cards,
-     two-tone flat display heading, one blue line above the fold, no dot field
-     or blobs — but keeps six distinct product hues instead of deriving them
-     all from the accent. So the chrome is theirs and the products are still
-     told apart by colour.
-
-     Every value clears WCAG. The blue is #005bc4 rather than their #0485f7
-     because here it is used as text; if you want their exact blue in the
-     places it is seen, `mono-fixed` is the palette that keeps it as a fill. */
-  [data-palette="hues"] {
-    --bg: #f4f4f5;
-    --surface: #ffffff;
-    --bg-sunken: #ffffff; /* .section-subtle inverts to a white band */
-    --bg-subtle: #e9e9ec;
-    --bg-muted: #e4e4e7;
-    --border: #e0e0e4;
-    --border-strong: #d4d4d8;
-
-    --text: #18181b; /* 16.12:1 on the ground */
-    --text-muted: #52525b; /* 7.03:1 */
-    --text-faint: #5f5f68; /* 5.75:1 */
-
-    --accent: #005bc4;
-    --accent-hover: #004493;
-    --accent-soft: #e6f1fe;
-    --accent-text: #005bc4; /* 5.80:1 */
-
-    --display-muted: #86868f; /* 3.28:1, clears the large-text floor */
-
-    --grad-from: #18181b;
-    --grad-to: #52525b;
-    --grad-on: #ffffff;
-  }
-
-  [data-palette="hues"] [data-brand="violet"] {
-    --brand: #2563eb;
-    --brand-hover: #1d4ed8;
-    --brand-soft: #eff6ff;
-    --brand-text: #1d4ed8;
-    --grad-from: #2563eb;
-    --grad-to: #1d4ed8;
-  }
-  [data-palette="hues"] [data-brand="cyan"] {
-    --brand: #0891b2;
-    --brand-hover: #0e7490;
-    --brand-soft: #ecfeff;
-    --brand-text: #0e7490;
-    --grad-from: #0891b2;
-    --grad-to: #0e7490;
-  }
-  [data-palette="hues"] [data-brand="blue"] {
-    --brand: #7c3aed;
-    --brand-hover: #6d28d9;
-    --brand-soft: #f5f3ff;
-    --brand-text: #6d28d9;
-    --grad-from: #7c3aed;
-    --grad-to: #6d28d9;
-  }
-  [data-palette="hues"] [data-brand="emerald"] {
-    --brand: #059669;
-    --brand-hover: #047857;
-    --brand-soft: #ecfdf5;
-    --brand-text: #047857;
-    --grad-from: #059669;
-    --grad-to: #047857;
-  }
-  [data-palette="hues"] [data-brand="amber"] {
-    --brand: #d97706;
-    --brand-hover: #b45309;
-    --brand-soft: #fffbeb;
-    --brand-text: #b45309;
-    --grad-from: #d97706;
-    --grad-to: #b45309;
-  }
-  [data-palette="hues"] [data-brand="clay"] {
-    --brand: #e11d48;
-    --brand-hover: #be123c;
-    --brand-soft: #fff1f2;
-    --brand-text: #be123c;
-    --grad-from: #e11d48;
-    --grad-to: #be123c;
   }
 
   * {

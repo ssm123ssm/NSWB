@@ -30,12 +30,33 @@ The language, in four rules:
 4. **Weight carries hierarchy.** 700 display at `-0.045em`, 600 headings, 500
    controls, 400 body. Inter.
 
-**Product hues are steps of the accent's own OKLab lightness ramp**
-(`oklch(from var(--accent) calc(l ± .12) c h)`), which is how their charts are
-built, with static hex declared first as a fallback. **This makes four of the
-six products the same blue**, so colour no longer tells them apart. That is
-faithful to a site selling one product; watch it on `/products`. Six distinct
-hues are a fifteen-line change — `[data-palette="hues"]` already holds them.
+**Product hues are six distinct colours**, one per product — a deliberate
+departure from heroui.pro, whose chart hues are steps of one accent ramp. That
+works for a site selling one product and made four of these six the same blue.
+NSQR keeps the house accent as the flagship; the rest are spaced around the
+wheel. Every fill clears 3:1 on both grounds (the white card and the `#f5f5f5`
+page) and every `--brand-text` clears 4.5:1 on both.
+
+**Colour is not carrying product identity on its own.** NSQR, Vault and
+Presence sit within 0.007 luminance of each other — easy to separate in colour,
+near-identical in greyscale. The mark in the icon tile is what distinguishes
+them, which is why `app/components/ProductMarks.js` is not decoration.
+
+**Every product mark encodes a claim, and each one is documented with the idea
+it carries.** NSQR is a QR finder square opening into a returning arrow (the
+frame is printed, the destination is not); Vault is a sealed box with the
+keyhole *outside* its wall (we hold the box, you hold the key); coLab is a
+milestone rail with the settled decision filled in; Presence is NSQR's square
+closed on a check; Lipd Hub is a lipid bilayer with one head picked out; AES is
+a page of prose resolving to a single verdict. A mark nobody can explain is
+decoration — redraw it rather than keep it. `ProductMark` falls back to
+**nothing** rather than to a generic icon, so a missing mark is a visible bug
+instead of a plausible placeholder.
+
+**AES is "Automated AI-based Essay Scoring", not Advanced Encryption
+Standard.** The initials and the studio's cryptography work both point the
+wrong way, and the old `score` motif key had already half-lost it. Do not give
+it a cipher mark.
 
 **CONTRAST: this palette fails WCAG in seven places, deliberately.** It is
 their design, duplicated at explicit direction after every failure was measured

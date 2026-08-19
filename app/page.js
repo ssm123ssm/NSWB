@@ -9,6 +9,7 @@ import {
   NeuralIcon,
   ShieldIcon,
 } from "./components/Icons";
+import ProductMark from "./components/ProductMarks";
 import ProductName from "./components/ProductName";
 import {
   capabilities,
@@ -176,7 +177,7 @@ function Products() {
             >
               <div className="flex items-start justify-between gap-4">
                 <span className="icon-tile">
-                  <LayersIcon className="h-5 w-5" />
+                  <ProductMark product={product} />
                 </span>
                 <span
                   className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}

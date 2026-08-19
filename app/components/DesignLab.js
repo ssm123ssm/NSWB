@@ -31,6 +31,7 @@ const AXES = [
       { value: "neutral", label: "Neutral + spectrum" },
       { value: "mono", label: "heroui.pro exact" },
       { value: "mono-fixed", label: "heroui.pro corrected" },
+      { value: "mono-hues", label: "Mono grey + 6 hues" },
     ],
   },
   {

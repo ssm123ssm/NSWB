@@ -540,6 +540,93 @@
     --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
   }
 
+  /* --- E3. Mono grey ground, distinct product hues ------------------------
+     The middle ground between the two above, and the one that was briefly
+     lost when `mono` was overwritten with the exact duplication.
+
+     It takes the *structure* of heroui.pro — grey ground, white cards,
+     two-tone flat display heading, one blue line above the fold, no dot field
+     or blobs — but keeps six distinct product hues instead of deriving them
+     all from the accent. So the chrome is theirs and the products are still
+     told apart by colour.
+
+     Every value clears WCAG. The blue is #005bc4 rather than their #0485f7
+     because here it is used as text; if you want their exact blue in the
+     places it is seen, `mono-fixed` is the palette that keeps it as a fill. */
+  [data-palette="mono-hues"] {
+    --bg: #f4f4f5;
+    --surface: #ffffff;
+    --bg-sunken: #ffffff; /* .section-subtle inverts to a white band */
+    --bg-subtle: #e9e9ec;
+    --bg-muted: #e4e4e7;
+    --border: #e0e0e4;
+    --border-strong: #d4d4d8;
+
+    --text: #18181b; /* 16.12:1 on the ground */
+    --text-muted: #52525b; /* 7.03:1 */
+    --text-faint: #5f5f68; /* 5.75:1 */
+
+    --accent: #005bc4;
+    --accent-hover: #004493;
+    --accent-soft: #e6f1fe;
+    --accent-text: #005bc4; /* 5.80:1 */
+
+    --display-muted: #86868f; /* 3.28:1, clears the large-text floor */
+
+    --grad-from: #18181b;
+    --grad-to: #52525b;
+    --grad-on: #ffffff;
+  }
+
+  [data-palette="mono-hues"] [data-brand="violet"] {
+    --brand: #2563eb;
+    --brand-hover: #1d4ed8;
+    --brand-soft: #eff6ff;
+    --brand-text: #1d4ed8;
+    --grad-from: #2563eb;
+    --grad-to: #1d4ed8;
+  }
+  [data-palette="mono-hues"] [data-brand="cyan"] {
+    --brand: #0891b2;
+    --brand-hover: #0e7490;
+    --brand-soft: #ecfeff;
+    --brand-text: #0e7490;
+    --grad-from: #0891b2;
+    --grad-to: #0e7490;
+  }
+  [data-palette="mono-hues"] [data-brand="blue"] {
+    --brand: #7c3aed;
+    --brand-hover: #6d28d9;
+    --brand-soft: #f5f3ff;
+    --brand-text: #6d28d9;
+    --grad-from: #7c3aed;
+    --grad-to: #6d28d9;
+  }
+  [data-palette="mono-hues"] [data-brand="emerald"] {
+    --brand: #059669;
+    --brand-hover: #047857;
+    --brand-soft: #ecfdf5;
+    --brand-text: #047857;
+    --grad-from: #059669;
+    --grad-to: #047857;
+  }
+  [data-palette="mono-hues"] [data-brand="amber"] {
+    --brand: #d97706;
+    --brand-hover: #b45309;
+    --brand-soft: #fffbeb;
+    --brand-text: #b45309;
+    --grad-from: #d97706;
+    --grad-to: #b45309;
+  }
+  [data-palette="mono-hues"] [data-brand="clay"] {
+    --brand: #e11d48;
+    --brand-hover: #be123c;
+    --brand-soft: #fff1f2;
+    --brand-text: #be123c;
+    --grad-from: #e11d48;
+    --grad-to: #be123c;
+  }
+
   /* --- Shape --------------------------------------------------------------
      The radius ladder is the loudest single signal in the language. Sharp
      reads technical and dense; soft reads consumer and friendly. */
@@ -672,7 +759,7 @@
   /* The headline tail stops being a gradient and becomes the second tone.
      Flat grey, no clip, no background — emphasis and de-emphasis rather than
      decoration. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .gradient-text {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .gradient-text {
     background: none;
     -webkit-background-clip: border-box;
     background-clip: border-box;
@@ -683,18 +770,18 @@
 
   /* The second tone takes its own line, as in the reference — the break is
      deliberate there rather than wherever the measure happens to wrap. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) h1 .gradient-text {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) h1 .gradient-text {
     display: block;
   }
 
   /* Display type is tighter and heavier than the other palettes carry. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) h1 {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) h1 {
     font-weight: 700;
     letter-spacing: -0.045em;
   }
 
   /* The announcement is a plain blue line, not a bordered chip. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .pill {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .pill {
     height: auto;
     padding: 0;
     border: 0;
@@ -706,61 +793,61 @@
     font-weight: 500;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) a.pill:hover {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) a.pill:hover {
     transform: none;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .pill-tag {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .pill-tag {
     display: none;
   }
 
   /* The ground is already grey, so the dot field and the blurred colour
      fields would only muddy it. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .grid-field,
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .blob {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .grid-field,
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .blob {
     display: none;
   }
 
   /* Cards are white on grey and lift on their own; the shadow is redundant. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .card {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .card {
     box-shadow: none;
   }
 
   /* Chrome is monochrome — blue stays reserved for the one accent line. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .btn-gradient {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .btn-gradient {
     background: var(--text);
     color: #ffffff;
     box-shadow: none;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .btn-gradient:hover {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .btn-gradient:hover {
     background: #000000;
     opacity: 1;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .brand-mark {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .brand-mark {
     background: var(--text);
     color: #ffffff;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .gradient-panel {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .gradient-panel {
     background: linear-gradient(140deg, #18181b, #27272a);
     color: #ffffff;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .gradient-panel h2 {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .gradient-panel h2 {
     color: #ffffff;
   }
 
   /* The eyebrow keeps its product hue but loses the gradient rule, which
      would be the only gradient left on the page. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .eyebrow::before {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .eyebrow::before {
     background: var(--brand);
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"]) .icon-tile {
+  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .icon-tile {
     background: var(--brand);
     box-shadow: none;
   }

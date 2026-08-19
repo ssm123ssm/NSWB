@@ -47,13 +47,21 @@ in `[data-palette="corrected"]`, which keeps `#0485f7` as a *fill* (a fill needs
 only 3:1) and darkens it to `#0067c9` only where it becomes small type. Moving
 to it is one attribute on `<html>`.
 
-**The design lab is still up for the undecided axes.**
-`app/components/DesignLab.js` is dev-only (the `isDev` guard in `layout.js`) and
-never renders in production, though it is still bundled into the layout chunk
-and the `corrected`/`hues` variant CSS ships. Typeface, radius, elevation and
-density are not settled. **Once they are, the winning values move into `:root`
-and the component, the variant blocks and the axis list all get deleted
-together.**
+**The design lab is gone.** Typeface (Inter), radius, elevation and density are
+all settled on the defaults, so the panel, the alternate typefaces and the
+shape/elevation/density/type variant CSS are removed. A production build now
+carries no trace of any of it.
+
+**Two alternative palettes remain, and they are not leftovers.** They are
+escape hatches for the two known costs of duplicating heroui.pro, each one
+attribute on `<html>` away:
+
+- `[data-palette="corrected"]` — the same palette with the seven WCAG failures
+  fixed.
+- `[data-palette="hues"]` — six distinct product hues instead of four steps of
+  one blue ramp, for when "every product is blue" stops working.
+
+Delete either once it is clear it will never be wanted.
 
 ## Key paths
 - `app/data/site.js`: **single source of truth** for the hero copy, products,

@@ -345,104 +345,199 @@
     --grad-to: #be123c;
   }
 
-  /* --- E. Mono: grey ground, two-tone display, one blue -------------------
-     The HeroUI Pro landing page, read structurally rather than copied. What
-     makes it work is not the colours — it is three moves:
+  /* --- E. heroui.pro, duplicated ------------------------------------------
+     Not an impression of their marketing site — these are the tokens their
+     live stylesheet ships, read out of
+     /_next/static/immutable/chunks/29qranzd3vz4s.css. Their marketing palette
+     is NOT the @heroui/theme library palette: the library primary is #006fee
+     and theirs is #0485f7. They kept the library's success and warning and
+     changed the blue.
 
-       1. The ground is grey (#f4f4f5) and the cards are white. That is the
-          inverse of every other palette here, and it is why their surfaces
-          lift without needing a shadow.
-       2. The display headline is two-tone — near-black first line, light grey
-          second line. Flat colour, not a gradient. It reads as emphasis and
-          de-emphasis rather than as decoration.
-       3. Colour appears exactly once above the fold, as a small blue line of
-          plain text. No pill, no border, no gradient.
+     Their product/chart hues are derived from the accent by OKLab lightness —
+     `oklch(from var(--accent) calc(l ± .12) c h)` — rather than being separate
+     hues, so the six product slots below are steps of that one ramp. Static
+     hex first and the relative form second, so a browser without relative
+     colour still gets the right value.
 
-     Their own values do not clear WCAG against their own ground: the second
-     headline line measures 2.33:1 (needs 3.0 as large text), the lead 4.40:1
-     and the blue 3.35:1 (both need 4.5). The steps below are the nearest ones
-     that pass — the greys move by roughly one ramp step, which is not visible
-     side by side but is the difference between legible and not.
-
-     Product hues are kept vivid, as in the neutral palette: the chrome is
-     mono, the products are not. */
+     CONTRAST, STATED PLAINLY. These are their numbers, kept deliberately:
+       --muted #71717a on the #f5f5f5 ground .... 4.43:1  (needs 4.5, body)
+       --accent #0485f7 as text on a card ....... 3.68:1  (needs 4.5)
+       --accent #0485f7 as text on the ground ... 3.38:1  (needs 4.5)
+       white/#fcfcfc on an accent-filled button . 3.68:1  (needs 4.5)
+       --danger #db3b3e as text ................. 4.09:1  (needs 4.5)
+       --success #17c964 as text ................ 2.01:1  (needs 4.5)
+       --warning #f5a524 as text ................ 1.87:1  (needs 4.5)
+     `mono-fixed` is the same palette with the smallest corrections that pass.
+     ======================================================================= */
   [data-palette="mono"] {
-    --bg: #f4f4f5;
+    --bg: #f5f5f5; /* --background */
+    --surface: #ffffff; /* --surface */
+    --bg-sunken: #fcfcfc; /* --snow */
+    --bg-subtle: #efeff0; /* --surface-secondary */
+    --bg-muted: #eaeaeb; /* --surface-tertiary */
+    --border: #e4e4e7; /* --separator */
+    --border-strong: #dedee0; /* --border */
+
+    --text: #18181b; /* --foreground / --eclipse */
+    --text-muted: #71717a; /* --muted */
+    --text-faint: #71717a; /* they ship one muted step, not two */
+
+    --accent: #0485f7;
+    --accent-hover: #0072e2; /* their ramp at l-.06 */
+    --accent-soft: color-mix(in oklab, #0485f7 12%, transparent);
+    --accent-on: #fcfcfc; /* --accent-foreground */
+    --accent-text: #0485f7;
+
+    --display-muted: #a1a1aa;
+
+    --grad-from: #0485f7;
+    --grad-to: #005fce;
+    --grad-on: #fcfcfc;
+  }
+
+  /* The six product slots as steps of their accent ramp, which is how their
+     charts are built. It makes every product blue — see the note in AGENTS.md
+     if product identity is wanted back. */
+  [data-palette="mono"] [data-brand="violet"] {
+    --brand: #0485f7;
+    --brand-hover: #0072e2;
+    --brand-text: #0485f7;
+    --grad-from: #0485f7;
+    --grad-to: #005fce;
+  }
+  [data-palette="mono"] [data-brand="cyan"] {
+    --brand: #005fce;
+    --brand: oklch(from #0485f7 calc(l - 0.12) c h);
+    --brand-hover: #005fce;
+    --brand-text: #005fce;
+    --grad-from: #005fce;
+    --grad-to: #0485f7;
+  }
+  [data-palette="mono"] [data-brand="blue"] {
+    --brand: #42acff;
+    --brand: oklch(from #0485f7 calc(l + 0.12) c h);
+    --brand-hover: #0485f7;
+    --brand-text: #0485f7;
+    --grad-from: #42acff;
+    --grad-to: #0485f7;
+  }
+  [data-palette="mono"] [data-brand="emerald"] {
+    --brand: #6cd4ff;
+    --brand: oklch(from #0485f7 calc(l + 0.24) c h);
+    --brand-hover: #42acff;
+    --brand-text: #005fce;
+    --grad-from: #6cd4ff;
+    --grad-to: #42acff;
+  }
+  /* The two status hues they ship, used where a product wants to read warm. */
+  [data-palette="mono"] [data-brand="amber"] {
+    --brand: #f5a524; /* --warning */
+    --brand-hover: #c4841d;
+    --brand-text: #f5a524;
+    --grad-from: #f5a524;
+    --grad-to: #db3b3e;
+  }
+  [data-palette="mono"] [data-brand="clay"] {
+    --brand: #db3b3e; /* --danger */
+    --brand-hover: #c2292c;
+    --brand-text: #db3b3e;
+    --grad-from: #db3b3e;
+    --grad-to: #f5a524;
+  }
+
+  /* Every product slot inherits its soft tint from the accent-mix pattern they
+     use, rather than a hand-picked 50-step. */
+  [data-palette="mono"] [data-brand] {
+    --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
+  }
+
+  /* --- E2. heroui.pro, contrast-corrected ---------------------------------
+     Identical to `mono` except for the values that fail WCAG. Each moves the
+     minimum distance needed and no further:
+
+       --muted   #71717a -> #5f5f68   4.43 -> 5.75 on the ground
+       accent as TEXT    -> #0067c9   3.68 -> 5.02 on a card
+       accent as a FILL  stays #0485f7 — a fill only needs 3:1, and this is
+                         the colour that makes the palette theirs. The split
+                         is the whole trick: you keep their blue everywhere
+                         you can see it and darken it only where it becomes
+                         small type.
+       text on an accent fill -> #ffffff at 14px+ bold, or the darker fill
+       --danger  #db3b3e -> #c42b2e as text
+       success/warning stay as fills only; they are never set on words.
+     ======================================================================= */
+  [data-palette="mono-fixed"] {
+    --bg: #f5f5f5;
     --surface: #ffffff;
-    --bg-sunken: #ffffff; /* .section-subtle inverts to a white band */
-    --bg-subtle: #e9e9ec;
-    --bg-muted: #e4e4e7;
-    --border: #e0e0e4;
-    --border-strong: #d4d4d8;
+    --bg-sunken: #fcfcfc;
+    --bg-subtle: #efeff0;
+    --bg-muted: #eaeaeb;
+    --border: #e4e4e7;
+    --border-strong: #dedee0;
 
-    --text: #18181b; /* 16.12:1 on the ground */
-    --text-muted: #52525b; /* 7.03:1 */
-    --text-faint: #5f5f68; /* 5.75:1 — a step darker than zinc-500, which
-                              measures 4.40:1 on grey and fails as body copy */
+    --text: #18181b;
+    --text-muted: #52525b; /* 7.03:1 on the ground */
+    --text-faint: #5f5f68; /* 5.75:1 */
 
-    /* The one colour above the fold. blue-700 rather than blue-500, which is
-       4.24:1 on this ground and fails as small text. */
-    --accent: #005bc4;
-    --accent-hover: #004493;
-    --accent-soft: #e6f1fe;
-    --accent-text: #005bc4; /* 5.80:1 */
+    /* The fill keeps their blue; only the text step moves. */
+    --accent: #0485f7;
+    --accent-hover: #0072e2;
+    --accent-soft: color-mix(in oklab, #0485f7 12%, transparent);
+    --accent-on: #ffffff;
+    --accent-text: #0067c9; /* 5.02:1 on a card, 4.64:1 on the ground */
 
-    /* The second line of a two-tone display heading. Not in the other
-       palettes — it only exists for this one. */
     --display-muted: #86868f; /* 3.28:1, clears the large-text floor */
 
-    --grad-from: #18181b;
-    --grad-to: #52525b;
+    --grad-from: #0067c9;
+    --grad-to: #005fce;
     --grad-on: #ffffff;
   }
 
-  [data-palette="mono"] [data-brand="violet"] {
-    --brand: #2563eb;
-    --brand-hover: #1d4ed8;
-    --brand-soft: #eff6ff;
-    --brand-text: #1d4ed8;
-    --grad-from: #2563eb;
-    --grad-to: #1d4ed8;
+  [data-palette="mono-fixed"] [data-brand="violet"] {
+    --brand: #0485f7;
+    --brand-hover: #0072e2;
+    --brand-text: #0067c9;
+    --grad-from: #0067c9;
+    --grad-to: #005fce;
   }
-  [data-palette="mono"] [data-brand="cyan"] {
-    --brand: #0891b2;
-    --brand-hover: #0e7490;
-    --brand-soft: #ecfeff;
-    --brand-text: #0e7490;
-    --grad-from: #0891b2;
-    --grad-to: #0e7490;
+  [data-palette="mono-fixed"] [data-brand="cyan"] {
+    --brand: #005fce;
+    --brand-hover: #00519f;
+    --brand-text: #005fce;
+    --grad-from: #005fce;
+    --grad-to: #0067c9;
   }
-  [data-palette="mono"] [data-brand="blue"] {
-    --brand: #7c3aed;
-    --brand-hover: #6d28d9;
-    --brand-soft: #f5f3ff;
-    --brand-text: #6d28d9;
-    --grad-from: #7c3aed;
-    --grad-to: #6d28d9;
+  [data-palette="mono-fixed"] [data-brand="blue"] {
+    --brand: #42acff;
+    --brand-hover: #0485f7;
+    --brand-text: #0067c9;
+    --grad-from: #0067c9;
+    --grad-to: #005fce;
   }
-  [data-palette="mono"] [data-brand="emerald"] {
-    --brand: #059669;
-    --brand-hover: #047857;
-    --brand-soft: #ecfdf5;
-    --brand-text: #047857;
-    --grad-from: #059669;
-    --grad-to: #047857;
+  [data-palette="mono-fixed"] [data-brand="emerald"] {
+    --brand: #6cd4ff;
+    --brand-hover: #42acff;
+    --brand-text: #005fce;
+    --grad-from: #005fce;
+    --grad-to: #0067c9;
   }
-  [data-palette="mono"] [data-brand="amber"] {
-    --brand: #d97706;
-    --brand-hover: #b45309;
-    --brand-soft: #fffbeb;
-    --brand-text: #b45309;
-    --grad-from: #d97706;
-    --grad-to: #b45309;
+  [data-palette="mono-fixed"] [data-brand="amber"] {
+    --brand: #f5a524;
+    --brand-hover: #c4841d;
+    --brand-text: #8a5a00;
+    --grad-from: #a46808;
+    --grad-to: #c42b2e;
   }
-  [data-palette="mono"] [data-brand="clay"] {
-    --brand: #e11d48;
-    --brand-hover: #be123c;
-    --brand-soft: #fff1f2;
-    --brand-text: #be123c;
-    --grad-from: #e11d48;
-    --grad-to: #be123c;
+  [data-palette="mono-fixed"] [data-brand="clay"] {
+    --brand: #db3b3e;
+    --brand-hover: #c2292c;
+    --brand-text: #c42b2e;
+    --grad-from: #c42b2e;
+    --grad-to: #a46808;
+  }
+
+  [data-palette="mono-fixed"] [data-brand] {
+    --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
   }
 
   /* --- Shape --------------------------------------------------------------
@@ -577,7 +672,7 @@
   /* The headline tail stops being a gradient and becomes the second tone.
      Flat grey, no clip, no background — emphasis and de-emphasis rather than
      decoration. */
-  [data-palette="mono"] .gradient-text {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .gradient-text {
     background: none;
     -webkit-background-clip: border-box;
     background-clip: border-box;
@@ -588,18 +683,18 @@
 
   /* The second tone takes its own line, as in the reference — the break is
      deliberate there rather than wherever the measure happens to wrap. */
-  [data-palette="mono"] h1 .gradient-text {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) h1 .gradient-text {
     display: block;
   }
 
   /* Display type is tighter and heavier than the other palettes carry. */
-  [data-palette="mono"] h1 {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) h1 {
     font-weight: 700;
     letter-spacing: -0.045em;
   }
 
   /* The announcement is a plain blue line, not a bordered chip. */
-  [data-palette="mono"] .pill {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .pill {
     height: auto;
     padding: 0;
     border: 0;
@@ -611,61 +706,61 @@
     font-weight: 500;
   }
 
-  [data-palette="mono"] a.pill:hover {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) a.pill:hover {
     transform: none;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
-  [data-palette="mono"] .pill-tag {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .pill-tag {
     display: none;
   }
 
   /* The ground is already grey, so the dot field and the blurred colour
      fields would only muddy it. */
-  [data-palette="mono"] .grid-field,
-  [data-palette="mono"] .blob {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .grid-field,
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .blob {
     display: none;
   }
 
   /* Cards are white on grey and lift on their own; the shadow is redundant. */
-  [data-palette="mono"] .card {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .card {
     box-shadow: none;
   }
 
   /* Chrome is monochrome — blue stays reserved for the one accent line. */
-  [data-palette="mono"] .btn-gradient {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .btn-gradient {
     background: var(--text);
     color: #ffffff;
     box-shadow: none;
   }
 
-  [data-palette="mono"] .btn-gradient:hover {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .btn-gradient:hover {
     background: #000000;
     opacity: 1;
   }
 
-  [data-palette="mono"] .brand-mark {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .brand-mark {
     background: var(--text);
     color: #ffffff;
   }
 
-  [data-palette="mono"] .gradient-panel {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .gradient-panel {
     background: linear-gradient(140deg, #18181b, #27272a);
     color: #ffffff;
   }
 
-  [data-palette="mono"] .gradient-panel h2 {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .gradient-panel h2 {
     color: #ffffff;
   }
 
   /* The eyebrow keeps its product hue but loses the gradient rule, which
      would be the only gradient left on the page. */
-  [data-palette="mono"] .eyebrow::before {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .eyebrow::before {
     background: var(--brand);
   }
 
-  [data-palette="mono"] .icon-tile {
+  :is([data-palette="mono"], [data-palette="mono-fixed"]) .icon-tile {
     background: var(--brand);
     box-shadow: none;
   }

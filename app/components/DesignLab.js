@@ -29,7 +29,8 @@ const AXES = [
       { value: "teal", label: "Teal → emerald" },
       { value: "ink", label: "Ink + amber" },
       { value: "neutral", label: "Neutral + spectrum" },
-      { value: "mono", label: "Mono grey + blue" },
+      { value: "mono", label: "heroui.pro exact" },
+      { value: "mono-fixed", label: "heroui.pro corrected" },
     ],
   },
   {

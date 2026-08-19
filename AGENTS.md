@@ -57,13 +57,28 @@ dead weight until it goes. **Once a direction is chosen, the winning values
 move up into `:root` and the component, the variant block and the axis list all
 get deleted together.**
 
-**The lab's palettes are contrast-corrected, and two of them deviate from
-their references deliberately.** The `mono` palette is HeroUI Pro's own landing
-page read structurally, and three of the four values in that hero fail WCAG
-against their own grey ground — the second display line at 2.33:1 (needs 3.0 as
-large text), the lead at 4.40:1 and the blue at 3.35:1 (both need 4.5). The
-palette uses the nearest passing steps instead, about one ramp step darker,
-which is invisible side by side. Do not "fix" them back toward the screenshot.
+**The `mono` palette is heroui.pro duplicated exactly**, tokens read out of
+their live stylesheet (`/_next/static/immutable/chunks/29qranzd3vz4s.css`), not
+approximated. Two things to know about it:
+
+- **Their marketing palette is not the `@heroui/theme` palette.** The library
+  primary is `#006fee`; theirs is `#0485f7`. They kept the library's `success`
+  and `warning` and changed the blue. So "use HeroUI's colours" is ambiguous —
+  ask which.
+- **Their product/chart hues are derived from the accent by OKLab lightness**
+  (`oklch(from var(--accent) calc(l ± .12) c h)`) rather than being separate
+  hues. Duplicating that makes all six products blue. If product identity is
+  wanted back, the `neutral` palette is the version with six distinct hues.
+
+**It fails WCAG in seven places and that is deliberate** — it is their design,
+kept faithfully at the user's explicit direction after the failures were
+reported. `--muted` on the ground is 4.43:1, the accent as text is 3.68:1 on a
+card and 3.38:1 on the ground, white on an accent fill is 3.68:1, and danger /
+success / warning as text are 4.09 / 2.01 / 1.87. **`mono-fixed` is the same
+palette with the smallest corrections that pass** — critically, it keeps
+`#0485f7` as a *fill* (a fill only needs 3:1) and darkens it to `#0067c9` only
+where it becomes small type. That split is what lets it stay recognisably their
+blue. Do not "simplify" the two into one.
 
 **Gradients must clear 4.5:1 along their whole length.** Every ramp here is
 darkened until white type clears 4.6:1 at both ends. This is not fussiness:

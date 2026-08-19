@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ExternalIcon } from "../components/Icons";
+import ResearchGraphic from "../components/ResearchGraphic";
+import VenueLogos from "../components/VenueLogos";
 import { publications } from "../data/site";
 
 export const metadata = {
@@ -23,6 +25,13 @@ export default function ResearchPage() {
             DOIs and arXiv links, so you can read them rather than take our word
             for it.
           </p>
+        </div>
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[22rem] items-center justify-end pr-12 xl:flex"
+        >
+          <VenueLogos />
         </div>
       </section>
 
@@ -52,9 +61,20 @@ export default function ResearchPage() {
   );
 }
 
+/* One product hue per paper, so the four findings read as four distinct
+   colours rather than one repeated accent blue — the same `data-brand`
+   scoping the product cards use, borrowing hues already in the palette
+   rather than adding new ones. */
+const PAPER_BRAND = {
+  "sisu-athwala": "emerald",
+  "saq-scoring": "violet",
+  "clinical-alignment": "amber",
+  "rag-summarization": "cyan",
+};
+
 function PublicationEntry({ paper }) {
   return (
-    <li className="pub-entry" id={paper.id}>
+    <li className="pub-entry" data-brand={PAPER_BRAND[paper.id]} id={paper.id}>
       <span className="pub-index" aria-hidden="true" />
 
       <div>
@@ -74,6 +94,8 @@ function PublicationEntry({ paper }) {
         <p className="mt-3 text-base leading-[1.5] text-muted">
           {paper.summary}
         </p>
+
+        <ResearchGraphic paperId={paper.id} />
 
         <a
           className="link-arrow mt-4"

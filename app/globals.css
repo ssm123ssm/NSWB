@@ -1323,6 +1323,16 @@
     font-size: 0.875rem;
   }
 
+  /* The per-paper graphic — bounded so a card's height stays predictable
+     regardless of how the SVG inside it wants to size. */
+  .pub-graphic {
+    height: 8.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+  }
+
   /* --- Legal --------------------------------------------------------------- */
   .legal-register {
     display: grid;

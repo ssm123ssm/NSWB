@@ -1,0 +1,542 @@
+/* ==========================================================================
+   NSQR reel — a four-beat narrated sequence: print the code, re-point it, lock
+   it, get alerted when someone tries.
+
+   Ported from nsqr-linkedin-animated-post.html, which is an export rig: a fixed
+   1080x1080 dark canvas scaled off the browser window, for recording a square
+   video. Three things changed to make it a section of a page instead:
+
+     1. It sizes to its container, not the viewport — no fixed pixel canvas.
+     2. Every colour resolves to a design token, so it follows the theme toggle
+        rather than staying pinned dark. --r-accent rides on --brand, so the call
+        site needs a data-brand ancestor (the component sets its own).
+     3. The alert needs a warning colour, which the token set has no entry for.
+        It is declared here for both themes rather than in globals.css, since
+        nothing else on the site raises an alert.
+
+   Beat timings, easing curves, the module reshuffle and the beat copy are the
+   reference values and should stay that way.
+   ========================================================================== */
+
+.reel {
+  --r-ink: var(--text);
+  --r-dim: var(--text-faint);
+  --r-body: var(--text-muted);
+  --r-line: var(--border);
+  --r-accent: var(--brand);
+  --r-signal: #b45309;
+  --r-display: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  --r-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --r-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+
+  position: relative;
+  /* Capped at the width of the principles block above it rather than the full
+     shell, and scaled to .section-title / .lead / .eyebrow, so the reel reads as
+     one more component of the page instead of a slab at the end of it. */
+  max-width: 56rem;
+  margin-inline: auto;
+  overflow: hidden;
+  /* The stacked layout below responds to the reel's own rendered width via
+     @container, not the viewport — the bento card is a fixed ~440px column on
+     a wide desktop page, so a viewport media query would never see it as
+     narrow and the two-column body would clip inside the card. */
+  container-type: inline-size;
+  container-name: reel;
+  border: 1px solid var(--r-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: radial-gradient(120% 90% at 12% 4%, var(--bg-subtle) 0%, transparent 58%),
+    radial-gradient(
+      90% 70% at 96% 100%,
+      color-mix(in srgb, var(--r-accent) 12%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--surface);
+  color: var(--r-ink);
+  font-family: var(--r-sans);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: clamp(1.25rem, 1.8vw, 1.5rem);
+}
+
+.reel * {
+  box-sizing: border-box;
+}
+
+/* ---- embedded ----
+   Used when the reel sits inside a card that already supplies the border,
+   radius and background — the "What we build" row, where every other card is
+   flat (heroui.pro's own showcase cards: same grey as the page, a 1px border
+   the only thing that reads as an object, no shadow, no gradient). The reel
+   was built to stand alone with its own elevated panel look; here it should
+   read as one more card in that row, not a different kind of object. */
+.reel.embedded {
+  border: none;
+  box-shadow: none;
+  background: none;
+  border-radius: 0;
+  max-width: none;
+  margin-inline: 0;
+}
+.reel.embedded::before {
+  content: none;
+}
+
+/* The engineering grid, part of the instrument feel. */
+.reel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(var(--r-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--r-line) 1px, transparent 1px);
+  /* 64px to match .grid-field in globals.css — the reel is not a 1080 canvas
+     any more, so the grid should keep the page's rhythm rather than its own. */
+  background-size: 64px 64px;
+  opacity: 0.35;
+  -webkit-mask-image: radial-gradient(85% 70% at 50% 45%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(85% 70% at 50% 45%, #000 30%, transparent 100%);
+}
+
+/* ---- top bar ---- */
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+/* Face and size only — the lockup inside is <ProductName>, which brings the
+   house weight, tracking and accent tail. */
+.mark {
+  font-family: var(--r-display);
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+}
+
+/* Sans, not mono — this sits in the brand row next to every other card's
+   own tagline (`.mark`/`.markSub` are this row's equivalent of a card's
+   name + description), and a monospace "DYNAMIC QR CODES" caption read as a
+   different typeface entirely once the reel moved in beside cards using the
+   site's ordinary body font. */
+.markSub {
+  font-family: var(--r-sans);
+  font-size: 0.8125rem;
+  color: var(--r-dim);
+}
+
+/* ---- middle: panel + narration ---- */
+/* The two columns share a top and a bottom edge: the panel sets the row height
+   from its square, and the narration stretches to it with the step row on the
+   top edge and the progress segments on the bottom. */
+.body {
+  display: grid;
+  /* rem, not px: the type inside the panel is rem-based, so a pixel square
+     would stop scaling with the visitor's font size and the alert card would
+     wrap. Capped narrower than the reel's original 16.25rem now that the
+     component sits full-width in the bento row — the square panel's height
+     follows its width, and a shorter square is what actually shortens the
+     row without touching the narration column. */
+  grid-template-columns: minmax(0, 10rem) 1fr;
+  gap: clamp(1.5rem, 2.6vw, 2.25rem);
+  align-items: stretch;
+  position: relative;
+  z-index: 2;
+}
+
+.panel {
+  position: relative;
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, var(--surface), var(--bg-subtle) 62%);
+  border: 1px solid var(--r-line);
+  box-shadow: var(--shadow-md), inset 0 1px 0 color-mix(in srgb, var(--r-ink) 6%, transparent);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* Scan sweep, on the first beat only. */
+.panel::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 38%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--r-accent) 15%, transparent) 60%,
+    transparent
+  );
+  transform: translateY(-140%);
+  opacity: 0;
+}
+.reel[data-beat="1"] .panel::after {
+  opacity: 1;
+  animation: rSweep 2.6s ease-in-out 0.3s 1;
+}
+@keyframes rSweep {
+  to {
+    transform: translateY(260%);
+  }
+}
+
+/* ---- the module grid ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  grid-template-rows: repeat(25, 1fr);
+  width: 74.5%;
+  height: 74.5%;
+  gap: clamp(1px, 0.55%, 2px);
+  transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+.m {
+  border-radius: 2px;
+  background: transparent;
+  transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.2, 1.3, 0.4, 1),
+    background-color 0.28s ease;
+}
+.m.on {
+  background: var(--r-ink);
+}
+.m.flip {
+  background: var(--r-accent);
+  transform: scale(1.35);
+  border-radius: 1px;
+}
+
+/* The assemble-in reveal is gated on data-anim, which only the mounted
+   component sets — without JS every module is simply present. */
+.reel[data-anim="on"] .m {
+  opacity: 0;
+  transform: scale(0.4);
+}
+.reel[data-anim="on"].isAssembled .m {
+  opacity: 1;
+  transform: none;
+}
+
+.reel[data-beat="3"] .grid,
+.reel[data-beat="4"] .grid {
+  filter: blur(3px) saturate(0.6);
+  opacity: 0.34;
+}
+
+/* ---- passcode overlay ---- */
+.lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  opacity: 0;
+  transform: translateY(14px) scale(0.96);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.reel[data-beat="3"] .lock,
+.reel[data-beat="4"] .lock {
+  opacity: 1;
+  transform: none;
+}
+/* The alert card takes the bottom third of the panel on the last beat, so the
+   lock lifts clear of it rather than sitting behind its top edge. */
+.reel[data-beat="4"] .lock {
+  padding-bottom: 5.5rem;
+}
+
+.shackle {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.8rem;
+  border: 2px solid var(--r-ink);
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+}
+.shackle::before {
+  content: "";
+  position: absolute;
+  top: -1.3rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid var(--r-ink);
+  border-bottom: none;
+  border-radius: 0.95rem 0.95rem 0 0;
+  transform: translateY(0.5rem);
+  transition: transform 0.5s cubic-bezier(0.4, 1.6, 0.4, 1);
+}
+.reel[data-beat="3"] .shackle::before,
+.reel[data-beat="4"] .shackle::before {
+  transform: translateY(0);
+}
+.shackle i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--r-ink);
+  display: block;
+}
+
+.dots {
+  display: flex;
+  gap: 0.7rem;
+}
+.dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--r-ink) 30%, transparent);
+  background: transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.dot.fill {
+  background: var(--r-ink);
+  border-color: var(--r-ink);
+}
+.dot.bad {
+  background: var(--r-signal);
+  border-color: var(--r-signal);
+}
+.reel[data-beat="4"] .lock {
+  animation: rShake 0.5s ease 1;
+}
+@keyframes rShake {
+  25% {
+    transform: translateX(-9px);
+  }
+  75% {
+    transform: translateX(9px);
+  }
+}
+
+/* ---- alert card ---- */
+.alert {
+  position: absolute;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  background: color-mix(in srgb, var(--r-signal) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--r-signal) 40%, transparent);
+  border-left: 4px solid var(--r-signal);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  font-family: var(--r-mono);
+  font-size: 0.625rem;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--r-signal) 70%, var(--r-ink));
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  backdrop-filter: blur(3px);
+}
+.reel[data-beat="4"] .alert {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.35s;
+}
+.alertHead {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--r-signal);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+.alertBlip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--r-signal);
+  animation: rBlip 1s steps(1) infinite;
+}
+@keyframes rBlip {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---- narration ---- */
+/* No measure of its own: the column fills its track so the caption, the readout
+   and the progress segments end on the same right edge as the top bar and the
+   footer. The shell already caps the line length at roughly .lead's 36rem. */
+.narr {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* All four beats occupy the same cell, so the column is as tall as the longest
+   one and the height never changes as beats swap. Reserving space per element
+   instead would either open a gap under short headlines or shift the page. */
+.stack {
+  display: grid;
+}
+.stack > * {
+  grid-area: 1 / 1;
+}
+.take {
+  opacity: 0;
+  visibility: hidden;
+}
+.take.isOn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.step {
+  font-family: var(--r-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--r-accent);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.stepBar {
+  flex: 1;
+  height: 1px;
+  background: var(--r-line);
+}
+
+.reel h2 {
+  font-family: var(--r-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3.4vw, 2.35rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  margin: 0;
+}
+.accent {
+  color: var(--r-accent);
+}
+.reel[data-beat="4"] .accent {
+  color: var(--r-signal);
+}
+
+.cap {
+  margin: 12px 0 0;
+  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+  line-height: 1.55;
+  color: var(--r-body);
+}
+
+.read {
+  margin-top: 16px;
+  font-family: var(--r-mono);
+  font-size: 0.75rem;
+  color: var(--r-dim);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.readArrow {
+  color: var(--r-accent);
+}
+.readOld {
+  opacity: 0.55;
+}
+.readKey {
+  color: var(--r-ink);
+}
+
+.prog {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.seg {
+  height: 3px;
+  flex: 1;
+  background: var(--r-line);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.seg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--r-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.seg.done::after {
+  transform: scaleX(1);
+}
+.seg.run::after {
+  animation: rFill var(--r-dur) linear forwards;
+}
+@keyframes rFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---- responsive ----
+   Lowered from the reference's 900px: this reel now only ever renders full-
+   width in the "What we build" row, where its container tracks the row —
+   roughly 944px on desktop, narrower as the grid drops to two columns and
+   then one. 560px keeps the panel-left/text-right layout through tablet
+   widths and only falls back to stacked on the phone-width single column,
+   where the row is already ~300-350px and two columns would clip. */
+@container reel (max-width: 560px) {
+  .body {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .panel {
+    max-width: 16.25rem;
+  }
+  .narr {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m,
+  .grid,
+  .alert,
+  .lock,
+  .shackle::before,
+  .dot {
+    transition: none !important;
+  }
+  .panel::after,
+  .alertBlip,
+  .reel[data-beat="4"] .lock {
+    animation: none !important;
+  }
+  .seg.run::after {
+    animation: none !important;
+    transform: scaleX(1);
+  }
+}

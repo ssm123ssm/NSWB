@@ -1,8 +1,6 @@
-import Link from "next/link";
-import { footerLinks, navLinks, products, site } from "../data/site";
+import { footerLinks, site } from "../data/site";
 import { CookieSettingsButton } from "./CookieBanner";
 import { GitHubIcon, LinkedInIcon } from "./Icons";
-import Wordmark from "./Wordmark";
 
 const socials = [
   { label: "LinkedIn", href: site.linkedin, Icon: LinkedInIcon },
@@ -10,96 +8,42 @@ const socials = [
 ];
 
 /**
- * A four-column footer on a sunken band: the lockup and the one-line
- * description, then products, then the site sections, then the legal surfaces.
- *
- * The product column is generated from `products` rather than listed here, so
- * adding a product to the site data puts it in the footer too.
+ * A single centered band: socials and legal links in one row, then the
+ * tagline, then the stamped copyright line.
  */
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-[color:var(--border)] bg-[color:var(--bg-sunken)]">
-      <div className="shell grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
-        <div>
-          <Link href="/" aria-label={`${site.name} home`}>
-            <Wordmark />
-          </Link>
-          <p className="mt-4 max-w-xs text-sm leading-[1.43] text-muted">
-            {site.footerLine}
-          </p>
-          <div className="mt-5 flex items-center gap-2">
-            {socials.map(({ label, href, Icon }) => (
-              <a
-                aria-label={label}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-token border border-[color:var(--border)] bg-[color:var(--surface)] text-faint transition hover:border-[color:var(--brand)] hover:text-[color:var(--brand-text)]"
-                href={href}
-                key={label}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <Icon className="h-4 w-4" />
-              </a>
-            ))}
-          </div>
+    <footer className="border-t border-[color:var(--border)]">
+      <div className="shell flex flex-wrap items-center justify-center gap-x-6 gap-y-4 pb-5 pt-8">
+        <div className="flex items-center gap-2">
+          {socials.map(({ label, href, Icon }) => (
+            <a
+              aria-label={label}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-faint transition hover:text-[color:var(--fg)]"
+              href={href}
+              key={label}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Icon className="h-4 w-4" />
+            </a>
+          ))}
         </div>
-
-        <FooterColumn title="Products">
-          {products
-            .filter((product) => product.detail)
-            .map((product) => (
-              <FooterLink href={product.detail} key={product.slug}>
-                {product.name}
-              </FooterLink>
-            ))}
-          <FooterLink href="/products">All products</FooterLink>
-        </FooterColumn>
-
-        <FooterColumn title="Studio">
-          {navLinks.map((link) => (
-            <FooterLink href={link.href} key={link.href}>
-              {link.label}
-            </FooterLink>
-          ))}
-        </FooterColumn>
-
-        <FooterColumn title="Legal">
-          {footerLinks.map((link) => (
-            <FooterLink href={link.href} key={link.href}>
-              {link.label}
-            </FooterLink>
-          ))}
-          <li>
-            {/* A button only because it reopens the banner in place; it sits
-                with the links because it does the same job. */}
-            <CookieSettingsButton />
-          </li>
-        </FooterColumn>
+        {footerLinks.map((link) => (
+          <a className="link-faint" href={link.href} key={link.href}>
+            {link.label}
+          </a>
+        ))}
+        <CookieSettingsButton />
       </div>
 
-      <div className="border-t border-[color:var(--border)]">
-        <p className="shell py-6 text-center text-sm text-faint">
-          © {new Date().getFullYear()} {site.name}. {site.footerNote}
-        </p>
-      </div>
+      <p className="shell pb-2 text-center text-sm text-faint">
+        Nothing here is assumed to work.
+      </p>
+
+      <p className="shell pb-8 text-center font-mono text-xs tracking-[0.2em] text-faint">
+        © {new Date().getFullYear()} n3ur45ens3
+      </p>
     </footer>
-  );
-}
-
-function FooterColumn({ title, children }) {
-  return (
-    <div>
-      <h2 className="text-sm font-semibold">{title}</h2>
-      <ul className="mt-4 grid gap-2.5">{children}</ul>
-    </div>
-  );
-}
-
-function FooterLink({ href, children }) {
-  return (
-    <li>
-      <Link className="link-muted text-sm" href={href}>
-        {children}
-      </Link>
-    </li>
   );
 }

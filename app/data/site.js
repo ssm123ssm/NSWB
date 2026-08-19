@@ -801,6 +801,25 @@ export const principles = [
   },
 ];
 
+/* The home page's "How we work" section used to show the four principles
+   above as cards, then a word cloud. Neither fit the section, so it's now
+   this flat list — one centred line, words separated by "·", colour cycling
+   through the site's brand accents in PrincipleLine. */
+export const principleWords = [
+  "Security",
+  "Privacy",
+  "Reliability",
+  "Transparency",
+  "Integrity",
+  "Trust",
+  "Resilience",
+  "Performance",
+  "Simplicity",
+  "Scalability",
+  "Accountability",
+  "Precision",
+];
+
 /* ----------------------------------------------------------------- NSQR --
  *
  * The public account of NSQR, and deliberately a short one. Vault is a

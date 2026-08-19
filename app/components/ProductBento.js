@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ContactButton } from "./SiteChrome";
-import { ArrowIcon } from "./Icons";
+import { ArrowIcon, ChatIcon, CheckIcon, WifiIcon } from "./Icons";
 import ProductName from "./ProductName";
+import NsqrReel from "./NsqrReel";
 import { getProduct } from "../data/site";
 
 /**
@@ -13,9 +14,15 @@ import { getProduct } from "../data/site";
  * are theirs too: two columns under lg, one column under md with every card
  * dropping to a single span and the grid capped at 500px.
  *
- * Their row three is three col-span-2 cards. We have six products where they
- * have seven cards, so row three here is two col-span-3s — the only deviation,
- * and it keeps the grid filled rather than leaving a two-column hole.
+ * Row one is NSQR alone, at the full six columns — the one card with room
+ * enough to run its own standalone reel (`<NsqrReel />`, built long before
+ * this section existed and never placed anywhere) rather than the panel-only
+ * cut made for a shared row. It carries its own name, tagline and CTA, so it
+ * renders outside `<BentoCard>` instead of inside a second layer of chrome
+ * that would just repeat them.
+ *
+ * Row three is their three col-span-2 cards exactly, now that Vault has moved
+ * down to sit beside AES and Lipd Hub.
  *
  * Each card is a fixed-height flex column: copy, then the graphic in whatever
  * height is left, then the link. The graphic is clipped to its own region and
@@ -34,12 +41,12 @@ import { getProduct } from "../data/site";
  */
 
 const layout = [
-  { slug: "nsqr", span: "col-span-3", height: "h-[400px]", Graphic: NsqrGraphic },
-  { slug: "vault", span: "col-span-3", height: "h-[400px]", Graphic: VaultGraphic },
-  { slug: "presence", span: "col-span-2", height: "h-[280px]", Graphic: PresenceGraphic },
-  { slug: "colab", span: "col-span-4", height: "h-[280px]", Graphic: ColabGraphic },
-  { slug: "aes", span: "col-span-3", height: "h-[288px]", Graphic: AesGraphic },
-  { slug: "lipd-hub", span: "col-span-3", height: "h-[288px]", Graphic: LipdGraphic },
+  { slug: "nsqr", full: true },
+  { slug: "presence", span: "col-span-2", height: "h-[340px]", Graphic: PresenceGraphic },
+  { slug: "colab", span: "col-span-4", height: "h-[340px]", Graphic: ColabGraphic },
+  { slug: "vault", span: "col-span-2", height: "h-[288px]", Graphic: VaultGraphic },
+  { slug: "aes", span: "col-span-2", height: "h-[288px]", Graphic: AesGraphic },
+  { slug: "lipd-hub", span: "col-span-2", height: "h-[288px]", Graphic: LipdGraphic },
 ];
 
 export default function ProductBento() {
@@ -57,15 +64,40 @@ export default function ProductBento() {
         </div>
 
         <div className="relative mt-12 grid grid-cols-6 gap-4 max-lg:grid-cols-2 max-md:mx-auto max-md:max-w-[500px] max-md:grid-cols-1 max-md:[&>*]:col-span-1">
-          {layout.map(({ slug, span, height, Graphic }) => (
-            <BentoCard
-              Graphic={Graphic}
-              height={height}
-              key={slug}
-              product={getProduct(slug)}
-              span={span}
-            />
-          ))}
+          {layout.map((item) =>
+            item.full ? (
+              <article
+                className="bento-card col-span-6 flex flex-col overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] max-lg:col-span-2"
+                data-brand={getProduct(item.slug).accent}
+                key={item.slug}
+              >
+                <NsqrReel embedded />
+                <div className="px-6 pb-5 pt-1">
+                  <Link className="link-arrow" href={getProduct(item.slug).detail}>
+                    Explore {getProduct(item.slug).name}
+                    <ArrowIcon />
+                  </Link>
+                </div>
+              </article>
+            ) : (
+              <BentoCard
+                Graphic={item.Graphic}
+                height={item.height}
+                key={item.slug}
+                product={getProduct(item.slug)}
+                span={item.span}
+              />
+            )
+          )}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <Link
+            className="btn btn-lg bg-[color:var(--bg-subtle)] text-[color:var(--text)] hover:bg-[color:var(--border)]"
+            href="/products"
+          >
+            See all products
+          </Link>
         </div>
       </div>
     </section>
@@ -79,7 +111,10 @@ function BentoCard({ product, span, height, Graphic }) {
       data-brand={product.accent}
     >
       <div className="p-6 pb-0">
-        <h3 className="brand-tag">
+        {/* Plain lockup, not the tinted `.brand-tag` pill — matching how the
+            NSQR card's own brand row already sets its name, which is the
+            look this whole row should carry rather than a capsule. */}
+        <h3 className="text-[1.0625rem] font-bold tracking-[-0.02em]">
           <ProductName product={product} />
         </h3>
         <p className="mt-4 text-base leading-[1.5] text-muted">
@@ -175,119 +210,120 @@ function BeamGradient({ id, dur, from, to, span = 34 }) {
   );
 }
 
-/** NSQR — three printed codes feeding one destination that stays editable.
- *  The beams are the scans arriving; the node on the right is the thing that
- *  can be re-pointed after the codes are already in the world. */
-function NsqrGraphic() {
-  const wires = [
-    { d: "M56 34C104 34 112 90 152 90", dur: "4s" },
-    { d: "M56 90C104 90 112 90 152 90", dur: "5s" },
-    { d: "M56 146C104 146 112 90 152 90", dur: "6.5s" },
-  ];
+/** Vault — the three things it actually promises (`product.highlights` in
+ *  site.js), read as a checked-off list rather than a row of filenames next
+ *  to their own ciphertext. The hex strings looked like encryption; they
+ *  did not say what the encryption is *for*. This says it directly. */
+function VaultGraphic() {
+  const values = ["Client-side encryption", "Encrypted manifests", "Policy-based access"];
   return (
-    <svg className="w-full" viewBox="0 0 340 180" fill="none" aria-hidden="true">
-      <defs>
-        {wires.map((w, i) => (
-          <BeamGradient dur={w.dur} from={-40} id={`nsqr-beam-${i}`} key={i} to={352} />
-        ))}
-        <BeamGradient dur="4.5s" from={-40} id="nsqr-beam-out" to={352} />
-      </defs>
-
-      {[34, 90, 146].map((y, i) => (
-        <rect
-          height="34"
-          key={y}
-          rx="10"
-          width="34"
-          x="22"
-          y={y - 17}
-          fill="var(--bg-subtle)"
-          stroke="var(--border-strong)"
-          opacity={1 - i * 0.12}
-        />
+    <div className="grid gap-2.5 px-6 pb-3">
+      {values.map((label) => (
+        <div className="flex items-center gap-2.5" key={label}>
+          <span
+            className="grid h-5 w-5 shrink-0 place-items-center rounded-full"
+            style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
+          >
+            <CheckIcon className="h-3 w-3" />
+          </span>
+          <span className="text-[0.78rem] leading-snug">{label}</span>
+        </div>
       ))}
+    </div>
+  );
+}
 
-      {wires.map((w, i) => (
-        <g key={w.d}>
-          <path className="beam-base" d={w.d} strokeLinecap="round" strokeWidth="2" />
-          <path className="beam" d={w.d} stroke={`url(#nsqr-beam-${i})`} strokeLinecap="round" strokeWidth="2" />
-        </g>
-      ))}
-
-      <rect height="52" rx="14" width="52" x="152" y="64" fill="var(--bg-sunken)" stroke="var(--brand)" />
-      <g fill="var(--brand)">
-        {[[162, 74], [172, 74], [162, 84], [182, 84], [192, 74], [172, 94], [192, 94]].map(([x, y]) => (
-          <rect height="8" key={`${x}-${y}`} rx="2" width="8" x={x} y={y} />
-        ))}
-      </g>
-
-      <path className="beam-base" d="M204 90H286" strokeLinecap="round" strokeWidth="2" />
-      <path className="beam" d="M204 90H286" stroke="url(#nsqr-beam-out)" strokeLinecap="round" strokeWidth="2" />
-
-      <rect height="44" rx="12" width="44" x="286" y="68" fill="var(--brand)" />
-      <path d="M300 90l6 6 12-12" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" fill="none" />
+/** A row of bars, standing in for a barcode — one of the two ways a check-in
+ *  actually gets marked. Widths sum to the viewBox exactly so the mark reads
+ *  as deliberate rather than random. */
+function BarcodeGlyph({ className = "h-3 w-3" }) {
+  const widths = [2, 1, 1, 2, 1, 2, 1, 2, 1, 1];
+  let x = 1;
+  return (
+    <svg aria-hidden="true" className={className} fill="currentColor" viewBox="0 0 24 24">
+      {widths.map((w, i) => {
+        const bar = (
+          <rect height="16" key={i} width={w} x={x} y="4" />
+        );
+        x += w + 1;
+        return bar;
+      })}
     </svg>
   );
 }
 
-/** Vault — file rows whose names are already ciphertext. */
-function VaultGraphic() {
+/** Presence — an attendance register, not a row of loose avatars: names,
+ *  a time column, and the ruled row a paper register would carry. The two
+ *  ways a check-in actually lands — a tap and a scan — get their own small
+ *  glyphs at the foot, muted rather than coloured, since they are the method
+ *  and not the point. */
+function PresenceGraphic() {
   const rows = [
-    ["board-pack-q3.pdf", "8f3ac1d94e0b7a2f"],
-    ["cohort-2026.csv", "b20e7c8a5f1d3906"],
-    ["term-sheet.docx", "5d9142fb6c0ea837"],
-    ["keys/rotation.md", "e7602b3d8a94c5f1"],
+    { initials: "AK", time: "09:02", present: true },
+    { initials: "RS", time: "09:04", present: true },
+    { initials: "MJ", time: "09:11", present: true },
+    { initials: "TP", time: "—", present: false },
   ];
   return (
-    <div className="grid gap-2 px-6 pb-3">
-      {rows.map(([name, cipher], i) => (
-        <div
-          className="flex items-center justify-between gap-4 rounded-token border border-[color:var(--border)] bg-[color:var(--bg-sunken)] px-3 py-2.5"
-          key={name}
-          style={{ opacity: 1 - i * 0.14 }}
+    <div className="px-6 pb-3">
+      <div className="grid">
+        {rows.map((row) => (
+          <div
+            className="flex items-center justify-between gap-3 border-t py-1 first:border-t-0"
+            key={row.initials}
+            style={{ borderColor: "var(--border)" }}
+          >
+            <span
+              className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[0.55rem] font-semibold"
+              style={{
+                background: row.present ? "var(--brand)" : "var(--bg-subtle)",
+                color: row.present ? "#ffffff" : "var(--text-faint)",
+              }}
+            >
+              {row.initials}
+            </span>
+            <span
+              className="font-mono text-[0.65rem]"
+              style={{ color: row.present ? "var(--brand-text)" : "var(--text-faint)" }}
+            >
+              {row.time}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-2 flex items-center gap-1.5" style={{ color: "var(--text-faint)" }}>
+        <span
+          className="grid h-5 w-5 place-items-center rounded-[6px] border"
+          style={{ borderColor: "var(--border-strong)" }}
         >
-          <span className="truncate text-xs text-faint line-through">{name}</span>
-          <span
-            className="font-mono text-[0.7rem]"
-            style={{ color: "var(--brand-text)" }}
-          >
-            {cipher}
-          </span>
-        </div>
-      ))}
+          <WifiIcon className="h-3 w-3 rotate-90" />
+        </span>
+        <span
+          className="grid h-5 w-5 place-items-center rounded-[6px] border"
+          style={{ borderColor: "var(--border-strong)" }}
+        >
+          <BarcodeGlyph className="h-3 w-3" />
+        </span>
+        <span className="text-[0.6rem]">tap or scan to check in</span>
+      </div>
     </div>
   );
 }
 
-/** Presence — a check-in roll filling up. */
-function PresenceGraphic() {
-  const people = ["AK", "RS", "MJ", "TP", "LN"];
-  return (
-    <div className="flex items-end gap-2 px-6 pb-3">
-      {people.map((initials, i) => (
-        <div className="grid justify-items-center gap-1.5" key={initials}>
-          <span
-            className="grid h-9 w-9 place-items-center rounded-full text-[0.65rem] font-semibold"
-            style={{
-              background: i < 4 ? "var(--brand)" : "var(--bg-subtle)",
-              color: i < 4 ? "#ffffff" : "var(--text-faint)",
-            }}
-          >
-            {initials}
-          </span>
-          <span
-            className="h-1 w-6 rounded-full"
-            style={{ background: i < 4 ? "var(--brand)" : "var(--border-strong)" }}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
+/** coLab — the milestone rail as a back layer, with two of its own cards
+ *  sitting side by side beneath it rather than stacked on top of one
+ *  another: a "coming due" checklist and a task carrying its own context —
+ *  the objects the product is actually built from (`colabCapabilities`:
+ *  "a timeline, not a backlog", "tasks that carry their context", "workloads
+ *  before you assign"). An earlier version stacked a third card in the
+ *  corner and the two floating panels collided; side by side with real
+ *  width and a stronger shadow reads as two cards, not a pile-up. */
+/** The status trio — deliberately not `--brand`. A task's urgency is a
+ *  universal green/amber/red regardless of which product's blue is on the
+ *  card, the same traffic-light read as a due-date column in any tracker. */
+const STATUS = { done: "#16a34a", soon: "#d97706", overdue: "#dc2626" };
 
-/** coLab — a milestone rail, with the beam running only over the stretch that
- *  is actually done. The light stops where the work stops, which is the point
- *  of the card: the rail is the plan, the lit part is the record. */
 function ColabGraphic() {
   const nodes = [
     { label: "Scope", at: 40, done: true },
@@ -295,38 +331,118 @@ function ColabGraphic() {
     { label: "Review", at: 340, done: false },
     { label: "Ship", at: 490, done: false },
   ];
+  const due = [
+    { label: "Wireframes", state: "done" },
+    { label: "Client call", state: "soon" },
+    { label: "Ship copy", state: "overdue" },
+  ];
+  const cardStyle = {
+    borderColor: "var(--border-strong)",
+    background: "var(--surface)",
+    boxShadow: "var(--shadow-md)",
+  };
   return (
-    <svg className="w-full" viewBox="0 0 530 92" fill="none" aria-hidden="true">
-      <defs>
-        <BeamGradient dur="4.5s" from={-40} id="colab-beam" span={60} to={230} />
-      </defs>
+    <div className="relative px-6 pb-3" style={{ height: "192px" }}>
+      <svg
+        className="absolute inset-x-6 top-0 w-[calc(100%-3rem)]"
+        fill="none"
+        viewBox="0 0 530 92"
+        aria-hidden="true"
+      >
+        <defs>
+          <BeamGradient dur="4.5s" from={-40} id="colab-beam" span={60} to={230} />
+        </defs>
 
-      <path className="beam-base" d="M40 20H490" strokeLinecap="round" strokeWidth="2" />
-      <path d="M40 20H190" stroke="var(--brand)" strokeLinecap="round" strokeWidth="2" />
-      <path className="beam" d="M40 20H190" stroke="url(#colab-beam)" strokeLinecap="round" strokeWidth="3" />
+        <path className="beam-base" d="M40 20H490" strokeLinecap="round" strokeWidth="2" />
+        <path d="M40 20H190" stroke="var(--brand)" strokeLinecap="round" strokeWidth="2" />
+        <path className="beam" d="M40 20H190" stroke="url(#colab-beam)" strokeLinecap="round" strokeWidth="3" />
 
-      {nodes.map((node) => (
-        <g key={node.label}>
-          <circle
-            cx={node.at}
-            cy="20"
-            r="9"
-            fill={node.done ? "var(--brand)" : "var(--bg-sunken)"}
-            stroke={node.done ? "var(--brand)" : "var(--border-strong)"}
-            strokeWidth="2"
-          />
-          <text
-            fill="var(--text-faint)"
-            fontSize="13"
-            textAnchor="middle"
-            x={node.at}
-            y="52"
+        {nodes.map((node) => (
+          <g key={node.label}>
+            <circle
+              cx={node.at}
+              cy="20"
+              r="9"
+              fill={node.done ? "var(--brand)" : "var(--bg-sunken)"}
+              stroke={node.done ? "var(--brand)" : "var(--border-strong)"}
+              strokeWidth="2"
+            />
+            <text fill="var(--text-faint)" fontSize="13" textAnchor="middle" x={node.at} y="52">
+              {node.label}
+            </text>
+          </g>
+        ))}
+      </svg>
+
+      {/* Coming due + task card, side by side rather than stacked — no
+          overlap to fight, and each one gets real width to read at. */}
+      <div className="absolute inset-x-6 bottom-0 flex items-end gap-4">
+        <div aria-hidden="true" className="flex-1 rounded-[14px] border p-3" style={cardStyle}>
+          <span className="text-[0.72rem] font-semibold">Coming due</span>
+          <ul className="mt-2 grid gap-1.5">
+            {due.map((item) => (
+              <li className="flex items-center gap-1.5" key={item.label}>
+                <span
+                  className="grid h-3.5 w-3.5 shrink-0 place-items-center rounded-[4px] border"
+                  style={{
+                    borderColor: STATUS[item.state],
+                    background: item.state === "done" ? STATUS[item.state] : "transparent",
+                    color: "#ffffff",
+                  }}
+                >
+                  {item.state === "done" && <CheckIcon className="h-2.5 w-2.5" />}
+                </span>
+                <span
+                  className={`truncate text-[0.72rem] ${
+                    item.state === "done" ? "text-faint line-through" : ""
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {/* Task completed — a small confirmation under the checklist that
+              already shows the same item struck through, so the panel reads
+              as one story: plan → done. */}
+          <div
+            className="mt-2.5 flex items-center gap-1.5 border-t pt-2"
+            style={{ borderColor: "var(--border)" }}
           >
-            {node.label}
-          </text>
-        </g>
-      ))}
-    </svg>
+            <span
+              className="grid h-4 w-4 shrink-0 place-items-center rounded-full"
+              style={{ background: STATUS.done, color: "#ffffff" }}
+            >
+              <CheckIcon className="h-2.5 w-2.5" />
+            </span>
+            <span className="truncate text-[0.68rem] text-faint">Wireframes completed</span>
+          </div>
+        </div>
+
+        <div
+          aria-hidden="true"
+          className="flex-1 -translate-y-1.5 rounded-[14px] border p-3"
+          style={cardStyle}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span className="chip chip-neutral h-5 px-2 text-[0.65rem]">Review</span>
+            <span className="text-[0.65rem] text-faint">Due Fri</span>
+          </div>
+          <p className="mt-2.5 text-[0.8rem] font-medium leading-snug">Ship the review flow</p>
+          <div className="mt-3 flex items-center justify-between">
+            <span
+              className="grid h-6 w-6 place-items-center rounded-full text-[0.6rem] font-semibold"
+              style={{ background: "var(--brand)", color: "var(--accent-on)" }}
+            >
+              RS
+            </span>
+            <span className="flex items-center gap-1 text-[0.65rem] text-faint">
+              <ChatIcon className="h-3 w-3" /> 3
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

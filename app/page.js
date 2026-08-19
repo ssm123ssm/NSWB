@@ -15,7 +15,7 @@ import {
   designPrinciples,
   founders,
   hero,
-  principles,
+  principleWords,
 } from "./data/site";
 
 export const metadata = {
@@ -159,47 +159,49 @@ function DesignPrinciples() {
 
 /* -------------------------------------------------------------------------
    Principles
-   ------------------------------------------------------------------------- */
+
+   A cloud and a card grid were both tried here and both dropped — the cloud
+   read as decorative noise and the cards were four fixed slots for a list
+   that is really just words. This is one centred line instead: the words
+   themselves, "·" between them, flat muted grey like the product marks row
+   in the hero, lighting up green/yellow/red under the pointer (see
+   `.principle-word` in globals.css). */
+/* The site's signal-green / signal-amber / signal-red `--brand-text` values
+   (globals.css), copied here since they're set per word via inline style
+   rather than the `data-brand` attribute those tokens normally key off. */
+const principleHoverColors = ["#2a7020", "#7d5a00", "#b3352b"];
+
 function Principles() {
   return (
     <section className="section section-subtle">
-      <div className="shell">
+      <div className="shell text-center">
         <p className="eyebrow">How we work</p>
-        <h2 className="section-title max-w-2xl">
-          Four things we do not negotiate
+        <h2 className="section-title mx-auto max-w-2xl">
+          Things we do not
+          <br />
+          negotiate
         </h2>
 
-        <div className="bento mt-12">
-          {principles.map((principle) => {
-            const Icon = icons[principle.icon] ?? ShieldIcon;
-            return (
-              <article
-                className="card card-hover"
-                data-brand={principle.accent}
-                key={principle.title}
+        <p className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-3 text-[1.375rem] font-semibold md:text-2xl">
+          {principleWords.map((word, index) => (
+            <span className="contents" key={word}>
+              {index > 0 && (
+                <span aria-hidden="true" className="text-faint">
+                  ·
+                </span>
+              )}
+              <span
+                className="principle-word"
+                style={{
+                  "--word-hover":
+                    principleHoverColors[index % principleHoverColors.length],
+                }}
               >
-                <div className="flex items-center gap-3">
-                  <span className="icon-tile icon-tile-soft">
-                    <Icon className="h-6 w-6" />
-                  </span>
-                  <span className="font-mono text-sm text-faint">
-                    {principle.label}
-                  </span>
-                </div>
-                <h3 className="mt-5 text-lg">{principle.title}</h3>
-                <p className="mt-2 text-base leading-[1.5] text-muted">
-                  {principle.description}
-                </p>
-                {principle.note && (
-                  <Link className="link-arrow mt-5" href={principle.note.href}>
-                    {principle.note.text}
-                    <ArrowIcon />
-                  </Link>
-                )}
-              </article>
-            );
-          })}
-        </div>
+                {word}
+              </span>
+            </span>
+          ))}
+        </p>
       </div>
     </section>
   );

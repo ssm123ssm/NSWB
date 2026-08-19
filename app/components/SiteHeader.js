@@ -26,6 +26,9 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const override = pageHeaders[pathname];
   const bare = Boolean(override);
+  // Legal pages carry no nav and no CTA — just the mark, centered, so the
+  // reader isn't pulled back toward the marketing site while reading a policy.
+  const legal = pathname === "/legal" || pathname.startsWith("/legal/");
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 8);
@@ -45,6 +48,22 @@ export default function SiteHeader() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
+
+  if (legal) {
+    return (
+      <header className="site-header" data-stuck={stuck}>
+        <div className="shell flex h-16 items-center justify-center">
+          <Link
+            className="flex items-center"
+            href="/"
+            aria-label={`${site.name} home`}
+          >
+            <Wordmark className="wordmark-vivid" />
+          </Link>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="site-header" data-stuck={stuck || menuOpen}>

@@ -370,11 +370,6 @@
     opacity: 1;
   }
 
-  .brand-mark {
-    background: var(--text);
-    color: #ffffff;
-  }
-
   /* Their dark surface is flat #18181b — the closing panel takes it straight. */
   .gradient-panel {
     background: #18181b;
@@ -925,6 +920,19 @@
     transform: translateX(3px);
   }
 
+  /* The "How we work" word line: flat muted grey at rest, same tone as the
+     product marks row (`--display-muted`), lighting up to a green/yellow/red
+     signal colour under the pointer — `--word-hover` is set per word inline
+     in page.js, cycling the site's existing signal-* accents. */
+  .principle-word {
+    color: var(--display-muted);
+    transition: color 0.2s ease;
+  }
+
+  .principle-word:hover {
+    color: var(--word-hover, var(--text));
+  }
+
   .link-muted {
     color: var(--text-muted);
     transition: color 0.15s ease;
@@ -1025,18 +1033,19 @@
     color: var(--text);
   }
 
-  .brand-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: var(--radius-sm);
-    background: var(--brand);
-    color: var(--accent-on);
-    font-size: 0.875rem;
-    font-weight: 700;
-    line-height: 1;
+  .wordmark-tone {
+    color: var(--display-muted);
+    transition: color 0.15s ease;
+  }
+
+  .wordmark:hover .wordmark-tone {
+    color: var(--accent-text);
+  }
+
+  /* Legal/Privacy header: the mark stays at full colour at rest, with no
+     extra hover state to color up into. */
+  .wordmark-vivid .wordmark-tone {
+    color: var(--accent-text);
   }
 
   /* --- Stat ---------------------------------------------------------------- */

@@ -57,6 +57,14 @@ dead weight until it goes. **Once a direction is chosen, the winning values
 move up into `:root` and the component, the variant block and the axis list all
 get deleted together.**
 
+**The lab's palettes are contrast-corrected, and two of them deviate from
+their references deliberately.** The `mono` palette is HeroUI Pro's own landing
+page read structurally, and three of the four values in that hero fail WCAG
+against their own grey ground — the second display line at 2.33:1 (needs 3.0 as
+large text), the lead at 4.40:1 and the blue at 3.35:1 (both need 4.5). The
+palette uses the nearest passing steps instead, about one ramp step darker,
+which is invisible side by side. Do not "fix" them back toward the screenshot.
+
 **Gradients must clear 4.5:1 along their whole length.** Every ramp here is
 darkened until white type clears 4.6:1 at both ends. This is not fussiness:
 HeroUI's bright scales carry white at 2.0–2.4:1, and the first cut of this

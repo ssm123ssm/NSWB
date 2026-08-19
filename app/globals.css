@@ -345,6 +345,106 @@
     --grad-to: #be123c;
   }
 
+  /* --- E. Mono: grey ground, two-tone display, one blue -------------------
+     The HeroUI Pro landing page, read structurally rather than copied. What
+     makes it work is not the colours — it is three moves:
+
+       1. The ground is grey (#f4f4f5) and the cards are white. That is the
+          inverse of every other palette here, and it is why their surfaces
+          lift without needing a shadow.
+       2. The display headline is two-tone — near-black first line, light grey
+          second line. Flat colour, not a gradient. It reads as emphasis and
+          de-emphasis rather than as decoration.
+       3. Colour appears exactly once above the fold, as a small blue line of
+          plain text. No pill, no border, no gradient.
+
+     Their own values do not clear WCAG against their own ground: the second
+     headline line measures 2.33:1 (needs 3.0 as large text), the lead 4.40:1
+     and the blue 3.35:1 (both need 4.5). The steps below are the nearest ones
+     that pass — the greys move by roughly one ramp step, which is not visible
+     side by side but is the difference between legible and not.
+
+     Product hues are kept vivid, as in the neutral palette: the chrome is
+     mono, the products are not. */
+  [data-palette="mono"] {
+    --bg: #f4f4f5;
+    --surface: #ffffff;
+    --bg-sunken: #ffffff; /* .section-subtle inverts to a white band */
+    --bg-subtle: #e9e9ec;
+    --bg-muted: #e4e4e7;
+    --border: #e0e0e4;
+    --border-strong: #d4d4d8;
+
+    --text: #18181b; /* 16.12:1 on the ground */
+    --text-muted: #52525b; /* 7.03:1 */
+    --text-faint: #5f5f68; /* 5.75:1 — a step darker than zinc-500, which
+                              measures 4.40:1 on grey and fails as body copy */
+
+    /* The one colour above the fold. blue-700 rather than blue-500, which is
+       4.24:1 on this ground and fails as small text. */
+    --accent: #005bc4;
+    --accent-hover: #004493;
+    --accent-soft: #e6f1fe;
+    --accent-text: #005bc4; /* 5.80:1 */
+
+    /* The second line of a two-tone display heading. Not in the other
+       palettes — it only exists for this one. */
+    --display-muted: #86868f; /* 3.28:1, clears the large-text floor */
+
+    --grad-from: #18181b;
+    --grad-to: #52525b;
+    --grad-on: #ffffff;
+  }
+
+  [data-palette="mono"] [data-brand="violet"] {
+    --brand: #2563eb;
+    --brand-hover: #1d4ed8;
+    --brand-soft: #eff6ff;
+    --brand-text: #1d4ed8;
+    --grad-from: #2563eb;
+    --grad-to: #1d4ed8;
+  }
+  [data-palette="mono"] [data-brand="cyan"] {
+    --brand: #0891b2;
+    --brand-hover: #0e7490;
+    --brand-soft: #ecfeff;
+    --brand-text: #0e7490;
+    --grad-from: #0891b2;
+    --grad-to: #0e7490;
+  }
+  [data-palette="mono"] [data-brand="blue"] {
+    --brand: #7c3aed;
+    --brand-hover: #6d28d9;
+    --brand-soft: #f5f3ff;
+    --brand-text: #6d28d9;
+    --grad-from: #7c3aed;
+    --grad-to: #6d28d9;
+  }
+  [data-palette="mono"] [data-brand="emerald"] {
+    --brand: #059669;
+    --brand-hover: #047857;
+    --brand-soft: #ecfdf5;
+    --brand-text: #047857;
+    --grad-from: #059669;
+    --grad-to: #047857;
+  }
+  [data-palette="mono"] [data-brand="amber"] {
+    --brand: #d97706;
+    --brand-hover: #b45309;
+    --brand-soft: #fffbeb;
+    --brand-text: #b45309;
+    --grad-from: #d97706;
+    --grad-to: #b45309;
+  }
+  [data-palette="mono"] [data-brand="clay"] {
+    --brand: #e11d48;
+    --brand-hover: #be123c;
+    --brand-soft: #fff1f2;
+    --brand-text: #be123c;
+    --grad-from: #e11d48;
+    --grad-to: #be123c;
+  }
+
   /* --- Shape --------------------------------------------------------------
      The radius ladder is the loudest single signal in the language. Sharp
      reads technical and dense; soft reads consumer and friendly. */
@@ -468,6 +568,106 @@
 
   [data-type="grotesk"] body {
     font-family: "Space Grotesk", var(--font-sans), sans-serif;
+  }
+
+  /* --- DESIGN LAB: mono-palette component overrides — temporary -----------
+     This palette is mostly structure, so most of it lives here rather than in
+     the token block above. */
+
+  /* The headline tail stops being a gradient and becomes the second tone.
+     Flat grey, no clip, no background — emphasis and de-emphasis rather than
+     decoration. */
+  [data-palette="mono"] .gradient-text {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--display-muted);
+    padding-inline: 0;
+    margin-inline: 0;
+  }
+
+  /* The second tone takes its own line, as in the reference — the break is
+     deliberate there rather than wherever the measure happens to wrap. */
+  [data-palette="mono"] h1 .gradient-text {
+    display: block;
+  }
+
+  /* Display type is tighter and heavier than the other palettes carry. */
+  [data-palette="mono"] h1 {
+    font-weight: 700;
+    letter-spacing: -0.045em;
+  }
+
+  /* The announcement is a plain blue line, not a bordered chip. */
+  [data-palette="mono"] .pill {
+    height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--accent-text);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  [data-palette="mono"] a.pill:hover {
+    transform: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  [data-palette="mono"] .pill-tag {
+    display: none;
+  }
+
+  /* The ground is already grey, so the dot field and the blurred colour
+     fields would only muddy it. */
+  [data-palette="mono"] .grid-field,
+  [data-palette="mono"] .blob {
+    display: none;
+  }
+
+  /* Cards are white on grey and lift on their own; the shadow is redundant. */
+  [data-palette="mono"] .card {
+    box-shadow: none;
+  }
+
+  /* Chrome is monochrome — blue stays reserved for the one accent line. */
+  [data-palette="mono"] .btn-gradient {
+    background: var(--text);
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  [data-palette="mono"] .btn-gradient:hover {
+    background: #000000;
+    opacity: 1;
+  }
+
+  [data-palette="mono"] .brand-mark {
+    background: var(--text);
+    color: #ffffff;
+  }
+
+  [data-palette="mono"] .gradient-panel {
+    background: linear-gradient(140deg, #18181b, #27272a);
+    color: #ffffff;
+  }
+
+  [data-palette="mono"] .gradient-panel h2 {
+    color: #ffffff;
+  }
+
+  /* The eyebrow keeps its product hue but loses the gradient rule, which
+     would be the only gradient left on the page. */
+  [data-palette="mono"] .eyebrow::before {
+    background: var(--brand);
+  }
+
+  [data-palette="mono"] .icon-tile {
+    background: var(--brand);
+    box-shadow: none;
   }
 
   /* --- DESIGN LAB: neutral-palette component overrides — temporary --------

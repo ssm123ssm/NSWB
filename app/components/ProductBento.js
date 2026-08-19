@@ -124,34 +124,97 @@ function BentoCard({ product, span, height, Graphic }) {
    hue, and is sized to sit under the copy without being measured against it.
    ------------------------------------------------------------------------- */
 
-/** NSQR — a QR field with scan volume rising underneath it. */
-function NsqrGraphic() {
-  const cells = [1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1];
-  const bars = [38, 62, 30, 78, 54, 88, 46];
+/**
+ * A beam gradient, matching heroui.pro's: a narrow window swept across the SVG
+ * in user space, so one animation lights every path it crosses. Their window
+ * runs right-to-left; these run left-to-right, because on this card the flow
+ * has a direction — a scan arriving, work advancing — and reading against it
+ * would be wrong.
+ *
+ * `span` is the sweep width, `dur` the stagger. Both keySplines and the 34px
+ * window width are theirs.
+ */
+function BeamGradient({ id, dur, from, to, span = 34 }) {
   return (
-    <div className="flex items-end justify-between gap-6 px-6 pb-3">
-      <div className="grid grid-cols-5 gap-1.5">
-        {cells.map((on, i) => (
-          <span
-            className="h-4 w-4 rounded-[3px]"
-            key={i}
-            style={{
-              background: on ? "var(--brand)" : "var(--bg-subtle)",
-              opacity: on ? 0.25 + (i % 5) * 0.14 : 1,
-            }}
-          />
+    <linearGradient gradientUnits="userSpaceOnUse" id={id} x1={from} x2={from + span} y1="0" y2="0">
+      <animate
+        attributeName="x1"
+        calcMode="spline"
+        dur={dur}
+        keySplines="0.16 1 0.3 1"
+        keyTimes="0; 1"
+        repeatCount="indefinite"
+        values={`${from}; ${to}`}
+      />
+      <animate
+        attributeName="x2"
+        calcMode="spline"
+        dur={dur}
+        keySplines="0.16 1 0.3 1"
+        keyTimes="0; 1"
+        repeatCount="indefinite"
+        values={`${from + span}; ${to + span}`}
+      />
+      <stop offset="0%" stopColor="var(--beam-a)" stopOpacity="0" />
+      <stop offset="5%" stopColor="var(--beam-a)" stopOpacity="1" />
+      <stop offset="32.5%" stopColor="var(--beam-b)" stopOpacity="1" />
+      <stop offset="100%" stopColor="var(--beam-b)" stopOpacity="0" />
+    </linearGradient>
+  );
+}
+
+/** NSQR — three printed codes feeding one destination that stays editable.
+ *  The beams are the scans arriving; the node on the right is the thing that
+ *  can be re-pointed after the codes are already in the world. */
+function NsqrGraphic() {
+  const wires = [
+    { d: "M56 34C104 34 112 90 152 90", dur: "4s" },
+    { d: "M56 90C104 90 112 90 152 90", dur: "5s" },
+    { d: "M56 146C104 146 112 90 152 90", dur: "6.5s" },
+  ];
+  return (
+    <svg className="w-full" viewBox="0 0 340 180" fill="none" aria-hidden="true">
+      <defs>
+        {wires.map((w, i) => (
+          <BeamGradient dur={w.dur} from={-40} id={`nsqr-beam-${i}`} key={i} to={352} />
         ))}
-      </div>
-      <div className="flex h-[104px] items-end gap-2">
-        {bars.map((h, i) => (
-          <span
-            className="w-4 rounded-t-[3px]"
-            key={i}
-            style={{ height: `${h}%`, background: "var(--brand)", opacity: 0.2 + i * 0.11 }}
-          />
+        <BeamGradient dur="4.5s" from={-40} id="nsqr-beam-out" to={352} />
+      </defs>
+
+      {[34, 90, 146].map((y, i) => (
+        <rect
+          height="34"
+          key={y}
+          rx="10"
+          width="34"
+          x="22"
+          y={y - 17}
+          fill="var(--bg-subtle)"
+          stroke="var(--border-strong)"
+          opacity={1 - i * 0.12}
+        />
+      ))}
+
+      {wires.map((w, i) => (
+        <g key={w.d}>
+          <path className="beam-base" d={w.d} strokeLinecap="round" strokeWidth="2" />
+          <path className="beam" d={w.d} stroke={`url(#nsqr-beam-${i})`} strokeLinecap="round" strokeWidth="2" />
+        </g>
+      ))}
+
+      <rect height="52" rx="14" width="52" x="152" y="64" fill="var(--bg-sunken)" stroke="var(--brand)" />
+      <g fill="var(--brand)">
+        {[[162, 74], [172, 74], [162, 84], [182, 84], [192, 74], [172, 94], [192, 94]].map(([x, y]) => (
+          <rect height="8" key={`${x}-${y}`} rx="2" width="8" x={x} y={y} />
         ))}
-      </div>
-    </div>
+      </g>
+
+      <path className="beam-base" d="M204 90H286" strokeLinecap="round" strokeWidth="2" />
+      <path className="beam" d="M204 90H286" stroke="url(#nsqr-beam-out)" strokeLinecap="round" strokeWidth="2" />
+
+      <rect height="44" rx="12" width="44" x="286" y="68" fill="var(--brand)" />
+      <path d="M300 90l6 6 12-12" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" fill="none" />
+    </svg>
   );
 }
 
@@ -210,41 +273,48 @@ function PresenceGraphic() {
   );
 }
 
-/** coLab — a milestone rail with the settled decision behind it. */
+/** coLab — a milestone rail, with the beam running only over the stretch that
+ *  is actually done. The light stops where the work stops, which is the point
+ *  of the card: the rail is the plan, the lit part is the record. */
 function ColabGraphic() {
   const nodes = [
-    { label: "Scope", done: true },
-    { label: "Build", done: true },
-    { label: "Review", done: false },
-    { label: "Ship", done: false },
+    { label: "Scope", at: 40, done: true },
+    { label: "Build", at: 190, done: true },
+    { label: "Review", at: 340, done: false },
+    { label: "Ship", at: 490, done: false },
   ];
   return (
-    <div className="px-6 pb-3">
-      <div className="relative">
-        <span
-          className="absolute left-0 right-0 top-[9px] h-[2px]"
-          style={{ background: "var(--border)" }}
-        />
-        <span
-          className="absolute left-0 top-[9px] h-[2px] w-1/2"
-          style={{ background: "var(--brand)" }}
-        />
-        <div className="relative flex justify-between">
-          {nodes.map((node) => (
-            <div className="grid justify-items-center gap-2" key={node.label}>
-              <span
-                className="h-5 w-5 rounded-full border-2"
-                style={{
-                  background: node.done ? "var(--brand)" : "var(--bg-sunken)",
-                  borderColor: node.done ? "var(--brand)" : "var(--border-strong)",
-                }}
-              />
-              <span className="text-[0.7rem] text-faint">{node.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <svg className="w-full" viewBox="0 0 530 92" fill="none" aria-hidden="true">
+      <defs>
+        <BeamGradient dur="4.5s" from={-40} id="colab-beam" span={60} to={230} />
+      </defs>
+
+      <path className="beam-base" d="M40 20H490" strokeLinecap="round" strokeWidth="2" />
+      <path d="M40 20H190" stroke="var(--brand)" strokeLinecap="round" strokeWidth="2" />
+      <path className="beam" d="M40 20H190" stroke="url(#colab-beam)" strokeLinecap="round" strokeWidth="3" />
+
+      {nodes.map((node) => (
+        <g key={node.label}>
+          <circle
+            cx={node.at}
+            cy="20"
+            r="9"
+            fill={node.done ? "var(--brand)" : "var(--bg-sunken)"}
+            stroke={node.done ? "var(--brand)" : "var(--border-strong)"}
+            strokeWidth="2"
+          />
+          <text
+            fill="var(--text-faint)"
+            fontSize="13"
+            textAnchor="middle"
+            x={node.at}
+            y="52"
+          >
+            {node.label}
+          </text>
+        </g>
+      ))}
+    </svg>
   );
 }
 

@@ -26,6 +26,19 @@ The language, in four rules:
    product hue. `.bento-card` adds the fuller treatment — a radially-masked dot
    field at 8.4px and a hue wash rising from the bottom edge, both of which are
    theirs.
+   **Beams** are the other borrowed effect: a narrow gradient window swept
+   across an SVG in user space, so one animation lights whichever part of a
+   curve it crosses and the paths themselves never move. Their window is 34px
+   on `cubic-bezier(0.16, 1, 0.3, 1)`, staggered 4–6.5s so a set never pulses
+   in unison, with two stops running hue → lighter step and transparent at both
+   ends. `BeamGradient` in `ProductBento.js` is that, parameterised; `--beam-a`
+   / `--beam-b` resolve per card from the product hue. Ours travel
+   left-to-right where theirs go right-to-left, because on these cards the flow
+   has a direction — a scan arriving, work advancing — and reading against it
+   would be wrong. Under `prefers-reduced-motion` the beams are removed
+   entirely rather than frozen, which would strand a bright patch mid-curve;
+   the static connector lines still draw.
+
    **Washes are anchored to the foot of a card, never the top.** Colour belongs
    where the graphics and chips are, not under body copy: a top-down wash put
    `--text-muted` at 4.1–4.3:1, below even the 4.43:1 it manages on the plain

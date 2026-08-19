@@ -792,6 +792,38 @@
     );
   }
 
+  /* --- Beams ---------------------------------------------------------------
+     heroui.pro runs a light along the connector lines in their first card: a
+     narrow gradient window swept across the whole SVG in user space, so it
+     lights whichever part of a curve it happens to cross. The paths never
+     move — only the gradient does, which is why one animation can serve five
+     different curves.
+
+     Their window is 34px wide, travels the full width on
+     cubic-bezier(0.16, 1, 0.3, 1), and each line is staggered between 4s and
+     6.5s so the set never pulses in unison. Two stops, from the hue into a
+     lighter step, transparent at both ends.
+
+     `--beam-a` / `--beam-b` are read by the gradient stops; they resolve per
+     card from the product's own hue. */
+  .bento-card {
+    --beam-a: var(--brand);
+    --beam-b: color-mix(in oklab, var(--brand) 45%, #ffffff);
+  }
+
+  .beam-base {
+    stroke: color-mix(in oklab, var(--text) 12%, transparent);
+  }
+
+  /* Under reduced motion the beams go entirely rather than freezing mid-sweep,
+     which would leave an arbitrary bright patch on one curve. The static
+     connector lines still draw, so the diagram survives without the motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .beam {
+      display: none;
+    }
+  }
+
   /* The foot fade, dissolving a graphic into whatever colour the card ends on. */
   .bento-fade {
     background: linear-gradient(to bottom, transparent, var(--card-foot));

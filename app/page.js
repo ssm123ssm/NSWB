@@ -12,6 +12,7 @@ import {
   principles,
   productShowcase,
   products,
+  publications,
 } from "./data/site";
 
 // Whichever product carries `featured` in the product data is the accent the
@@ -20,6 +21,20 @@ import {
 // closing showcase used to read it too, for the mark in its lead; that lead is
 // gone and its panels carry their own accents.
 const featured = featuredProducts[0];
+
+/* The research card under Capabilities counts and names its own sources rather
+   than restating them in prose. A paper added to `publications` changes the
+   figure and, if it lands somewhere new, the list of venues — so the home page
+   cannot end up claiming a number the /research page contradicts.
+
+   `Set` over the venues keeps first-seen order, and the data is newest first,
+   which puts the two journals ahead of the preprint server. Formatted rather
+   than joined so the conjunction is right at any length. */
+const paperCount = publications.length;
+const paperVenues = new Intl.ListFormat("en-GB", {
+  style: "long",
+  type: "conjunction",
+}).format([...new Set(publications.map((paper) => paper.venue))]);
 
 // The showcase data holds capabilities against a slug and nothing else, so the
 // product facts are resolved from the registry here rather than duplicated
@@ -218,14 +233,40 @@ export default function HomePage() {
           />
 
           {/* The lead directly above says "research depth", so the pointer to
-              the papers sits here, at the line it refers to. */}
-          <p className="mt-10 text-[0.85rem] leading-relaxed text-faint">
-            Four publications, in PLOS One, BMC Medical Education and on arXiv.{" "}
-            <Link className="link-arrow" href="/research">
-              Publications
+              the papers sits here, at the line it refers to.
+
+              A card rather than the line of fine print it was. That line named
+              a count and three venues and then stopped, which told a reader the
+              work existed without telling them anything about it — and set at
+              --text-faint under a track of full-height plates, it read as a
+              footnote to the section rather than as part of it. The card is
+              deliberately small and ranged left under the heading column: it is
+              a door to the research page, not a summary of the research.
+
+              Kept off .card-hover: nothing lifts unless the whole card is the
+              click target, and here the link inside it is. */}
+          <div className="card mt-10 max-w-xl p-6">
+            <div className="flex items-baseline justify-between gap-4">
+              <p className="eyebrow">Research</p>
+              {/* The count as a figure, in mono, where the papers themselves
+                  are numbered on /research. */}
+              <p className="font-[family-name:var(--font-mono)] text-xs text-faint">
+                {String(paperCount).padStart(2, "0")} papers
+              </p>
+            </div>
+
+            <p className="mt-4 text-sm leading-relaxed text-muted">
+              Peer-reviewed and preprint work in {paperVenues}: retrieval
+              augmented generation, aligning language models for clinical tasks,
+              and automated short answer marking measured against human
+              examiners.
+            </p>
+
+            <Link className="link-arrow mt-5 inline-flex" href="/research">
+              Read the publications
               <ArrowIcon />
             </Link>
-          </p>
+          </div>
         </div>
       </section>
 

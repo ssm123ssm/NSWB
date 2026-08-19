@@ -253,6 +253,98 @@
     --grad-to: #ea580c;
   }
 
+  /* --- D. Neutral chrome, coloured content ---------------------------------
+     The chrome stops competing with the products. Buttons, links, focus and
+     the closing panel are near-black; colour is spent entirely on the six
+     product hues, which get to be *more* saturated than the house-colour
+     scheme allowed rather than less.
+
+     The reason that works: in the other palettes a product hue has to carry
+     white type on a gradient button, which forces every hue down into the
+     700s. Here nothing structural is coloured, so a hue only has to clear 3:1
+     as a fill behind a white icon and 4.5:1 as its own text step. That is a
+     much cheaper constraint, and it buys back the vividness.
+
+     The neutral ramp is warm (stone, not zinc). A studio whose line is "we
+     think about what breaks" does not also need a cold grey.
+
+     The signature moves from one house gradient to the *spectrum* — the six
+     product hues as a set. `.gradient-text` runs blue → violet → rose, which
+     is derived from the products rather than invented next to them.
+
+     The discipline this needs: one hue per surface. A card wears its own
+     product's colour and no other. Six hues on a page is a palette; six hues
+     in one card is a rainbow. */
+  [data-palette="neutral"] {
+    --bg-sunken: #fafaf9;
+    --bg-subtle: #f5f5f4;
+    --bg-muted: #e7e5e4;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --text: #1c1917; /* 17.49:1 */
+    --text-muted: #57534e; /* 7.63:1 */
+    --text-faint: #78716c; /* 4.80:1 */
+
+    --accent: #1c1917;
+    --accent-hover: #000000;
+    --accent-soft: #f5f5f4;
+    --accent-text: #1c1917;
+
+    /* The spectrum, used only as text and as the hero fields. */
+    --grad-from: #2563eb;
+    --grad-to: #e11d48;
+    --grad-on: #ffffff;
+  }
+
+  [data-palette="neutral"] [data-brand="violet"] {
+    --brand: #2563eb;
+    --brand-hover: #1d4ed8;
+    --brand-soft: #eff6ff;
+    --brand-text: #1d4ed8;
+    --grad-from: #2563eb;
+    --grad-to: #1d4ed8;
+  }
+  [data-palette="neutral"] [data-brand="cyan"] {
+    --brand: #0891b2;
+    --brand-hover: #0e7490;
+    --brand-soft: #ecfeff;
+    --brand-text: #0e7490;
+    --grad-from: #0891b2;
+    --grad-to: #0e7490;
+  }
+  [data-palette="neutral"] [data-brand="blue"] {
+    --brand: #7c3aed;
+    --brand-hover: #6d28d9;
+    --brand-soft: #f5f3ff;
+    --brand-text: #6d28d9;
+    --grad-from: #7c3aed;
+    --grad-to: #6d28d9;
+  }
+  [data-palette="neutral"] [data-brand="emerald"] {
+    --brand: #059669;
+    --brand-hover: #047857;
+    --brand-soft: #ecfdf5;
+    --brand-text: #047857;
+    --grad-from: #059669;
+    --grad-to: #047857;
+  }
+  [data-palette="neutral"] [data-brand="amber"] {
+    --brand: #d97706;
+    --brand-hover: #b45309;
+    --brand-soft: #fffbeb;
+    --brand-text: #b45309;
+    --grad-from: #d97706;
+    --grad-to: #b45309;
+  }
+  [data-palette="neutral"] [data-brand="clay"] {
+    --brand: #e11d48;
+    --brand-hover: #be123c;
+    --brand-soft: #fff1f2;
+    --brand-text: #be123c;
+    --grad-from: #e11d48;
+    --grad-to: #be123c;
+  }
+
   /* --- Shape --------------------------------------------------------------
      The radius ladder is the loudest single signal in the language. Sharp
      reads technical and dense; soft reads consumer and friendly. */
@@ -376,6 +468,58 @@
 
   [data-type="grotesk"] body {
     font-family: "Space Grotesk", var(--font-sans), sans-serif;
+  }
+
+  /* --- DESIGN LAB: neutral-palette component overrides — temporary --------
+     The neutral scheme is not just a swap of token values: it changes what is
+     allowed to be coloured. Structural surfaces go near-black and flat, and
+     the gradient survives only as text and as the hero colour fields. Without
+     these, "neutral" would still render a bright gradient button and the whole
+     point would be lost. */
+  [data-palette="neutral"] .btn-gradient {
+    background: var(--accent);
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  [data-palette="neutral"] .btn-gradient:hover {
+    background: var(--accent-hover);
+    opacity: 1;
+  }
+
+  /* Flat product colour rather than a gradient — with neutral chrome the tile
+     is the only colour in the card, and a flat one reads more deliberate. */
+  [data-palette="neutral"] .icon-tile {
+    background: var(--brand);
+    box-shadow: none;
+  }
+
+  [data-palette="neutral"] .icon-tile-soft {
+    background: var(--brand-soft);
+    color: var(--brand-text);
+  }
+
+  [data-palette="neutral"] .brand-mark,
+  [data-palette="neutral"] .pill-tag {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  /* The closing plate goes ink. It is the loudest object on the page and the
+     one most likely to look like a template in a gradient. */
+  [data-palette="neutral"] .gradient-panel {
+    background: linear-gradient(140deg, #1c1917, #292524);
+    color: #ffffff;
+  }
+
+  [data-palette="neutral"] .gradient-panel h2 {
+    color: #ffffff;
+  }
+
+  /* The eyebrow rule keeps the spectrum, so the one multi-hue motif on the
+     page is the thing derived from the products. */
+  [data-palette="neutral"] .eyebrow {
+    color: var(--brand-text);
   }
 
   /* --- DESIGN LAB: density — temporary, see the variants block above ------ */

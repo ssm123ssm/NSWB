@@ -28,6 +28,7 @@ const AXES = [
       { value: "indigo", label: "Indigo → violet" },
       { value: "teal", label: "Teal → emerald" },
       { value: "ink", label: "Ink + amber" },
+      { value: "neutral", label: "Neutral + spectrum" },
     ],
   },
   {

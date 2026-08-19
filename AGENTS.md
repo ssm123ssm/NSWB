@@ -45,6 +45,29 @@ split into head/tail only so the tail can carry the gradient; `headlinePlain`
 holds it whole for metadata and OG images. Product names and the `legalDocs`
 registry are likewise fixed.
 
+**The design lab is temporary.** `app/components/DesignLab.js` plus the
+"DESIGN LAB VARIANTS" block in `globals.css` exist only to choose a direction:
+a dev-only panel writes `data-palette`, `data-type`, `data-radius`,
+`data-elevation` and `data-density` onto `<html>` and the variant rules
+re-point the tokens under the whole site. It never renders in production (the
+`isDev` guard in `layout.js`), and the alternate typefaces are fetched at
+runtime rather than through `next/font` so a production build carries no trace
+of them. The component itself is still bundled into the layout chunk, so it is
+dead weight until it goes. **Once a direction is chosen, the winning values
+move up into `:root` and the component, the variant block and the axis list all
+get deleted together.**
+
+**Gradients must clear 4.5:1 along their whole length.** Every ramp here is
+darkened until white type clears 4.6:1 at both ends. This is not fussiness:
+HeroUI's bright scales carry white at 2.0–2.4:1, and the first cut of this
+rebuild shipped a house gradient ending in `#06b7db` — 2.39:1 under the white
+type on every gradient button, icon tile and panel. The same ramp is also used
+as `.gradient-text` on white, so a light endpoint is unreadable there too, which
+is why "keep it vivid and put ink on it" is not an escape. `--grad-on` is the
+token for the type colour on a gradient fill; it is white everywhere today, and
+it exists so that the constraint has somewhere to live rather than being
+rediscovered.
+
 Contrast is no longer machine-audited. `scripts/contrast.py` is stale — it
 encodes the old violet palette and is not a gate. The text tokens here
 (`--text`, `--text-muted`, `--text-faint`, `--brand-text`, `--accent-text`) were

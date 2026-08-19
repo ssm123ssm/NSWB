@@ -1,5 +1,6 @@
 import { Inter, JetBrains_Mono } from "next/font/google";
 import SiteChrome from "./components/SiteChrome";
+import DesignLab from "./components/DesignLab";
 import { site } from "./data/site";
 import "./globals.css";
 
@@ -79,6 +80,8 @@ const organizationSchema = {
   sameAs: [site.linkedin, site.github],
 };
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -98,6 +101,7 @@ export default function RootLayout({ children }) {
           Skip to content
         </a>
         <SiteChrome>{children}</SiteChrome>
+        {isDev && <DesignLab />}
       </body>
     </html>
   );

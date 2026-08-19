@@ -13,7 +13,7 @@ export default function Image() {
   return shareCard({
     // --brand-text for cyan, so the card obeys the same contrast rule the
     // pages do rather than using the lighter fill value.
-    accent: "#06b7db",
+    accent: "#048099",
     headline: "Encrypted before it leaves",
     emphasis: "your device.",
     footer: "Vault — storage only you can open",

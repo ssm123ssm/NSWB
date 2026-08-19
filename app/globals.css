@@ -63,10 +63,20 @@
     --brand-soft: var(--accent-soft);
     --brand-text: var(--accent-text);
 
-    /* One gradient, everywhere. Blue into cyan-600. Re-pointed per product,
-       never a second pair invented locally. */
+    /* One gradient, everywhere. Blue into a deepened cyan. Re-pointed per
+       product, never a second pair invented locally.
+
+       The `to` end is #048099 rather than HeroUI's #06b7db. That bright cyan
+       carries white type at 2.39:1 and reads as gradient text on white at the
+       same ratio — it failed as a button fill and as a wordmark. Every ramp
+       below is darkened until white clears 4.6:1 across its whole length,
+       which also makes it safe as `.gradient-text`. */
     --grad-from: #006fee;
-    --grad-to: #06b7db;
+    --grad-to: #048099;
+    /* The text colour that sits ON a gradient fill. It is a token rather than
+       a hardcoded white because a light gradient (an amber one, say) cannot
+       carry white type at 4.5:1 — such a palette sets this to ink instead. */
+    --grad-on: #ffffff;
 
     /* --- Elevation --------------------------------------------------------
        HeroUI's boxShadow small/medium/large, plus a resting step below them.
@@ -110,14 +120,14 @@
     --brand-soft: #e6f1fe;
     --brand-text: #005bc4;
     --grad-from: #006fee;
-    --grad-to: #06b7db;
+    --grad-to: #048099;
   }
   [data-brand="cyan"] {
     --brand: #06b7db; /* cyan — Vault */
     --brand-hover: #0e8aaa;
     --brand-soft: #e6fafe;
     --brand-text: #0b6a83;
-    --grad-from: #06b7db;
+    --grad-from: #048099;
     --grad-to: #006fee;
   }
   [data-brand="blue"] {
@@ -133,24 +143,151 @@
     --brand-hover: #12a150;
     --brand-soft: #e8faf0;
     --brand-text: #0e793c;
-    --grad-from: #17c964;
-    --grad-to: #06b7db;
+    --grad-from: #0f8643;
+    --grad-to: #048099;
   }
   [data-brand="amber"] {
     --brand: #f5a524; /* warning — Lipd Hub */
     --brand-hover: #c4841d;
     --brand-soft: #fefce8;
     --brand-text: #8a5a00;
-    --grad-from: #f5a524;
-    --grad-to: #f31260;
+    --grad-from: #a46808;
+    --grad-to: #e60c58;
   }
   [data-brand="clay"] {
     --brand: #f31260; /* danger — AES */
     --brand-hover: #c20e4d;
     --brand-soft: #fee7ef;
     --brand-text: #c20e4d;
-    --grad-from: #f31260;
+    --grad-from: #e60c58;
     --grad-to: #7828c8;
+  }
+
+
+  /* ==========================================================================
+     DESIGN LAB VARIANTS — temporary
+
+     Everything in this block exists so the design can be judged on real pages
+     instead of as swatches. `DesignLab` (dev-only) writes data-palette,
+     data-radius, data-density and data-type onto <html>, and these rules
+     re-point the tokens underneath the whole site.
+
+     None of it is the design. Once a direction is chosen, the winning values
+     move up into :root above and this entire block is deleted — see the note
+     in AGENTS.md.
+
+     Every palette is contrast-checked rather than eyeballed: the --*-text
+     steps clear 4.5:1 on white and on their own soft tint, and --grad-on is
+     whatever colour actually reads on that palette's gradient. That last one
+     is why the token exists — the amber palette cannot carry white type.
+     ========================================================================== */
+
+  /* --- A. Indigo → violet -------------------------------------------------
+     Modern and a little premium. Furthest from the stock HeroUI blue while
+     staying in the same family, so it reads as a considered choice rather
+     than a different genre. */
+  [data-palette="indigo"] {
+    --accent: #4f46e5;
+    --accent-hover: #4338ca;
+    --accent-soft: #eef2ff;
+    --accent-text: #4338ca; /* 7.90:1 on white */
+    --grad-from: #4f46e5;
+    --grad-to: #9333ea; /* 5.38:1 with white type, so the whole ramp is safe */
+    --grad-on: #ffffff;
+  }
+  [data-palette="indigo"] [data-brand="violet"] {
+    --brand: #4f46e5;
+    --brand-hover: #4338ca;
+    --brand-soft: #eef2ff;
+    --brand-text: #4338ca;
+    --grad-from: #4f46e5;
+    --grad-to: #9333ea;
+  }
+
+  /* --- B. Teal → emerald --------------------------------------------------
+     Calm and verification-flavoured — the palette security tooling tends to
+     wear. The gradient is deliberately narrow: the brighter teals and
+     emeralds cannot carry white type, so the ramp stays in the 700s. */
+  [data-palette="teal"] {
+    --accent: #0f766e;
+    --accent-hover: #115e59;
+    --accent-soft: #f0fdfa;
+    --accent-text: #0f766e; /* 5.47:1 on white */
+    --grad-from: #0f766e;
+    --grad-to: #047857; /* 5.48:1 with white type */
+    --grad-on: #ffffff;
+  }
+  [data-palette="teal"] [data-brand="violet"] {
+    --brand: #0f766e;
+    --brand-hover: #115e59;
+    --brand-soft: #f0fdfa;
+    --brand-text: #0f766e;
+    --grad-from: #0f766e;
+    --grad-to: #047857;
+  }
+
+  /* --- C. Ink + amber -----------------------------------------------------
+     The one that is not a SaaS blue. Chrome is near-black — buttons, links,
+     focus — and amber is spent only on the gradient surfaces, which carry ink
+     type rather than white. Sober, editorial, and the most distinctive of the
+     three; also the one that will look most wrong if the copy is breezy. */
+  [data-palette="ink"] {
+    --accent: #18181b;
+    --accent-hover: #000000;
+    --accent-soft: #fffbeb;
+    --accent-text: #18181b;
+    /* Deep burnt amber rather than a bright one. The gradient is also used as
+       text on white (`.gradient-text` — the wordmark tail, the stat figures),
+       so a light amber would be unreadable there no matter what --grad-on
+       says. Warm and distinctive, still safe. */
+    --grad-from: #b45309;
+    --grad-to: #9a3412;
+    --grad-on: #ffffff;
+  }
+  [data-palette="ink"] [data-brand="violet"] {
+    --brand: #18181b;
+    --brand-hover: #000000;
+    --brand-soft: #fffbeb;
+    --brand-text: #92400e;
+    --grad-from: #fbbf24;
+    --grad-to: #ea580c;
+  }
+
+  /* --- Shape --------------------------------------------------------------
+     The radius ladder is the loudest single signal in the language. Sharp
+     reads technical and dense; soft reads consumer and friendly. */
+  [data-radius="sharp"] {
+    --radius-sm: 3px;
+    --radius: 5px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 10px;
+  }
+  [data-radius="soft"] {
+    --radius-sm: 12px;
+    --radius: 18px;
+    --radius-md: 22px;
+    --radius-lg: 30px;
+    --radius-xl: 40px;
+  }
+
+  /* --- Elevation ----------------------------------------------------------
+     Flat drops the shadows entirely and lets the border do the separating —
+     which changes the whole language, because a card stops being a raised
+     object. */
+  [data-elevation="flat"] {
+    --shadow-xs: none;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+  }
+  [data-elevation="heavy"] {
+    --shadow-sm: 0px 2px 8px 0px rgb(0 0 0 / 0.08),
+      0px 0px 1px 0px rgb(0 0 0 / 0.3);
+    --shadow-md: 0px 8px 28px -4px rgb(0 0 0 / 0.14),
+      0px 0px 1px 0px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0px 32px 64px -12px rgb(0 0 0 / 0.22),
+      0px 0px 1px 0px rgb(0 0 0 / 0.3);
   }
 
   * {
@@ -226,6 +363,36 @@
 
   .section-tight {
     padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  /* --- DESIGN LAB: typeface — temporary, see the variants block above ---- */
+  /* The alternates are named directly rather than through a --font-* variable,
+     because they are not loaded by next/font — DesignLab injects a stylesheet
+     for them at runtime, in development only, so a production build carries no
+     trace of them. */
+  [data-type="instrument"] body {
+    font-family: "Instrument Sans", var(--font-sans), sans-serif;
+  }
+
+  [data-type="grotesk"] body {
+    font-family: "Space Grotesk", var(--font-sans), sans-serif;
+  }
+
+  /* --- DESIGN LAB: density — temporary, see the variants block above ------ */
+  [data-density="tight"] .shell {
+    max-width: 72rem;
+  }
+
+  [data-density="tight"] .section {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  [data-density="airy"] .shell {
+    max-width: 88rem;
+  }
+
+  [data-density="airy"] .section {
+    padding-block: clamp(5rem, 12vw, 10rem);
   }
 
   /* A band that carries more weight than white without going dark. */
@@ -337,7 +504,7 @@
       var(--grad-from),
       var(--grad-to)
     );
-    color: #ffffff;
+    color: var(--grad-on);
     box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--grad-from) 65%, transparent);
   }
 
@@ -419,7 +586,7 @@
       var(--grad-from),
       var(--grad-to)
     );
-    color: #ffffff;
+    color: var(--grad-on);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.01em;
@@ -520,7 +687,7 @@
       var(--grad-from),
       var(--grad-to)
     );
-    color: #ffffff;
+    color: var(--grad-on);
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--grad-from) 70%, transparent);
   }
 
@@ -672,7 +839,7 @@
       var(--grad-from),
       var(--grad-to)
     );
-    color: #ffffff;
+    color: var(--grad-on);
     font-size: 0.875rem;
     font-weight: 700;
     line-height: 1;
@@ -705,13 +872,13 @@
       var(--grad-from),
       var(--grad-to)
     );
-    color: #ffffff;
+    color: var(--grad-on);
     box-shadow: var(--shadow-lg);
     text-align: center;
   }
 
   .gradient-panel h2 {
-    color: #ffffff;
+    color: var(--grad-on);
   }
 
   /* The faint dot matrix over the plate, so it is not a flat wash. */
@@ -722,7 +889,7 @@
     pointer-events: none;
     background-image: radial-gradient(
       circle at 1px 1px,
-      rgb(255 255 255 / 0.22) 1px,
+      color-mix(in srgb, var(--grad-on) 22%, transparent) 1px,
       transparent 0
     );
     background-size: 24px 24px;

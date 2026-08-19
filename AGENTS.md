@@ -19,9 +19,20 @@ and `warning`. "HeroUI's colours" is ambiguous — this is the site's.
 
 The language, in four rules:
 
-1. **The ground is grey (`#f5f5f5`) and cards are white.** That inversion is
-   why surfaces lift without a shadow, and why `.card` carries none. A section
-   that wants more weight uses `.section-subtle`, which inverts to a white band.
+1. **The ground is grey (`#f5f5f5`) and nothing is a flat white panel.** Their
+   cards carry `bg-background` — the same grey as the page — and are made to
+   read by a border and a wash rather than by a white fill. Ours follow: every
+   card runs a gradient off `--bg-sunken` into `--card-foot`, a trace of the
+   product hue. `.bento-card` adds the fuller treatment — a radially-masked dot
+   field at 8.4px and a hue wash rising from the bottom edge, both of which are
+   theirs.
+   **Washes are anchored to the foot of a card, never the top.** Colour belongs
+   where the graphics and chips are, not under body copy: a top-down wash put
+   `--text-muted` at 4.1–4.3:1, below even the 4.43:1 it manages on the plain
+   ground, so tinting was making an already-marginal token worse rather than
+   inheriting a known problem. `--card-foot` is also what a graphic's fade must
+   dissolve into — fading to `--surface` stops the gradient against a colour
+   the card is not.
 2. **The display heading is two-tone.** `.display-tone` is flat
    `--display-muted` grey on its own line — not a gradient, despite the ramp
    tokens still existing for fills. It reads as emphasis and de-emphasis.

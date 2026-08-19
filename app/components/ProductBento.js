@@ -75,7 +75,7 @@ export default function ProductBento() {
 function BentoCard({ product, span, height, Graphic }) {
   return (
     <article
-      className={`flex flex-col overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] bg-[color:var(--surface)] transition-colors hover:border-[color:var(--brand)] ${span} ${height} max-lg:col-span-1`}
+      className={`bento-card flex flex-col overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] transition-colors hover:border-[color:var(--brand)] ${span} ${height} max-lg:col-span-1`}
       data-brand={product.accent}
     >
       <div className="p-6 pb-0">
@@ -99,12 +99,7 @@ function BentoCard({ product, span, height, Graphic }) {
         <div className="absolute inset-x-0 bottom-0">
           <Graphic />
         </div>
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-16"
-          style={{
-            background: "linear-gradient(to bottom, transparent, var(--surface))",
-          }}
-        />
+        <div className="bento-fade pointer-events-none absolute inset-x-0 bottom-0 h-16" />
       </div>
 
       <div className="px-6 pb-5 pt-1">
@@ -240,7 +235,7 @@ function ColabGraphic() {
               <span
                 className="h-5 w-5 rounded-full border-2"
                 style={{
-                  background: node.done ? "var(--brand)" : "var(--surface)",
+                  background: node.done ? "var(--brand)" : "var(--bg-sunken)",
                   borderColor: node.done ? "var(--brand)" : "var(--border-strong)",
                 }}
               />

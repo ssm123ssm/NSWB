@@ -715,12 +715,18 @@
     color: var(--brand-text);
   }
 
+  /* The capsule has to read as a capsule for all six hues. --brand-soft alone
+     does not: it is a 12% mix, and at that strength violet and blue are
+     clearly present on white while teal and green all but vanish, so the six
+     lockups looked like two different treatments. The hairline gives every
+     capsule an edge regardless of how its tint lands. */
   .brand-tag {
     display: inline-flex;
     align-items: center;
     padding: 0.375rem 0.875rem;
     border-radius: var(--radius-full);
-    background: var(--brand-soft);
+    border: 1px solid color-mix(in oklab, var(--brand) 24%, transparent);
+    background: color-mix(in oklab, var(--brand) 14%, transparent);
     font-size: 1.0625rem;
     font-weight: 700;
     letter-spacing: -0.02em;

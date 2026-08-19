@@ -17,10 +17,16 @@ import { getProduct } from "../data/site";
  * have seven cards, so row three here is two col-span-3s — the only deviation,
  * and it keeps the grid filled rather than leaving a two-column hole.
  *
- * Each card is a fixed-height frame with the copy at the top and a graphic
- * bleeding out of the bottom edge, faded into the surface by an overlay. That
- * fade is the effect doing most of the work: it lets an illustration run past
- * the card boundary without the card needing to contain it.
+ * Each card is a fixed-height flex column: copy, then the graphic in whatever
+ * height is left, then the link. The graphic is clipped to its own region and
+ * its foot is dissolved into the surface by a gradient overlay, which is what
+ * keeps an illustration from meeting the card border as a hard edge.
+
+ * The column is load-bearing rather than tidy. The first version positioned
+ * the graphic and the link absolutely inside the frame, and on every card they
+ * landed on top of each other. Siblings in a column cannot overlap however
+ * tall the copy runs, which matters here because the taglines are not all one
+ * line.
  *
  * The graphics are ours. Theirs are demos of their own component library,
  * which would mean nothing here — each of these draws the thing its product
@@ -69,10 +75,10 @@ export default function ProductBento() {
 function BentoCard({ product, span, height, Graphic }) {
   return (
     <article
-      className={`group relative overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] bg-[color:var(--surface)] transition-colors hover:border-[color:var(--brand)] ${span} ${height} max-lg:col-span-1`}
+      className={`flex flex-col overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] bg-[color:var(--surface)] transition-colors hover:border-[color:var(--brand)] ${span} ${height} max-lg:col-span-1`}
       data-brand={product.accent}
     >
-      <div className="relative z-20 p-6">
+      <div className="p-6 pb-0">
         <h3 className="brand-tag">
           <ProductName product={product} />
         </h3>
@@ -81,22 +87,27 @@ function BentoCard({ product, span, height, Graphic }) {
         </p>
       </div>
 
-      {/* The graphic bleeds out of the bottom of the frame; the overlay below
-          fades it into the surface so it never meets the border as a hard
-          edge. Both are inert to assistive tech and to the pointer. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0" aria-hidden="true">
-        <Graphic />
-      </div>
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent, var(--surface))",
-        }}
-        aria-hidden="true"
-      />
+      {/* The graphic gets whatever height is left over and is clipped to it,
+          with the fade dissolving its foot into the surface.
 
-      <div className="absolute inset-x-6 bottom-5 z-20">
+          This is a flex column on purpose. An earlier version absolutely
+          positioned the graphic and the link inside a fixed-height frame, and
+          on every card they landed on top of each other — the link sat over
+          the illustration and both became unreadable. Three siblings in a
+          column cannot overlap however tall the copy runs. */}
+      <div className="relative min-h-0 flex-1 overflow-hidden" aria-hidden="true">
+        <div className="absolute inset-x-0 bottom-0">
+          <Graphic />
+        </div>
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16"
+          style={{
+            background: "linear-gradient(to bottom, transparent, var(--surface))",
+          }}
+        />
+      </div>
+
+      <div className="px-6 pb-5 pt-1">
         {product.detail ? (
           <Link className="link-arrow" href={product.detail}>
             Explore {product.name}
@@ -123,7 +134,7 @@ function NsqrGraphic() {
   const cells = [1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1];
   const bars = [38, 62, 30, 78, 54, 88, 46];
   return (
-    <div className="flex items-end justify-between gap-6 px-6 pb-6">
+    <div className="flex items-end justify-between gap-6 px-6 pb-3">
       <div className="grid grid-cols-5 gap-1.5">
         {cells.map((on, i) => (
           <span
@@ -158,7 +169,7 @@ function VaultGraphic() {
     ["keys/rotation.md", "e7602b3d8a94c5f1"],
   ];
   return (
-    <div className="grid gap-2 px-6 pb-6">
+    <div className="grid gap-2 px-6 pb-3">
       {rows.map(([name, cipher], i) => (
         <div
           className="flex items-center justify-between gap-4 rounded-token border border-[color:var(--border)] bg-[color:var(--bg-sunken)] px-3 py-2.5"
@@ -182,7 +193,7 @@ function VaultGraphic() {
 function PresenceGraphic() {
   const people = ["AK", "RS", "MJ", "TP", "LN"];
   return (
-    <div className="flex items-end gap-2 px-6 pb-6">
+    <div className="flex items-end gap-2 px-6 pb-3">
       {people.map((initials, i) => (
         <div className="grid justify-items-center gap-1.5" key={initials}>
           <span
@@ -213,7 +224,7 @@ function ColabGraphic() {
     { label: "Ship", done: false },
   ];
   return (
-    <div className="px-6 pb-6">
+    <div className="px-6 pb-3">
       <div className="relative">
         <span
           className="absolute left-0 right-0 top-[9px] h-[2px]"
@@ -245,7 +256,7 @@ function ColabGraphic() {
 /** AES — prose resolving into a score. */
 function AesGraphic() {
   return (
-    <div className="flex items-end justify-between gap-6 px-6 pb-6">
+    <div className="flex items-end justify-between gap-6 px-6 pb-3">
       <div className="grid flex-1 gap-1.5">
         {[100, 92, 96, 74, 88].map((w, i) => (
           <span
@@ -269,7 +280,7 @@ function AesGraphic() {
 function LipdGraphic() {
   const heads = [0, 1, 2, 3, 4, 5, 6, 7];
   return (
-    <div className="grid gap-1 px-6 pb-6">
+    <div className="grid gap-1 px-6 pb-3">
       <div className="flex justify-between">
         {heads.map((i) => (
           <span

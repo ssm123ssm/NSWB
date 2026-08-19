@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { footerLinks, site } from "../data/site";
 import { CookieSettingsButton } from "./CookieBanner";
-import HashMark from "./HashMark";
 import { GitHubIcon, LinkedInIcon } from "./Icons";
 
 const socials = [
@@ -9,6 +7,10 @@ const socials = [
   { label: "GitHub", href: site.github, Icon: GitHubIcon },
 ];
 
+/**
+ * A single centered band: socials and legal links in one row, then the
+ * tagline, then the stamped copyright line.
+ */
 export default function SiteFooter() {
   return (
     <footer className="border-t border-[color:var(--border)]">
@@ -27,23 +29,20 @@ export default function SiteFooter() {
             </a>
           ))}
         </div>
-
         {footerLinks.map((link) => (
-          <Link className="link-faint" href={link.href} key={link.href}>
+          <a className="link-faint" href={link.href} key={link.href}>
             {link.label}
-          </Link>
+          </a>
         ))}
-
-        {/* Sits in the same row as the links because it does the same job —
-            it is a button only because it reopens the banner in place. */}
         <CookieSettingsButton />
       </div>
 
-      <p className="shell pb-8 text-center text-sm text-faint">
-        © {new Date().getFullYear()}{" "}
-        {/* The visible name morphs into a digest; screen readers get the real one. */}
-        <span className="sr-only">{site.name}</span>
-        <HashMark />
+      <p className="shell pb-2 text-center text-sm text-faint">
+        Nothing here is assumed to work.
+      </p>
+
+      <p className="shell pb-8 text-center font-mono text-xs tracking-[0.2em] text-faint">
+        © {new Date().getFullYear()} n3ur45ens3
       </p>
     </footer>
   );

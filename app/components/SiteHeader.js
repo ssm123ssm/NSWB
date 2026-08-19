@@ -6,19 +6,34 @@ import { useEffect, useState } from "react";
 import { navLinks, pageHeaders, site } from "../data/site";
 import { CloseIcon, MenuIcon } from "./Icons";
 import { useContact } from "./ContactContext";
-import ThemeToggle from "./ThemeToggle";
 import Wordmark from "./Wordmark";
 
+/**
+ * Sticky, translucent and blurred — the page slides under it, and the border
+ * only appears once the page has actually moved, so the header has no edge
+ * while the hero is at rest.
+ *
+ * Product pages run a stripped header carrying their own action instead of the
+ * site nav; see `pageHeaders` in the site data for what that means.
+ *
+ * The primary call sits on the right as a gradient button, which is the one
+ * place in the chrome the house gradient appears.
+ */
 export default function SiteHeader() {
   const { open: openContact } = useContact();
   const [stuck, setStuck] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [nearClosing, setNearClosing] = useState(false);
   const pathname = usePathname();
-  // Product pages run a stripped header carrying their own action instead of
-  // the site nav. See `pageHeaders` for what that means and why it is keyed by
-  // path.
   const override = pageHeaders[pathname];
   const bare = Boolean(override);
+  // /products makes its own case for getting in touch at the foot of the
+  // page, so the header does not also carry the CTA there.
+  const hideCta = pathname === "/products";
+  // Legal pages carry no nav and no CTA — just the mark, centered, so the
+  // reader isn't pulled back toward the marketing site while reading a policy.
+  const legal = pathname === "/legal" || pathname.startsWith("/legal/");
+  const ctaStateClass = nearClosing ? " btn-muted" : stuck ? " btn-scrolled" : "";
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 8);
@@ -26,6 +41,24 @@ export default function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // The home page's own closing CTA restates "Start a conversation" — mute
+  // the header's copy while that section is on screen so the two don't read
+  // as two separate asks.
+  useEffect(() => {
+    if (pathname !== "/") {
+      setNearClosing(false);
+      return;
+    }
+    const target = document.getElementById("closing");
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setNearClosing(entry.isIntersecting),
+      { rootMargin: "-64px 0px 0px 0px" }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [pathname]);
 
   // Close the mobile menu whenever the route changes.
   useEffect(() => setMenuOpen(false), [pathname]);
@@ -39,35 +72,55 @@ export default function SiteHeader() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
+  if (legal) {
+    return (
+      <header className="site-header" data-stuck={stuck}>
+        <div className="shell flex h-16 items-center justify-center">
+          <Link
+            className="flex items-center"
+            href="/"
+            aria-label={`${site.name} home`}
+          >
+            <Wordmark className="wordmark-vivid" />
+          </Link>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="site-header" data-stuck={stuck || menuOpen}>
       <div className="shell flex h-16 items-center justify-between gap-6">
-        <Link className="flex items-center" href="/" aria-label={`${site.name} home`}>
+        <Link
+          className="flex items-center"
+          href="/"
+          aria-label={`${site.name} home`}
+        >
           <Wordmark />
         </Link>
 
         {!bare && (
-          <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
+          <nav
+            className="hidden items-center gap-1 md:flex"
+            aria-label="Main"
+          >
             {navLinks.map((link) => (
-              <Link className="nav-link" key={link.href} href={link.href}>
+              <Link
+                className="nav-link"
+                key={link.href}
+                href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
+              >
                 {link.label}
               </Link>
             ))}
-            {/* Contact sits with the nav rather than beside the theme toggle:
-                it is a third destination, and a filled button here would be a
-                second accent competing with the hero. It opens the dialog
-                instead of navigating, so it is a button wearing .nav-link. */}
-            <button className="nav-link" type="button" onClick={() => openContact()}>
-              Contact
-            </button>
           </nav>
         )}
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-          {override?.cta && (
+          {override?.cta ? (
             <a
-              className="btn btn-brand btn-sm"
+              className="btn btn-gradient btn-sm"
               data-brand={override.brand}
               href={override.cta.href}
               {...(override.cta.external
@@ -76,6 +129,16 @@ export default function SiteHeader() {
             >
               {override.cta.label}
             </a>
+          ) : (
+            !hideCta && (
+              <button
+                className={`btn btn-gradient btn-sm hidden md:inline-flex${ctaStateClass}`}
+                type="button"
+                onClick={() => openContact()}
+              >
+                Start a conversation
+              </button>
+            )
           )}
           {!bare && (
             <button
@@ -97,10 +160,10 @@ export default function SiteHeader() {
           id="mobile-menu"
           className="border-t border-[color:var(--border)] bg-[color:var(--bg)] md:hidden"
         >
-          <nav className="shell flex flex-col py-3" aria-label="Mobile">
+          <nav className="shell flex flex-col gap-1 py-4" aria-label="Mobile">
             {navLinks.map((link) => (
               <Link
-                className="border-b border-[color:var(--border)] py-3.5 text-[0.95rem] last:border-0"
+                className="rounded-token px-3 py-2.5 text-[0.95rem] font-medium hover:bg-[color:var(--bg-subtle)]"
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
@@ -108,16 +171,18 @@ export default function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            <button
-              className="border-b border-[color:var(--border)] py-3.5 text-left text-[0.95rem] last:border-0"
-              type="button"
-              onClick={() => {
-                setMenuOpen(false);
-                openContact();
-              }}
-            >
-              Contact
-            </button>
+            {!hideCta && (
+              <button
+                className={`btn btn-gradient mt-2 w-full${ctaStateClass}`}
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  openContact();
+                }}
+              >
+                Start a conversation
+              </button>
+            )}
           </nav>
         </div>
       )}

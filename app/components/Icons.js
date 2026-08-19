@@ -34,6 +34,16 @@ export function NeuralIcon({ className = "h-5 w-5" }) {
   );
 }
 
+export function WavesIcon({ className = "h-3 w-3" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} strokeWidth={1.6} aria-hidden="true">
+      <path d="M2 8c2-2.4 4-2.4 6 0s4 2.4 6 0 4-2.4 6 0" opacity="0.45" />
+      <path d="M2 13c2-2.4 4-2.4 6 0s4 2.4 6 0 4-2.4 6 0" opacity="0.7" />
+      <path d="M2 18c2-2.4 4-2.4 6 0s4 2.4 6 0 4-2.4 6 0" />
+    </svg>
+  );
+}
+
 export function LockIcon({ className = "h-5 w-5" }) {
   return (
     <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
@@ -94,22 +104,8 @@ export function MenuIcon({ className = "h-5 w-5" }) {
   );
 }
 
-export function SunIcon({ className = "h-4 w-4" }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-    </svg>
-  );
-}
-
-export function MoonIcon({ className = "h-4 w-4" }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">
-      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
-    </svg>
-  );
-}
+/* The sun and moon glyphs went with the theme toggle. The site has one theme,
+   so there is nothing left for them to label. In git if a toggle ever returns. */
 
 export function LinkedInIcon({ className = "h-4 w-4" }) {
   return (
@@ -490,7 +486,7 @@ export const motifMap = {
 
 /* --- Principle marks ------------------------------------------------------
  *
- * The set above names products; these name the three principles on the home
+ * The set above names products; these name the principles on the home
  * page. Same 120-unit box and stroke, so a card carrying one of these sits in
  * the same family as a timeline card carrying one of those.
  *
@@ -543,8 +539,25 @@ export function MeasureMotif({ className }) {
   );
 }
 
+// Research: a paper, and the work drawn out of it. The page is the source; the
+// marks leaving its edge are what cites and builds on it — the point being that
+// the findings leave the page rather than sit on it.
+export function CitationMotif({ className }) {
+  return (
+    <Motif className={className}>
+      <rect x="12" y="14" width="56" height="92" rx="9" />
+      <path d="M24 38h32M24 54h24M24 70h32M24 86h18" />
+      <path d="M68 42h22M68 60h34M68 78h26" />
+      <circle cx="94" cy="42" r="4" {...solid} />
+      <circle cx="106" cy="60" r="4" {...solid} />
+      <circle cx="98" cy="78" r="4" {...solid} />
+    </Motif>
+  );
+}
+
 export const principleMotifMap = {
   boundary: BoundaryMotif,
   mesh: MeshMotif,
   measure: MeasureMotif,
+  citation: CitationMotif,
 };

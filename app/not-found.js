@@ -14,7 +14,7 @@ export default function NotFound() {
           products page.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link className="btn btn-primary" href="/">
+          <Link className="btn btn-gradient" href="/">
             Back home
           </Link>
           <Link className="link-arrow" href="/products">

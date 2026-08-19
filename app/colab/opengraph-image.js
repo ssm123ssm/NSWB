@@ -13,7 +13,7 @@ export default function Image() {
   return shareCard({
     // --brand-text for blue, so the card obeys the same contrast rule the
     // pages do rather than using the lighter fill value.
-    accent: "#0d72a7",
+    accent: "#7828c8",
     headline: "Every project remembers",
     emphasis: "what it is for.",
     footer: "coLab — dates, work, and the decisions between them",

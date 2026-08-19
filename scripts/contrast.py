@@ -3,7 +3,12 @@
 
 The brand handoff asks for 4.5:1 on every text pair and says to check it
 rather than assume. This derives the text-safe companion for each chart hue
-and audits the semantic tokens in both themes.
+and audits the semantic tokens.
+
+One theme, and it is the light one the handoff specifies. The site carried a
+derived dark theme until it was removed, and the two sections that audited it
+went with it — a checker that reports on colours the stylesheet no longer
+defines is worse than no checker, because it passes.
 
 Run: python3 scripts/contrast.py
 """
@@ -33,9 +38,6 @@ CHART = {
     "clay":   "#D05F43",   # chart-6  -> AES
 }
 INK = "#1C2231"
-# Off-ramp on purpose: neutral 600 does not clear the deepened subtle ground,
-# and .section-subtle is a whole section of text sitting on exactly that.
-FAINT = "#636976"
 PAPER = "#F9FAFD"
 WASH = "#F5F3FF"
 WHITE = "#FFFFFF"
@@ -75,18 +77,6 @@ def darken_to(h, bg, target=4.5):
     return "#000000"
 
 
-def lighten_to(h, bg, target=4.5):
-    """Same walk upward, for the dark theme."""
-    r, g, b = rgb(h)
-    hue, light, sat = colorsys.rgb_to_hls(r, g, b)
-    while light < 1:
-        cand = hexof(*colorsys.hls_to_rgb(hue, light, sat))
-        if ratio(cand, bg) >= target:
-            return cand
-        light += 0.005
-    return "#FFFFFF"
-
-
 def show(label, fg, bg, need=4.5):
     r = ratio(fg, bg)
     print(f"  {'PASS' if r >= need else 'FAIL'}  {r:5.2f}:1  {label:<34} {fg} on {bg}")
@@ -96,7 +86,7 @@ def show(label, fg, bg, need=4.5):
 ok = True
 print("\n=== LIGHT: text on paper / white / wash ===")
 for label, fg in (("--text (ink)", INK), ("--text-muted n700", NEUTRAL[700]),
-                  ("--text-faint (shipped)", FAINT)):
+                  ("--text-faint n600", NEUTRAL[600])):
     for bgname, bg in (("paper", PAPER), ("white", WHITE)):
         ok &= show(f"{label} / {bgname}", fg, bg)
 ok &= show("violet 600 link / paper", VIOLET[600], PAPER)
@@ -111,25 +101,6 @@ for name, fill in CHART.items():
     print(f"  {name:<8} fill {fill}  ->  text {companion}", end="")
     print(f"   ({ratio(companion, PAPER):.2f}:1 paper, {ratio(companion, WHITE):.2f}:1 white)")
 
-print("\n=== DARK: derived ground and text ===")
-D_BG, D_SUBTLE = "#080D19", "#0E1524"
-D_SURFACE, D_RAISED = "#161F2F", "#1C2637"
-# Neutral 500 lands at 4.16:1 on the raised surface — the ramp's "600 and
-# darker carries text" line is a light-theme rule and does not invert cleanly,
-# so the dark theme's two muted steps move up one rung to 300/400.
-for label, fg in (("--text n50", NEUTRAL[50]), ("--text-muted n300", NEUTRAL[300]),
-                  ("--text-faint n400", NEUTRAL[400])):
-    ok &= show(f"{label} / raised", fg, D_RAISED)
-ok &= show("violet 400 accent / raised", VIOLET[400], D_RAISED)
-ok &= show("ink on violet 400 (button)", D_BG, VIOLET[400])
-
-print("\n=== DARK: product accents lifted off the raised surface ===")
-for name, fill in CHART.items():
-    companion = lighten_to(fill, D_RAISED)
-    print(f"  {name:<8} text {companion}   ({ratio(companion, D_RAISED):.2f}:1 raised,"
-          f" {ratio(companion, D_BG):.2f}:1 ground)")
-
-
 # --- tinted grounds --------------------------------------------------------
 # The pairs above all sit on paper or white. Two places on the site do not, and
 # both were failing on the live pages while this script reported everything
@@ -143,10 +114,7 @@ for name, fill in CHART.items():
 # A companion derived against paper is therefore not safe everywhere it is
 # used. These are the real worst-case grounds, so this is what the companions
 # have to be derived against.
-# Deepened from neutral 100 so .section-subtle actually reads as a different
-# ground: the old step off paper was 1.067 in relative luminance, which is at
-# the edge of visible. This is 1.142, and --text-faint moved with it.
-SUBTLE = "#E8ECF5"
+SUBTLE = NEUTRAL[100]
 SOFT = {
     "violet": "#F5F3FF", "blue": "#E4F2FD", "cyan": "#E6F6F7",
     "emerald": "#D9FAE3", "amber": "#FFEED2", "clay": "#FEEBE9",
@@ -155,7 +123,7 @@ SOFT = {
 print("\n=== LIGHT: muted text on the subtle ground (.section-subtle), as shipped ===")
 # Shipped values again, not ramp steps: --text-faint sits just off neutral 600
 # precisely because the ramp step did not clear this ground.
-for label, fg in (("--text-muted", "#4C5360"), ("--text-faint", FAINT)):
+for label, fg in (("--text-muted", "#4C5360"), ("--text-faint", "#686E7B")):
     if not show(f"{label} / bg-subtle", fg, SUBTLE):
         ok = False
         print(f"        -> darken to {darken_to(fg, SUBTLE)}")
@@ -178,23 +146,5 @@ for name, fg in SHIPPED_BRAND_TEXT.items():
         safe = darken_to(fg, soft)
         print(f"        -> darken to {safe}"
               f" ({ratio(safe, soft):.2f}:1 chip, {ratio(safe, PAPER):.2f}:1 paper)")
-
-# --- semantic tokens -------------------------------------------------------
-# Pass / warn / fail, kept separate from --accent and --brand so a state reads
-# the same on all six products. They reuse the emerald, amber and clay
-# companions rather than introducing hues, so the site stays at six.
-SEMANTIC = {
-    "light": {"ok": ("#0A7E53", "#D9FAE3"), "warn": ("#816C05", "#FFEED2"),
-              "fail": ("#B7492D", "#FEEBE9")},
-    "dark":  {"ok": ("#0CA16B", "#0C2419"), "warn": ("#A58A06", "#241E0C"),
-              "fail": ("#D56F55", "#2B1A15")},
-}
-
-print("\n=== Semantic tokens on their own soft grounds, and on the page ground ===")
-for theme, rows in SEMANTIC.items():
-    ground = PAPER if theme == "light" else D_BG
-    for name, (fg, soft) in rows.items():
-        ok &= show(f"{theme} --{name} / soft", fg, soft)
-        ok &= show(f"{theme} --{name} / ground", fg, ground)
 
 print(f"\n{'ALL SEMANTIC PAIRS PASS' if ok else 'SOME PAIRS FAIL — see above'}\n")

@@ -23,7 +23,7 @@ export const contentType = "image/png";
 
 export default function Image() {
   return shareCard({
-    accent: "#6924d0",
+    accent: "#006fee",
     headline: "We think about what breaks —",
     emphasis: "before it breaks",
     footer: "Software, cryptography, and applied AI",

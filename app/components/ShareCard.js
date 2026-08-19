@@ -23,17 +23,45 @@ export function shareCard({ accent, headline, emphasis, footer }) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#f9fafd",
+          background: "#ffffff",
           padding: "80px",
-          // The hairline grid from the hero, flattened to two gradients.
+          // A hairline grid, flattened to two linear gradients. Satori's CSS
+          // parser rejects the page's radial dot-matrix syntax outright, so
+          // this is deliberately the simpler figure rather than a match.
           backgroundImage:
-            "linear-gradient(to right, #eceaf6 1px, transparent 1px), linear-gradient(to bottom, #eceaf6 1px, transparent 1px)",
+            "linear-gradient(to right, #e4e4e7 1px, transparent 1px), linear-gradient(to bottom, #e4e4e7 1px, transparent 1px)",
           backgroundSize: "96px 96px",
         }}
       >
-        <div style={{ display: "flex", fontSize: 44, letterSpacing: "-0.03em" }}>
-          <span style={{ color: "#111827" }}>neura</span>
-          <span style={{ color: "#6924d0" }}>sense</span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "18px",
+            fontSize: 44,
+            fontWeight: 700,
+            letterSpacing: "-0.03em",
+          }}
+        >
+          {/* The rounded gradient mark, matching the site wordmark. */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 62,
+              height: 62,
+              borderRadius: 16,
+              background: `linear-gradient(135deg, ${accent}, #06b7db)`,
+              color: "#ffffff",
+            }}
+          >
+            n
+          </div>
+          <div style={{ display: "flex" }}>
+            <span style={{ color: "#11181c" }}>neura</span>
+            <span style={{ color: accent }}>sense</span>
+          </div>
         </div>
 
         <div
@@ -42,8 +70,9 @@ export function shareCard({ accent, headline, emphasis, footer }) {
             flexDirection: "column",
             fontSize: 76,
             lineHeight: 1.1,
+            fontWeight: 700,
             letterSpacing: "-0.035em",
-            color: "#111827",
+            color: "#11181c",
           }}
         >
           <span>{headline}</span>
@@ -54,8 +83,8 @@ export function shareCard({ accent, headline, emphasis, footer }) {
           style={{
             display: "flex",
             fontSize: 26,
-            color: "#4b5563",
-            borderTop: "1px solid #d9dbe7",
+            color: "#52525b",
+            borderTop: "1px solid #e4e4e7",
             paddingTop: "28px",
           }}
         >

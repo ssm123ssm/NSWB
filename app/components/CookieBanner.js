@@ -66,10 +66,10 @@ export default function CookieBanner() {
       <h2 id="consent-banner-title" className="mt-1.5 text-[0.95rem]">
         This website uses cookies
       </h2>
-      <p className="mt-2 text-[0.85rem] leading-relaxed text-muted">
+      <p className="mt-2 text-sm leading-[1.43] text-muted">
         One cookie remembers your choice, and we count page views only if you
         accept. No advertising, nothing sold.{" "}
-        <Link className="link-faint" href="/legal/website-privacy">
+        <Link className="link-muted" href="/legal/website-privacy">
           What we collect
         </Link>
       </p>
@@ -86,14 +86,14 @@ export default function CookieBanner() {
           as agreeing, and a greyed-out decline is the usual way that fails. */}
       <div className="mt-4 flex gap-2">
         <button
-          className="btn btn-secondary btn-sm flex-1"
+          className="btn btn-bordered btn-sm flex-1"
           type="button"
           onClick={() => decide("granted")}
         >
           Accept
         </button>
         <button
-          className="btn btn-secondary btn-sm flex-1"
+          className="btn btn-bordered btn-sm flex-1"
           type="button"
           onClick={() => decide("denied")}
         >
@@ -109,7 +109,7 @@ export function CookieSettingsButton() {
   const { reopen } = useConsent();
 
   return (
-    <button className="link-faint cursor-pointer" type="button" onClick={reopen}>
+    <button className="link-muted cursor-pointer" type="button" onClick={reopen}>
       Cookies
     </button>
   );

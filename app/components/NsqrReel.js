@@ -85,8 +85,6 @@ const FLIP_HOLD = 230;
 const N = 25;
 
 const nsqr = products.find((product) => product.slug === "nsqr");
-const [urlHead, ...urlRest] = new URL(nsqr.app).host.split(".");
-const urlTail = urlRest.join(".");
 
 /**
  * A stylised QR pattern — finder squares, alignment square and timing lines in
@@ -155,21 +153,13 @@ const renderHead = (head) =>
 const plainHead = (head) => head.replace(/[[\]]/g, "");
 
 /**
- * NSQR's four-beat reel: print the code, re-point it, lock it, learn the moment
- * someone tries. The panel on the left illustrates whichever beat is running —
- * modules reshuffling as the destination changes, then a passcode prompt, then
- * the alert that a wrong entry sends.
- *
- * Hover or focus freezes the sequence where it stands and resumes from there.
- * Under prefers-reduced-motion nothing moves: the reel settles on one beat and
- * stays. The animated half is aria-hidden and all four messages are given to
- * assistive tech as a plain list instead, so nothing depends on watching text
- * replace itself.
+ * The beat clock and the panel's per-beat business (module reshuffle, lock
+ * fill, alert), shared by the full reel and the compact panel-only view —
+ * both are the same four-beat sequence, just narrated or not.
  */
-export default function NsqrReel({ className = "" }) {
+function useReelBeats() {
   const [beat, setBeat] = useState(0);
   const [cycle, setCycle] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [animated, setAnimated] = useState(false);
   const [assembled, setAssembled] = useState(false);
@@ -191,10 +181,10 @@ export default function NsqrReel({ className = "" }) {
     return () => clearTimeout(id);
   }, []);
 
-  // The clock. Each beat schedules the next; the last one loops back after the
-  // tail. Pausing stashes the remainder in a ref and resuming spends it.
+  // The clock. Each beat schedules the next; the last one loops back after
+  // the tail. Runs continuously — nothing pauses it, hover included.
   useEffect(() => {
-    if (reduced || paused) return;
+    if (reduced) return;
 
     const last = beat === BEATS.length - 1;
     const duration = remaining.current ?? BEATS[beat].ms + (last ? TAIL : 0);
@@ -218,7 +208,7 @@ export default function NsqrReel({ className = "" }) {
         remaining.current = Math.max(0, duration - (Date.now() - startedAt));
       }
     };
-  }, [beat, cycle, paused, reduced]);
+  }, [beat, cycle, reduced]);
 
   // Per-beat business in the panel.
   useEffect(() => {
@@ -244,29 +234,76 @@ export default function NsqrReel({ className = "" }) {
     return () => timers.forEach(clearTimeout);
   }, [beat, cycle, reduced]);
 
+  return { beat, reduced, animated, assembled, filled, bad, gridRef };
+}
+
+/** The animated panel's markup — the QR grid, the passcode lock, the alert
+ *  card — shared by the full reel and the compact panel-only view. */
+function ReelPanel({ gridRef, filled, bad }) {
+  return (
+    <div aria-hidden="true" className={styles.panel}>
+      <QrGrid gridRef={gridRef} />
+
+      <div className={styles.lock}>
+        <div className={styles.shackle}>
+          <i />
+        </div>
+        <div className={styles.dots}>
+          {[0, 1, 2, 3].map((j) => (
+            <b
+              className={`${styles.dot} ${bad ? styles.bad : j < filled ? styles.fill : ""}`}
+              key={j}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.alert}>
+        <div className={styles.alertHead}>
+          <em className={styles.alertBlip} />
+          {ALERT.headline}
+        </div>
+        {ALERT.rows.map(([label, value]) => (
+          <div key={label}>
+            {label} &nbsp;·&nbsp; {value}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * NSQR's four-beat reel: print the code, re-point it, lock it, learn the moment
+ * someone tries. The panel on the left illustrates whichever beat is running —
+ * modules reshuffling as the destination changes, then a passcode prompt, then
+ * the alert that a wrong entry sends.
+ *
+ * Runs continuously — hover and focus do not freeze it. Under
+ * prefers-reduced-motion nothing moves: the reel settles on one beat and
+ * stays. The animated half is aria-hidden and all four messages are given to
+ * assistive tech as a plain list instead, so nothing depends on watching text
+ * replace itself.
+ */
+export default function NsqrReel({ className = "", embedded = false }) {
+  const { beat, animated, assembled, filled, bad, gridRef } = useReelBeats();
+
   return (
     <section
       aria-label="NSQR — how a dynamic QR code works"
-      className={`${styles.reel} ${assembled ? styles.isAssembled : ""} ${
-        paused ? styles.isPaused : ""
+      className={`${styles.reel} ${embedded ? styles.embedded : ""} ${
+        assembled ? styles.isAssembled : ""
       } ${className}`.trim()}
       data-anim={animated ? "on" : undefined}
       data-beat={beat + 1}
       data-brand={nsqr.accent}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
     >
       <div className={styles.top}>
         <div className={styles.brand}>
           <div className={styles.mark}>
             <ProductName product={nsqr} />
           </div>
-          <div className={styles.markSub}>dynamic qr codes</div>
-        </div>
-        <div className={styles.by}>
-          a <span className={styles.byName}>neurasense</span> product
+          <div className={styles.markSub}>Dynamic QR codes</div>
         </div>
       </div>
 
@@ -280,37 +317,7 @@ export default function NsqrReel({ className = "" }) {
       </ul>
 
       <div className={styles.body}>
-        <div aria-hidden="true" className={styles.panel}>
-          <QrGrid gridRef={gridRef} />
-
-          <div className={styles.lock}>
-            <div className={styles.shackle}>
-              <i />
-            </div>
-            <div className={styles.dots}>
-              {[0, 1, 2, 3].map((j) => (
-                <b
-                  className={`${styles.dot} ${
-                    bad ? styles.bad : j < filled ? styles.fill : ""
-                  }`}
-                  key={j}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.alert}>
-            <div className={styles.alertHead}>
-              <em className={styles.alertBlip} />
-              {ALERT.headline}
-            </div>
-            {ALERT.rows.map(([label, value]) => (
-              <div key={label}>
-                {label} &nbsp;·&nbsp; {value}
-              </div>
-            ))}
-          </div>
-        </div>
+        <ReelPanel bad={bad} filled={filled} gridRef={gridRef} />
 
         <div aria-hidden="true" className={styles.narr}>
           <div className={styles.stack}>
@@ -356,18 +363,6 @@ export default function NsqrReel({ className = "" }) {
             ))}
           </div>
         </div>
-      </div>
-
-      <div className={styles.foot}>
-        <div>
-          <div className={styles.url}>
-            {urlHead}.<span className={styles.urlBrand}>{urlTail}</span>
-          </div>
-          <p className={styles.tag}>static codes free forever · no card required</p>
-        </div>
-        <a className={styles.cta} href={nsqr.app} target="_blank" rel="noreferrer">
-          Start free <span className={styles.ctaArrow}>→</span>
-        </a>
       </div>
     </section>
   );

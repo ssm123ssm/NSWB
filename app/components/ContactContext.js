@@ -27,7 +27,7 @@ export function useContact() {
 export function ContactButton({
   subject = null,
   intent = null,
-  className = "btn btn-primary",
+  className = "btn btn-gradient",
   children,
 }) {
   const { open } = useContact();

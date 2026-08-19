@@ -1,20 +1,21 @@
 /**
- * A product's name as display type. Products carrying a `wordmark` render as
- * their lockup — lowercase and tightened, with the tail in the product accent;
- * everything else renders as plain text.
+ * A product's trade name, set as its own lockup: head in ink, tail in the
+ * product's colour. These are the products' established marks — they are the
+ * logo, so this component is the logo, and the split and the hue are not
+ * styling choices to revisit.
  *
- * The lockup is the product's mark, so it is the same on every surface: hero
- * strip, timeline card, product row, contact dialog. Prose and metadata keep
- * the canonical `name` instead — this is for the places where the name is set
- * as type rather than read as a sentence.
+ * The lockup is the product's mark, so it is the same on every surface: hero,
+ * product card, contact dialog. Prose and metadata keep the canonical `name`
+ * instead — this is for the places where the name is set as type rather than
+ * read as a sentence.
  *
- * Size and weight are inherited, so the same component works at hero-strip
- * scale and card-heading scale. The lockup is hidden from assistive tech behind
- * the canonical `name`, so links read as "Explore NSQR" rather than "nsqr".
+ * The tail is `.lockup-tail`, which resolves --brand-text. That is a *text*
+ * colour, chosen to clear 4.5:1 on a white card, on the grey page and on the
+ * lockup's own tinted pill — the pill being the tightest of the three. Never
+ * set the tail to --brand, which is a fill and is not safe on words.
  *
- * The tail colour comes from --brand, so every call site needs a data-brand
- * ancestor carrying the product's accent — otherwise the mark wears the house
- * accent and quietly says the wrong thing.
+ * Every call site needs a data-brand ancestor carrying the product's accent,
+ * or the mark wears the house colour and quietly says the wrong thing.
  */
 export default function ProductName({ product, className = "" }) {
   if (!product.wordmark) {
@@ -28,7 +29,7 @@ export default function ProductName({ product, className = "" }) {
       <span className="sr-only">{product.name}</span>
       <span aria-hidden="true">
         {head}
-        <span className="wordmark-tail">{tail}</span>
+        <span className="lockup-tail">{tail}</span>
       </span>
     </span>
   );

@@ -1,21 +1,24 @@
-import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import SiteChrome from "./components/SiteChrome";
 import { site } from "./data/site";
 import "./globals.css";
 
-// Only the two weights the brand allows. Loading more would just be inviting
-// someone to reach for a bold the system does not have.
-const jakarta = Plus_Jakarta_Sans({
+// Inter, which is what HeroUI itself sets. Weight carries hierarchy in this
+// system — 700 display, 600 headings, 500 controls, 400 body — so all four
+// steps are loaded and all four are used.
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
-const plexMono = IBM_Plex_Mono({
+// Mono is no longer a semantic marker of machine output the way the old brand
+// used it. It is here for code, hashes and figures, and nothing else.
+const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400"],
+  weight: ["400", "500"],
   variable: "--font-mono",
 });
 
@@ -49,28 +52,13 @@ export const metadata = {
   alternates: { canonical: "/" },
 };
 
+// One theme, so one colour — matching --bg. The site has no dark mode: there
+// is nothing for a (prefers-color-scheme: dark) entry here to point at, and
+// declaring one would put the browser's chrome in a palette the page never
+// wears.
 export const viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9fafd" },
-    { media: "(prefers-color-scheme: dark)", color: "#080d19" },
-  ],
+  themeColor: "#ffffff",
 };
-
-/**
- * Runs before first paint so a dark-theme visitor never sees a white flash.
- */
-const themeScript = `
-(function () {
-  try {
-    var stored = localStorage.getItem("ns-theme");
-    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.dataset.theme =
-      stored || (prefersDark ? "dark" : "light");
-  } catch (e) {
-    document.documentElement.dataset.theme = "light";
-  }
-})();
-`;
 
 /**
  * What the company is, in the vocabulary search engines parse rather than the
@@ -93,9 +81,8 @@ const organizationSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -103,9 +90,9 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={`${jakarta.variable} ${plexMono.variable}`}>
+      <body className={`${inter.variable} ${mono.variable}`}>
         <a
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-[color:var(--surface)] focus:px-4 focus:py-2 focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-token-lg focus:bg-[color:var(--surface)] focus:px-4 focus:py-2 focus:shadow-float"
           href="#main"
         >
           Skip to content

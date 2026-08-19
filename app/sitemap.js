@@ -16,6 +16,7 @@ export default function sitemap() {
   const staticRoutes = [
     { path: "", priority: 1 },
     { path: "/products", priority: 0.9 },
+    { path: "/research", priority: 0.7 },
     { path: "/legal", priority: 0.3 },
   ];
 

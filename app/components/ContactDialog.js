@@ -27,6 +27,11 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
     : product
       ? product.access === "request"
       : Boolean(subject);
+  // "message" is the short form: just something to say, sent with no contact
+  // details required. "contact" is its mirror: no message, just the details
+  // to reach back on. Both skip the fuller general-enquiry shape below.
+  const isMessageOnly = intent === "message";
+  const isContactRequest = intent === "contact";
   const productName = product?.name ?? subject;
 
   useEffect(() => {
@@ -69,13 +74,15 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
       email: String(formData.get("email") ?? "").trim(),
       phone: String(formData.get("phone") ?? "").trim(),
       message: String(formData.get("message") ?? "").trim(),
-      subject: subject ?? "General enquiry",
+      subject:
+        subject ??
+        (isMessageOnly ? "Message" : isContactRequest ? "Contact request" : "General enquiry"),
       // The honeypot below. Sent whatever it holds — the server decides what a
       // filled one means, and the form stays ignorant of the trick.
       company: String(formData.get("company") ?? ""),
     };
 
-    if (!payload.email && !payload.phone) {
+    if (!isMessageOnly && !payload.email && !payload.phone) {
       setError("Please give us an email address or a phone number.");
       return;
     }
@@ -117,15 +124,19 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            {productName && (
+            {(productName || isMessageOnly || isContactRequest) && (
               <p className="eyebrow mb-1.5">
                 {/* Once sent the heading turns into a status, so the eyebrow
                     takes over holding on to what the message was about. */}
                 {status === "sent"
-                  ? productName
+                  ? (productName ?? (isContactRequest ? "Request sent" : "Message sent"))
                   : isAccessRequest
                     ? "Request access"
-                    : "Talk to us"}
+                    : isMessageOnly
+                      ? "Message us"
+                      : isContactRequest
+                        ? "Contact us"
+                        : "Talk to us"}
               </p>
             )}
             <h2 id="contact-dialog-title" className="text-lg">
@@ -133,6 +144,10 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
                 "Message received"
               ) : product ? (
                 <ProductName product={product} />
+              ) : isMessageOnly ? (
+                "Send us a message"
+              ) : isContactRequest ? (
+                "Have us contact you"
               ) : (
                 productName ?? "Start a project"
               )}
@@ -151,13 +166,14 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
         {status === "sent" ? (
           <div>
             <span className="icon-tile mb-4">
-              <CheckIcon className="h-5 w-5" />
+              <CheckIcon className="h-6 w-6" />
             </span>
-            <p className="text-[0.95rem] leading-relaxed text-muted">
-              Thanks — we have your details and will come back to you shortly,
-              usually within two working days.
+            <p className="text-base leading-[1.5] text-muted">
+              {isMessageOnly
+                ? "Thanks — we have your message and will come back to you shortly, usually within two working days."
+                : "Thanks — we have your details and will come back to you shortly, usually within two working days."}
             </p>
-            <button className="btn btn-secondary mt-6 w-full" type="button" onClick={onClose}>
+            <button className="btn btn-bordered mt-6 w-full" type="button" onClick={onClose}>
               Close
             </button>
           </div>
@@ -179,12 +195,16 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
               aria-hidden="true"
             />
 
-            <p className="text-[0.925rem] leading-relaxed text-muted">
+            <p className="text-base leading-[1.5] text-muted">
               {isAccessRequest
                 ? `Tell us a little about your team and we'll send ${productName} documentation, onboarding steps, and timelines.`
-                : productName
-                  ? `Tell us how you'd like to use ${productName} and we'll come back with the right next step.`
-                  : "Share your idea or challenge and we'll help shape it into a clear plan with the right tech and timeline."}
+                : isMessageOnly
+                  ? "Type your message below and we'll get back to you."
+                  : isContactRequest
+                    ? "Share how to reach you and we'll get in touch."
+                    : productName
+                      ? `Tell us how you'd like to use ${productName} and we'll come back with the right next step.`
+                      : "Share your idea or challenge and we'll help shape it into a clear plan with the right tech and timeline."}
             </p>
 
             {error && (
@@ -196,70 +216,87 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
               </p>
             )}
 
-            <div>
-              <label className="field-label" htmlFor="contact-name">
-                Name
-              </label>
-              <input
-                ref={firstFieldRef}
-                className="field-input"
-                id="contact-name"
-                name="name"
-                type="text"
-                placeholder="Your name"
-                autoComplete="name"
-                required
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
+            {!isMessageOnly && (
               <div>
-                <label className="field-label" htmlFor="contact-email">
-                  Email
+                <label className="field-label" htmlFor="contact-name">
+                  Name
                 </label>
                 <input
+                  ref={firstFieldRef}
                   className="field-input"
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  autoComplete="email"
-                />
-              </div>
-              <div>
-                <label className="field-label" htmlFor="contact-phone">
-                  Phone <span className="text-faint">(optional)</span>
-                </label>
-                <input
-                  className="field-input"
-                  id="contact-phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="+94 00 000 0000"
-                  autoComplete="tel"
-                />
-              </div>
-            </div>
-
-            {!isAccessRequest && (
-              <div>
-                <label className="field-label" htmlFor="contact-message">
-                  {productName
-                    ? `What would you like to do with ${productName}?`
-                    : "What would you like to build?"}
-                </label>
-                <textarea
-                  className="field-input field-textarea"
-                  id="contact-message"
-                  name="message"
-                  placeholder="A short description is plenty to get started."
+                  id="contact-name"
+                  name="name"
+                  type="text"
+                  placeholder="Your name"
+                  autoComplete="name"
                   required
                 />
               </div>
             )}
 
+            {!isMessageOnly && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="field-label" htmlFor="contact-email">
+                    Email
+                  </label>
+                  <input
+                    className="field-input"
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    placeholder="you@company.com"
+                    autoComplete="email"
+                  />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="contact-phone">
+                    Phone <span className="text-faint">(optional)</span>
+                  </label>
+                  <input
+                    className="field-input"
+                    id="contact-phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+94 00 000 0000"
+                    autoComplete="tel"
+                  />
+                </div>
+              </div>
+            )}
+
+            {!isAccessRequest && (
+              <div>
+                <label className="field-label" htmlFor="contact-message">
+                  {isMessageOnly
+                    ? "Your message"
+                    : isContactRequest
+                      ? (
+                        <>
+                          Message <span className="text-faint">(optional)</span>
+                        </>
+                      )
+                      : productName
+                        ? `What would you like to do with ${productName}?`
+                        : "What would you like to build?"}
+                </label>
+                <textarea
+                  ref={isMessageOnly ? firstFieldRef : undefined}
+                  className="field-input field-textarea"
+                  id="contact-message"
+                  name="message"
+                  placeholder={
+                    isMessageOnly || isContactRequest
+                      ? "Type your message here."
+                      : "A short description is plenty to get started."
+                  }
+                  required={!isContactRequest}
+                />
+              </div>
+            )}
+
             <button
-              className="btn btn-primary mt-1 w-full"
+              className="btn btn-gradient mt-1 w-full"
               type="submit"
               disabled={status === "sending"}
             >
@@ -267,7 +304,9 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
                 ? "Sending…"
                 : isAccessRequest
                   ? "Send request"
-                  : "Send message"}
+                  : isContactRequest
+                    ? "Request contact"
+                    : "Send message"}
             </button>
           </form>
         )}

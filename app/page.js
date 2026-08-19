@@ -1,279 +1,271 @@
 import Link from "next/link";
-import NsqrReel from "./components/NsqrReel";
-import PrincipleTrack from "./components/PrincipleTrack";
-import ProductName from "./components/ProductName";
-import ProductTimeline from "./components/ProductTimeline";
-import { ArrowIcon } from "./components/Icons";
-import { featuredProducts, overview, principles, products } from "./data/site";
+import { ContactButton } from "./components/SiteChrome";
+import {
+  ArrowIcon,
+  DocIcon,
+  LayersIcon,
+  UsersIcon,
+  LockIcon,
+  NeuralIcon,
+  ShieldIcon,
+  WavesIcon,
+} from "./components/Icons";
+import ProductBento from "./components/ProductBento";
+import {
+  closing,
+  designPrinciples,
+  founders,
+  hero,
+  principleWords,
+} from "./data/site";
 
-// The closing section leads with whatever carries `featured` in the product
-// data, so the capsule names the same product the hero strip emphasises.
-const featured = featuredProducts[0];
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
+const icons = {
+  layers: LayersIcon,
+  users: UsersIcon,
+  lock: LockIcon,
+  neural: NeuralIcon,
+  shield: ShieldIcon,
+  doc: DocIcon,
+};
 
 export default function HomePage() {
-  const live = products.filter((p) => p.status === "live");
-  const upcoming = products.filter((p) => p.status !== "live");
-  // Timeline order: shipped first, then what is still being built.
-  const ordered = [...live, ...upcoming];
-
   return (
     <main id="main">
-      {/* ScreenPager is parked, not gone. It moved a whole screen per scroll
-          gesture by taking the wheel event, and it was carefully scoped —
-          desktop only, never under reduced motion, released at both ends. The
-          objection is not to the implementation but to the pattern: cancelling
-          a scroll gesture fights the reader's own hand, and on a trackpad with
-          momentum it reads as the page misbehaving. That is a poor first
-          impression for a studio whose claim is that it notices what breaks.
-
-          What replaces it is what was already written as its fallback. The
-          component was the only thing putting .screens-paged on <html>, and
-          globals.css switches on CSS scroll-snap in its absence — so the two
-          screens still hold together, using the browser's own snapping, which
-          nothing has to fight.
-
-          To bring it back: restore the import and render <ScreenPager /> here.
-          The component file is untouched at app/components/ScreenPager.js. */}
-
-      {/* ------------------------------------------------------------ Hero */}
-      {/* The house colour is neutral, so the hero borrows the featured
-          product's accent for its two coloured elements — the headline span and
-          the glow. It follows whichever product carries `featured`, the same
-          way the closing banner does. */}
-      <section
-        className="hero-screen screen relative overflow-hidden"
-        data-brand={featured.accent}
-      >
-        <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div
-          className="glow left-1/2 top-[-10rem] h-[26rem] w-[36rem] -translate-x-1/2 bg-[color:var(--brand)]"
-          aria-hidden="true"
-        />
-
-        {/* .screen sets the one-viewport height; this fills it. Two bands, not
-            one stack: the headline block takes the free space and centres
-            inside it, and the strip of product marks sits near the bottom
-            edge, so the marks are the last thing in the first screen and the
-            thing it hands over to. That only reads as the floor of the screen
-            because .hero-screen subtracts the header from its height — the
-            header is sticky and therefore in flow, so a plain 100svh hero ends
-            below the fold and takes this strip with it. The bottom padding is
-            deliberately much smaller than the top one, so the strip sits low
-            enough to read as a base rather than as a third block floating in
-            the middle. */}
-        {/* pt-20 on a phone rather than pt-24: the 1rem it gives back is part
-            of what keeps the product strip above the consent card on a small
-            screen. The fuller measure returns at sm, where the card is a
-            floating panel off to one side and overlaps nothing. */}
-        <div className="shell relative flex flex-1 flex-col pb-10 pt-20 text-center sm:pb-12 sm:pt-24">
-          <div className="flex flex-1 flex-col items-center justify-center">
-            <h1 className="display animate-rise max-w-4xl">
-              We think about what breaks —{" "}
-              <span className="text-brand">before it breaks</span>
-            </h1>
-
-            <p
-              className="lead-mono animate-rise mt-7 max-w-xl"
-              style={{ animationDelay: "60ms" }}
-            >
-              A studio for software, cryptography, and applied AI. Nothing here
-              is assumed to work.
-            </p>
-
-            {/* The hero's single action, kept as a quiet link rather than a
-                button: the headline already carries the fold, and a violet
-                button here would be a second accent competing with it. */}
-            <div
-              className="animate-rise mt-10"
-              style={{ animationDelay: "120ms" }}
-            >
-              <Link className="link-arrow link-muted" href="/products">
-                View products
-                <ArrowIcon />
-              </Link>
-            </div>
-          </div>
-
-          {/* The rule is set to max-w-3xl rather than the headline's max-w-4xl:
-              both are centred in the same shell, and a rule slightly narrower
-              than the text above it reads as a base under the block instead of
-              a line crossing it. */}
-          <div
-            className="animate-rise mx-auto mt-8 w-full max-w-3xl border-t border-[color:var(--border)] pt-7 sm:mt-12"
-            style={{ animationDelay: "180ms" }}
-          >
-            <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-              {live.map((product) => (
-                <li key={product.slug} data-brand={product.accent}>
-                  <HeroProductLink product={product} />
-                </li>
-              ))}
-              {upcoming.length > 0 && (
-                <li>
-                  <Link
-                    className="text-sm text-faint transition-colors hover:text-[color:var(--text-muted)]"
-                    href="/#products"
-                  >
-                    +{upcoming.length} in development
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------- Overview */}
-      {/* The second screen. Carries .screen so it is a full viewport of its
-          own and the site opens as a pair of them — the hero states the claim,
-          this one says who is making it — before the page settles into
-          ordinary scrolling at Capabilities below.
-
-          Sits between the hero and Capabilities so the conversational register
-          lands once the reader is already oriented. Plain .section, because
-          Capabilities below is .section-subtle and the two alternate.
-
-          Set as a statement block rather than a centred paragraph: the sentence
-          is the one spoken line on the site, and centred body copy of one line
-          reads as a caption that got separated from its picture. Ranged left
-          against a brand rule, with the middle clause marked, it reads as
-          something said. Borrows the featured product's accent, as the hero
-          does. */}
-      <section
-        className="screen section"
-        id="overview"
-        data-brand={featured.accent}
-      >
-        <div className="shell">
-          <div className="statement reveal mx-auto max-w-4xl">
-            <p className="eyebrow">{overview.eyebrow}</p>
-            <p className="statement-body mt-6">
-              {overview.parts.lead}{" "}
-              <span className="mark-brand">{overview.parts.mark}</span>{" "}
-              {overview.parts.tail}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------- Capabilities */}
-      {/* One section where there were two. The three capability cards and the
-          three principles were the same claim told twice — a card naming a
-          discipline, then a numbered cell naming how it is practised — and read
-          back to back they diluted each other. What survives is the
-          capabilities heading over the principles row: the heading says what we
-          build on, the row says what holds while we do.
-
-          Keeps id="capabilities" and .snap-edge, both of which the nav and the
-          screen sequence above address by name.
-
-          The heading moved inside PrincipleTrack, which holds it still on the
-          left while the three principles pass it, so the centred heading that
-          sat over a centred row is now ranged left with the column it belongs
-          to. This was the last caller of the local SectionHeading helper, which
-          went with it.
-
-          .snap-edge stays and still behaves: it is the far side of the last
-          screen, and snapping here is `proximity`, so landing on this section's
-          start does not then fight the reader scrolling down through it. */}
-      <section className="snap-edge section section-subtle" id="capabilities">
-        <div className="shell">
-          <PrincipleTrack
-            title="Everything we build on"
-            lead="A focused set of disciplines built for secure, scalable intelligence — research depth paired with operational delivery."
-            principles={principles}
-          />
-        </div>
-      </section>
-
-      {/* --------------------------------------------------------- Products */}
-      <section className="section" id="products">
-        <div className="shell">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="section-title">
-              A focused line for secure, modern intelligence
-            </h2>
-            <p className="lead mt-4">
-              Each platform blends clean interaction design with research-grade
-              engineering.
-            </p>
-          </div>
-
-          <div className="mt-12">
-            <ProductTimeline products={ordered} />
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------ NSQR */}
-      {/* The page closes on the featured product rather than a contact card.
-          Deliberately not #contact: the anchor named a contact prompt, and this
-          is a product banner. Contact now runs through the header button and
-          the dialog it opens. */}
-      {/* Reduced top padding: the principles section above already closes on its
-          own full .section padding, so the default would stack two of them. */}
-      <section className="section pb-16 pt-10">
-        <div className="shell">
-          {/* The capsule is what marks this as a feature rather than one more
-              card: it wears the product's own accent and names it from the
-              data, so it follows whichever product carries `featured`. */}
-          <div
-            className="mb-5 flex justify-center"
-            data-brand={featured.accent}
-          >
-            <p className="badge">
-              Featuring <ProductName product={featured} />
-            </p>
-          </div>
-
-          <NsqrReel />
-        </div>
-      </section>
-
+      <Hero />
+      <FoundersNote />
+      <DesignPrinciples />
+      <ProductBento />
+      <Principles />
+      <Closing />
     </main>
   );
 }
 
-/**
- * One lockup in the hero strip. Every product sets its own accent through the
- * wordmark, so hierarchy comes from opacity rather than colour: the featured
- * product sits at full strength in a tinted chip, the rest sit back until
- * hovered.
- *
- * Links to the detail page where there is one, otherwise straight out to the
- * app. Proprietary products have no public URL, so they stay plain text rather
- * than inviting a click that goes nowhere.
- *
- * The chip is the strip's only emphasis, and it goes to the products carrying
- * `lead` — see the products data for why it is two of them and not five. The
- * others sit back at 70% and come up on hover, so the line still reads as one
- * row of the same kind of thing rather than two tiers of product.
- */
-function HeroProductLink({ product }) {
-  const href =
-    product.access === "request" ? null : product.detail ?? product.app;
-  const base = "inline-flex items-center rounded-full text-sm transition-opacity";
-  const className = product.lead
-    ? `${base} bg-[color:var(--brand-soft)] px-3 py-1`
-    : `${base} opacity-70 ${href ? "hover:opacity-100" : ""}`;
+/* -------------------------------------------------------------------------
+   The hero
 
-  const label = <ProductName product={product} />;
-
-  if (!href) {
-    return <span className={className}>{label}</span>;
-  }
-
-  if (product.detail) {
-    return (
-      <Link className={className} href={href}>
-        {label}
-      </Link>
-    );
-  }
-
+   Centred on the grey ground, with nothing behind it. The headline is the
+   studio's own sentence and does not change; only its second tone moves, onto
+   its own line.
+   ------------------------------------------------------------------------- */
+function Hero() {
   return (
-    <a className={className} href={href} target="_blank" rel="noreferrer">
-      {label}
-    </a>
+    <section className="relative isolate overflow-hidden">
+      <div className="shell flex flex-col items-center pb-16 pt-20 text-center md:pb-24 md:pt-28">
+        <Link className="pill rise" href="/products">
+          <span className="pill-tag">
+            <WavesIcon className="h-3 w-3" />
+          </span>
+          {hero.pill.text}
+          <ArrowIcon className="h-3.5 w-3.5" />
+        </Link>
+
+        <h1 className="rise mt-7 max-w-4xl text-[clamp(3rem,6.4vw,4.5rem)]">
+          {hero.headlineHead}{" "}
+          <span className="display-tone">{hero.headlineTail}</span>
+        </h1>
+
+        <p className="lead lead-center rise">
+          {hero.lead}
+        </p>
+
+        <div className="rise mt-9 flex flex-wrap items-center justify-center gap-3">
+          <a className="btn btn-gradient btn-lg" href={hero.actions.primary.href}>
+            {hero.actions.primary.label}
+            <ArrowIcon />
+          </a>
+          <Link className="btn btn-bordered btn-lg" href={hero.actions.secondary.href}>
+            {hero.actions.secondary.label}
+          </Link>
+        </div>
+      </div>
+
+      <div className="shell pb-16 md:pb-24">
+        <ProductBrands />
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   The founders' statement
+
+   Type on the ground straight after the stats band — no card, no rule, no
+   quotation mark. The reference has no quote component, so this is set as the
+   32px sub-section size rather than borrowing an object that would have to be
+   invented. Left-aligned, like every other section on the site.
+   ------------------------------------------------------------------------- */
+function FoundersNote() {
+  return (
+    <section className="section-tight">
+      <div className="shell">
+        <p className="statement">
+          <span className="statement-opener">{founders.opener}</span>{" "}
+          {founders.statement}
+        </p>
+        <p className="statement-coda">{founders.coda}</p>
+        <p className="statement-sign">
+          <span className="names">{founders.names}</span>
+          <span className="role">{founders.role}</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Capabilities, as a bento
+   ------------------------------------------------------------------------- */
+function DesignPrinciples() {
+  return (
+    <section className="section section-subtle" id="capabilities">
+      <div className="shell">
+        <h2 className="section-title max-w-3xl">{designPrinciples.title}</h2>
+
+        <div className="bento mt-12">
+          {designPrinciples.items.map((item) => {
+            const Icon = icons[item.icon];
+            return (
+              <article
+                className="card card-hover cloud"
+                data-brand={item.accent}
+                key={item.segments.map((seg) => seg.text).join("")}
+              >
+                <span className="icon-tile">
+                  <Icon className="h-8 w-8" />
+                </span>
+                <p className="mt-5 text-base leading-[1.5] text-muted">
+                  {item.segments.map((seg, i) =>
+                    seg.mark ? (
+                      <span className="mark" key={i}>
+                        {seg.text}
+                      </span>
+                    ) : (
+                      <span key={i}>{seg.text}</span>
+                    )
+                  )}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+
+        <p className="principle-closing">{designPrinciples.closing}</p>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Principles
+
+   A cloud and a card grid were both tried here and both dropped — the cloud
+   read as decorative noise and the cards were four fixed slots for a list
+   that is really just words. This is one centred line instead: the words
+   themselves, "·" between them, flat muted grey like the product marks row
+   in the hero, lighting up green/yellow/red under the pointer (see
+   `.principle-word` in globals.css). */
+/* The site's signal-green / signal-amber / signal-red `--brand-text` values
+   (globals.css), copied here since they're set per word via inline style
+   rather than the `data-brand` attribute those tokens normally key off. */
+const principleHoverColors = ["#2a7020", "#7d5a00", "#b3352b"];
+
+function Principles() {
+  return (
+    <section className="section section-subtle">
+      <div className="shell text-center">
+        <p className="eyebrow">How we work</p>
+        <h2 className="section-title mx-auto max-w-2xl">
+          Things we do not
+          <br />
+          negotiate
+        </h2>
+
+        <p className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-3 text-[1.375rem] font-semibold md:text-2xl">
+          {principleWords.map((word, index) => (
+            <span className="contents" key={word}>
+              {index > 0 && (
+                <span aria-hidden="true" className="text-faint">
+                  ·
+                </span>
+              )}
+              <span
+                className="principle-word"
+                style={{
+                  "--word-hover":
+                    principleHoverColors[index % principleHoverColors.length],
+                }}
+              >
+                {word}
+              </span>
+            </span>
+          ))}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   The closing call, on a full gradient plate
+   ------------------------------------------------------------------------- */
+function Closing() {
+  return (
+    <section className="py-20" id="closing">
+      <div className="shell">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-5xl font-medium tracking-[-0.015em] max-md:text-4xl">
+            <p className="mb-0">{closing.eyebrow}.</p>
+            <p className="text-[color:var(--display-muted)]">
+              {closing.title.replace(/today$/, "")}
+              <span className="text-[color:var(--accent)]">today</span>.
+            </p>
+          </div>
+
+          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-[color:var(--accent)]/70 bg-[color:var(--bg-subtle)] p-1">
+            <ContactButton
+              className="rounded-full px-6 py-2.5 text-[0.95rem] font-medium bg-[color:var(--surface)] text-[color:var(--text)] shadow-sm"
+              intent="message"
+            >
+              Message us
+            </ContactButton>
+            <ContactButton
+              className="rounded-full px-6 py-2.5 text-[0.95rem] font-medium text-muted hover:text-[color:var(--text)]"
+              intent="contact"
+            >
+              Contact us
+            </ContactButton>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Product brands in the hero
+
+   A muted-color grid of the six product brands, matching the stats band style.
+   Displayed below the hero statistics, using faint text color like the stat labels.
+
+   Marks are set exactly as given — nsqr, vault, coLab, presence, lipidhub, aes —
+   not the capitalised/spaced `name` field from data/site.js.
+   ------------------------------------------------------------------------- */
+const brandMarks = ["nsqr", "vault", "coLab", "presence", "lipidhub", "aes"];
+
+function ProductBrands() {
+  return (
+    <dl className="grid grid-cols-3 gap-6 border-y border-[color:var(--border)] py-10 md:grid-cols-6">
+      {brandMarks.map((mark) => (
+        <div className="text-center" key={mark}>
+          <dt className="sr-only">{mark}</dt>
+          <dd className="product-mark display-tone">{mark}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

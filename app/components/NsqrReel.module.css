@@ -36,6 +36,12 @@
   max-width: 56rem;
   margin-inline: auto;
   overflow: hidden;
+  /* The stacked layout below responds to the reel's own rendered width via
+     @container, not the viewport — the bento card is a fixed ~440px column on
+     a wide desktop page, so a viewport media query would never see it as
+     narrow and the two-column body would clip inside the card. */
+  container-type: inline-size;
+  container-name: reel;
   border: 1px solid var(--r-line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
@@ -50,16 +56,31 @@
   font-family: var(--r-sans);
   padding: clamp(1.25rem, 2vw, 1.75rem);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto;
   gap: clamp(1.25rem, 1.8vw, 1.5rem);
-}
-
-:root[data-theme="dark"] .reel {
-  --r-signal: #ffb020;
 }
 
 .reel * {
   box-sizing: border-box;
+}
+
+/* ---- embedded ----
+   Used when the reel sits inside a card that already supplies the border,
+   radius and background — the "What we build" row, where every other card is
+   flat (heroui.pro's own showcase cards: same grey as the page, a 1px border
+   the only thing that reads as an object, no shadow, no gradient). The reel
+   was built to stand alone with its own elevated panel look; here it should
+   read as one more card in that row, not a different kind of object. */
+.reel.embedded {
+  border: none;
+  box-shadow: none;
+  background: none;
+  border-radius: 0;
+  max-width: none;
+  margin-inline: 0;
+}
+.reel.embedded::before {
+  content: none;
 }
 
 /* The engineering grid, part of the instrument feel. */
@@ -102,18 +123,15 @@
   font-size: clamp(1.125rem, 1.6vw, 1.375rem);
 }
 
-.markSub,
-.by {
-  font-family: var(--r-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+/* Sans, not mono — this sits in the brand row next to every other card's
+   own tagline (`.mark`/`.markSub` are this row's equivalent of a card's
+   name + description), and a monospace "DYNAMIC QR CODES" caption read as a
+   different typeface entirely once the reel moved in beside cards using the
+   site's ordinary body font. */
+.markSub {
+  font-family: var(--r-sans);
+  font-size: 0.8125rem;
   color: var(--r-dim);
-}
-
-.byName {
-  color: var(--r-ink);
-  font-weight: 400;
 }
 
 /* ---- middle: panel + narration ---- */
@@ -124,8 +142,11 @@
   display: grid;
   /* rem, not px: the type inside the panel is rem-based, so a pixel square
      would stop scaling with the visitor's font size and the alert card would
-     wrap. */
-  grid-template-columns: minmax(0, 16.25rem) 1fr;
+     wrap. Capped narrower than the reel's original 16.25rem now that the
+     component sits full-width in the bento row — the square panel's height
+     follows its width, and a shorter square is what actually shortens the
+     row without touching the narration column. */
+  grid-template-columns: minmax(0, 10rem) 1fr;
   gap: clamp(1.5rem, 2.6vw, 2.25rem);
   align-items: stretch;
   position: relative;
@@ -138,7 +159,7 @@
   width: 100%;
   aspect-ratio: 1;
   border-radius: var(--radius);
-  background: linear-gradient(160deg, var(--surface-raised), var(--bg-subtle) 62%);
+  background: linear-gradient(160deg, var(--surface), var(--bg-subtle) 62%);
   border: 1px solid var(--r-line);
   box-shadow: var(--shadow-md), inset 0 1px 0 color-mix(in srgb, var(--r-ink) 6%, transparent);
   display: grid;
@@ -470,10 +491,6 @@
 .seg.run::after {
   animation: rFill var(--r-dur) linear forwards;
 }
-/* Hover or focus freezes the sweep where it stands rather than resetting it. */
-.reel.isPaused .seg.run::after {
-  animation-play-state: paused;
-}
 @keyframes rFill {
   from {
     transform: scaleX(0);
@@ -483,66 +500,14 @@
   }
 }
 
-/* ---- bottom ---- */
-.foot {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--r-line);
-  padding-top: 14px;
-  position: relative;
-  z-index: 2;
-}
-.url {
-  font-family: var(--r-mono);
-  font-size: clamp(0.875rem, 1.2vw, 1rem);
-  letter-spacing: -0.01em;
-}
-.urlBrand {
-  color: var(--r-accent);
-  font-weight: 400;
-}
-.tag {
-  font-family: var(--r-mono);
-  font-size: 0.6875rem;
-  color: var(--r-dim);
-  letter-spacing: 0.06em;
-  margin: 5px 0 0;
-}
-
-.cta {
-  font-family: var(--r-display);
-  font-weight: 400;
-  font-size: 0.9375rem;
-  letter-spacing: -0.01em;
-  border: 1px solid var(--r-ink);
-  border-radius: 999px;
-  padding: 0.7rem 1.3rem;
-  white-space: nowrap;
-  text-decoration: none;
-  color: var(--r-ink);
-  transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
-}
-.cta:hover {
-  background: var(--r-ink);
-  color: var(--surface);
-  transform: translateY(-2px);
-}
-.cta:focus-visible {
-  outline: 2px solid var(--r-accent);
-  outline-offset: 3px;
-}
-.ctaArrow {
-  color: var(--r-accent);
-}
-.cta:hover .ctaArrow {
-  color: var(--surface);
-}
-
-/* ---- responsive ---- */
-@media (max-width: 900px) {
+/* ---- responsive ----
+   Lowered from the reference's 900px: this reel now only ever renders full-
+   width in the "What we build" row, where its container tracks the row —
+   roughly 944px on desktop, narrower as the grid drops to two columns and
+   then one. 560px keeps the panel-left/text-right layout through tablet
+   widths and only falls back to stacked on the phone-width single column,
+   where the row is already ~300-350px and two columns would clip. */
+@container reel (max-width: 560px) {
   .body {
     grid-template-columns: 1fr;
     justify-items: center;
@@ -554,13 +519,6 @@
     width: 100%;
     max-width: none;
   }
-  .foot {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .cta {
-    text-align: center;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -569,8 +527,7 @@
   .alert,
   .lock,
   .shackle::before,
-  .dot,
-  .cta {
+  .dot {
     transition: none !important;
   }
   .panel::after,

@@ -72,7 +72,7 @@ export default function LegalDoc({ doc }) {
             <p className="eyebrow mt-6">{doc.scope}</p>
             {/* Held smaller than a marketing hero — a document masthead, not a
                 headline, so the dense body below reads as one continuous text. */}
-            <h1 className="mt-3 text-[clamp(1.75rem,3.4vw,2.5rem)] font-bold tracking-tight">
+            <h1 className="mt-3 text-[clamp(2.25rem,3.6vw,3rem)]">
               {title ?? doc.title}
             </h1>
             {updated && (

@@ -1,0 +1,847 @@
+<title>HeroUI Pro Handoff</title>
+<style>
+  /* ------------------------------------------------------------------
+     This document is built in the system it documents. Every token below
+     is heroui.pro's own, read out of their live stylesheet — the page is
+     therefore its own swatch sheet. Where this document adds something
+     their system has no component for, it is marked .is-addition.
+     ------------------------------------------------------------------ */
+
+  :root {
+    /* Light — their default theme */
+    --bg:            #f5f5f5;
+    --surface:       #ffffff;
+    --surface-2:     #efeff0;
+    --surface-3:     #eaeaeb;
+    --fg:            #18181b;
+    --muted:         #71717a;
+    --border:        #dedee0;
+    --separator:     #e4e4e7;
+    --default:       #ebebec;
+    --accent:        #0485f7;
+    --accent-fg:     #fcfcfc;
+    --success:       #17c964;
+    --warning:       #f5a524;
+    --danger:        #db3b3e;
+    --code-bg:       #ebebec;
+    --shadow-surface: 0 2px 4px 0 #0000000a, 0 1px 2px 0 #0000000f, 0 0 1px 0 #0000000f;
+    --swatch-ring:   #00000014;
+
+    --radius:        8px;
+    --radius-card:   24px;
+    --radius-button: 24px;
+    --ease-out:      cubic-bezier(0, 0, .2, 1);
+    --measure:       992px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:        #060607;
+      --surface:   #18181b;
+      --surface-2: #232325;
+      --surface-3: #262728;
+      --fg:        #fcfcfc;
+      --muted:     #9f9fa9;
+      --border:    #28282c;
+      --separator: #212124;
+      --default:   #27272a;
+      --code-bg:   #232325;
+      --shadow-surface: 0 0 0 0 transparent inset;
+      --swatch-ring: #ffffff1a;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg:        #060607;
+    --surface:   #18181b;
+    --surface-2: #232325;
+    --surface-3: #262728;
+    --fg:        #fcfcfc;
+    --muted:     #9f9fa9;
+    --border:    #28282c;
+    --separator: #212124;
+    --default:   #27272a;
+    --code-bg:   #232325;
+    --shadow-surface: 0 0 0 0 transparent inset;
+    --swatch-ring: #ffffff1a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    /* Their --font-sans is Inter, loaded as a variable face. Font CDNs are
+       blocked here, so this uses a locally-installed Inter when the reader
+       has one and falls through to the platform UI face otherwise. */
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Their headings are all font-medium. There is no 600 or 700 in their
+     type — hierarchy is size, and every tracking value is -0.015em of its
+     own size, so one letter-spacing serves the whole scale. */
+  h1, h2, h3 {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.21;
+    text-wrap: balance;
+  }
+
+  p { margin: 0; }
+
+  code, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.8125em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  code {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 0.12em 0.4em;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* --- Their layout: max-w-[992px], px-4, my-20 between sections ------- */
+  .shell {
+    width: 100%;
+    max-width: var(--measure);
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  .stack { display: flex; flex-direction: column; }
+
+  section.band {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;              /* their heading -> content step is mt-12 */
+    padding-block: 80px;    /* their my-20 rhythm */
+  }
+
+  section.band + section.band { border-top: 1px solid var(--separator); }
+
+  .head { display: flex; flex-direction: column; gap: 8px; max-width: 640px; }
+
+  /* Their eyebrow: text-accent, text-base, font-medium. Nothing drawn beside it. */
+  .eyebrow {
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  .head h2 { font-size: 2.25rem; }
+  .head p { color: var(--muted); font-size: 1rem; line-height: 1.5; max-width: 520px; }
+
+  /* --- Masthead -------------------------------------------------------- */
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-block: 96px 72px;
+  }
+
+  .masthead h1 {
+    font-size: clamp(2.75rem, 7vw, 4.5rem);
+    line-height: 0.9;
+    max-width: 14ch;
+  }
+
+  .masthead .tone { color: color-mix(in srgb, var(--muted) 60%, transparent); display: block; }
+
+  .masthead .sub { color: var(--muted); max-width: 540px; font-size: 1.0625rem; }
+
+  .provenance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--bg);
+  }
+
+  .provenance div { display: flex; flex-direction: column; gap: 2px; }
+  .provenance dt { color: var(--muted); font-size: 0.75rem; }
+  .provenance dd { margin: 0; font-size: 0.8125rem; }
+
+  /* --- The card, to spec ----------------------------------------------
+     bg = --background (the page grey), 1px --border, 24px radius, p-6.
+     No fill gradient, no wash, no shadow, no hover lift. -------------- */
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--bg);
+    transition: border-color 0.2s var(--ease-out);
+  }
+
+  .card h3 { font-size: 1.25rem; line-height: 1.34; }
+  .card p { color: var(--muted); font-size: 0.9375rem; }
+
+  .grid-6 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+  .span-4 { grid-column: span 4; }
+  .span-6 { grid-column: span 6; }
+
+  /* --- Spec rail: the rendered object beside its source declaration ---- */
+  .rail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .demo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding: 32px 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--bg);
+  }
+
+  .src {
+    margin: 0;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface-2);
+    color: var(--fg);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .src .c { color: var(--muted); }
+
+  /* --- Swatches -------------------------------------------------------- */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 16px;
+  }
+
+  .swatch { display: flex; flex-direction: column; gap: 8px; }
+
+  .chipfill {
+    height: 68px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px var(--swatch-ring);
+  }
+
+  .swatch .name { font-size: 0.8125rem; font-weight: 500; }
+  .swatch .val {
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Tables ---------------------------------------------------------- */
+  .tablewrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+
+  table { border-collapse: collapse; width: 100%; min-width: 560px; }
+
+  th, td {
+    text-align: left;
+    padding: 13px 22px;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--separator);
+  }
+
+  th {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.75rem;
+    background: var(--surface-2);
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+
+  td.num { font-variant-numeric: tabular-nums; text-align: right; }
+
+  td.mono, th.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 0.78125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Type specimens -------------------------------------------------- */
+  .specimen {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: 20px 28px;
+    align-items: baseline;
+    padding-block: 20px;
+    border-bottom: 1px solid var(--separator);
+  }
+
+  .specimen:last-child { border-bottom: 0; }
+
+  .specimen .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .specimen .sample { min-width: 0; overflow-wrap: anywhere; }
+
+  .s-h1 { font-size: 4.5rem; font-weight: 500; letter-spacing: -1.08px; line-height: 0.9; }
+  .s-h2 { font-size: 3rem;   font-weight: 500; letter-spacing: -0.72px; line-height: normal; }
+  .s-h3 { font-size: 2rem;   font-weight: 500; letter-spacing: -0.48px; line-height: normal; }
+  .s-card { font-size: 1.25rem; font-weight: 500; line-height: 1.34; }
+  .s-body { font-size: 1rem; font-weight: 400; line-height: 1.5; }
+  .s-cardtitle { font-size: 0.875rem; font-weight: 500; line-height: 1.43; }
+  .s-carddesc { font-size: 0.75rem; font-weight: 400; line-height: 1.34; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .s-h1 { font-size: 3rem; }
+    .s-h2 { font-size: 2.25rem; }
+    .s-h3 { font-size: 1.5rem; }
+  }
+
+  /* --- Buttons, to spec ------------------------------------------------ */
+  .btnrow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding-inline: 16px;
+    border: 0;
+    border-radius: var(--radius-button);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transform-origin: 50%;
+    transition: transform .25s ease, background-color .1s var(--ease-out);
+  }
+
+  .button:active { transform: scale(0.97); }
+  .button--primary { background: var(--accent); color: var(--accent-fg); }
+  .button--primary:hover { background: color-mix(in oklab, var(--accent) 90%, var(--accent-fg) 10%); }
+  .button--secondary { background: var(--default); color: var(--accent); }
+  .button--tertiary { background: var(--default); color: var(--fg); }
+  .button--sm { height: 36px; padding-inline: 12px; }
+  .button--lg { height: 44px; font-size: 1rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button, .card { transition: none; }
+    .button:active { transform: none; }
+  }
+
+  /* --- Chips ----------------------------------------------------------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.34;
+  }
+
+  .chip--accent  { background: var(--accent);  color: var(--accent-fg); }
+  .chip--success { background: var(--success); color: #06170d; }
+  .chip--warning { background: var(--warning); color: #241703; }
+  .chip--danger  { background: var(--danger);  color: #fcfcfc; }
+  .chip--soft    { background: color-mix(in oklab, var(--accent) 15%, transparent); color: var(--accent); }
+  .chip--default { background: var(--default); color: var(--fg); }
+
+  /* --- Verdict marks: what is in the reference and what is not --------- */
+  .verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .verdict::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .verdict.keep::before { background: var(--success); }
+  .verdict.drop::before { background: var(--danger); }
+  .verdict.add::before  { background: var(--warning); }
+
+  .is-addition { border-style: dashed; }
+
+  /* --- Grid diagram ----------------------------------------------------- */
+  .griddemo { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+
+  .griddemo .col {
+    height: 84px;
+    border-radius: 10px;
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent);
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .ledger-note {
+    color: var(--muted);
+    font-size: 0.8125rem;
+    max-width: 620px;
+  }
+
+  footer.foot {
+    padding-block: 56px 80px;
+    border-top: 1px solid var(--separator);
+    color: var(--muted);
+    font-size: 0.8125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  @media (max-width: 900px) {
+    .rail { grid-template-columns: minmax(0, 1fr); }
+    .span-2, .span-3, .span-4 { grid-column: span 3; }
+  }
+
+  @media (max-width: 620px) {
+    .grid-6 { grid-template-columns: 1fr; }
+    .span-2, .span-3, .span-4, .span-6 { grid-column: span 1; }
+    .specimen { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    section.band { padding-block: 56px; gap: 32px; }
+    .griddemo { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <p class="eyebrow">Design handoff</p>
+    <h1>The HeroUI Pro visual language<span class="tone">measured, not eyeballed.</span></h1>
+    <p class="sub">Every value on this page was read out of heroui.pro's compiled stylesheet and rendered markup. Nothing here is estimated from a screenshot. The page is built in the system it documents, so each component below is a live specimen rather than a picture of one.</p>
+    <dl class="provenance">
+      <div>
+        <dt>Source</dt>
+        <dd class="mono">heroui.pro</dd>
+      </div>
+      <div>
+        <dt>Stylesheet</dt>
+        <dd class="mono">chunks/29qranzd3vz4s.css</dd>
+      </div>
+      <div>
+        <dt>Captured</dt>
+        <dd class="mono">19 Aug 2026</dd>
+      </div>
+      <div>
+        <dt>Themes shipped</dt>
+        <dd class="mono">light + dark</dd>
+      </div>
+    </dl>
+  </header>
+
+  <!-- ============================ COLOUR ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Foundations</p>
+      <h2>Colour</h2>
+      <p>One accent, one neutral ramp, three semantic hues. The ramp is the whole system — there is no secondary brand colour anywhere in the stylesheet.</p>
+    </div>
+
+    <div class="stack" style="gap:32px">
+      <div>
+        <h3 style="font-size:1.0625rem;margin-bottom:16px">Neutrals &amp; accent — light</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="chipfill" style="background:#f5f5f5"></div><span class="name">Background</span><span class="val">#f5f5f5</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#ffffff"></div><span class="name">Surface</span><span class="val">#ffffff</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#efeff0"></div><span class="name">Surface 2</span><span class="val">#efeff0</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#eaeaeb"></div><span class="name">Surface 3</span><span class="val">#eaeaeb</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#dedee0"></div><span class="name">Border</span><span class="val">#dedee0</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#e4e4e7"></div><span class="name">Separator</span><span class="val">#e4e4e7</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#71717a"></div><span class="name">Muted</span><span class="val">#71717a</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#18181b"></div><span class="name">Foreground</span><span class="val">#18181b</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#0485f7"></div><span class="name">Accent</span><span class="val">#0485f7</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-size:1.0625rem;margin-bottom:16px">Neutrals — dark</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="chipfill" style="background:#060607"></div><span class="name">Background</span><span class="val">#060607</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#18181b"></div><span class="name">Surface</span><span class="val">#18181b</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#232325"></div><span class="name">Surface 2</span><span class="val">#232325</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#262728"></div><span class="name">Surface 3</span><span class="val">#262728</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#28282c"></div><span class="name">Border</span><span class="val">#28282c</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#212124"></div><span class="name">Separator</span><span class="val">#212124</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#9f9fa9"></div><span class="name">Muted</span><span class="val">#9f9fa9</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#fcfcfc"></div><span class="name">Foreground</span><span class="val">#fcfcfc</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-size:1.0625rem;margin-bottom:16px">Semantic</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="chipfill" style="background:#17c964"></div><span class="name">Success</span><span class="val">#17c964</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#f5a524"></div><span class="name">Warning</span><span class="val">#f5a524</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#db3b3e"></div><span class="name">Danger</span><span class="val">#db3b3e</span></div>
+          <div class="swatch"><div class="chipfill" style="background:#fcfcfc;"></div><span class="name">Snow</span><span class="val">#fcfcfc</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th class="mono">Token</th><th>Derivation</th><th>Applies to</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">--accent-hover</td><td class="mono">accent 90% + snow 10%</td><td>Button and link hover fills</td></tr>
+          <tr><td class="mono">--accent-soft</td><td class="mono">accent 15% + transparent</td><td>Soft chips, tinted rows (12% in dark)</td></tr>
+          <tr><td class="mono">--default-hover</td><td class="mono">default 96% + fg 4%</td><td>Secondary and tertiary button hover</td></tr>
+          <tr><td class="mono">--focus</td><td class="mono">= --accent</td><td>Every focus ring on the site</td></tr>
+          <tr><td class="mono">--disabled-opacity</td><td class="mono">0.5</td><td>All disabled states, no colour change</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================ TYPE ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Foundations</p>
+      <h2>Typography</h2>
+      <p>Inter as the variable text face, heroSans as the display face. Every heading is weight 500 — there is no 600 or 700 in their type. Hierarchy is carried by size alone.</p>
+    </div>
+
+    <div>
+      <div class="specimen">
+        <div class="meta"><span>Display / h1</span><span>72px · 500</span><span>track −1.08px</span><span>leading 0.9</span></div>
+        <div class="sample s-h1">Ship faster</div>
+      </div>
+      <div class="specimen">
+        <div class="meta"><span>Section / h2</span><span>48px · 500</span><span>track −0.72px</span><span>leading normal</span></div>
+        <div class="sample s-h2">Your brand, fully mapped.</div>
+      </div>
+      <div class="specimen">
+        <div class="meta"><span>Sub-section</span><span>32px · 500</span><span>track −0.48px</span><span>leading normal</span></div>
+        <div class="sample s-h3">Start from scratch or import.</div>
+      </div>
+      <div class="specimen">
+        <div class="meta"><span>Feature card title</span><span>20px · 500</span><span>leading 1.34</span></div>
+        <div class="sample s-card">Design systems</div>
+      </div>
+      <div class="specimen">
+        <div class="meta"><span>Body / lead</span><span>16px · 400</span><span>leading 1.5</span><span>max 520px</span></div>
+        <div class="sample s-body" style="color:var(--muted);max-width:520px">Make it yours with your colors, fonts, voice, and assets. Body copy is capped at 520px on centred section leads, which lands close to 65 characters.</div>
+      </div>
+      <div class="specimen">
+        <div class="meta"><span>Compact card title</span><span>14px · 500</span><span>leading 1.43</span></div>
+        <div class="sample s-cardtitle">Theme editor</div>
+      </div>
+      <div class="specimen">
+        <div class="meta"><span>Compact card body</span><span>12px · 400</span><span>leading 1.34</span></div>
+        <div class="sample s-carddesc">Used only inside their small showcase cards, never as page body copy.</div>
+      </div>
+    </div>
+
+    <div class="card" style="border-style:dashed">
+      <h3 style="font-size:1rem">Two card-title sizes, and they are not interchangeable</h3>
+      <p>14px/12px is the pair for their compact showcase tiles. Feature cards — the p-6, 240–400px ones — take the 20px title with 16px body. Picking the compact pair for a feature card is the most common way this scale gets misapplied.</p>
+    </div>
+  </section>
+
+  <!-- ============================ CARD ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Components</p>
+      <h2>The card</h2>
+      <p>The single most misread object in the system. Their landing card is the same grey as the page — the border is the only thing that makes it an object.</p>
+    </div>
+
+    <div class="rail">
+      <div class="demo">
+        <div class="card">
+          <h3>Design systems</h3>
+          <p>Start from scratch or import your site. This card is rendered at the exact spec beside it.</p>
+          <div class="btnrow" style="margin-top:4px">
+            <span class="chip chip--soft">Live specimen</span>
+          </div>
+        </div>
+      </div>
+      <pre class="src"><span class="c">/* resolved from their landing markup */</span>
+background : var(--background)   <span class="c">#f5f5f5</span>
+border     : 1px solid var(--border)
+             <span class="c">#dedee0</span>
+radius     : 24px
+padding    : 24px   <span class="c">(p-6)</span>
+gap        : 12px
+
+<span class="c">/* absent, deliberately */</span>
+box-shadow : none
+background-image : none
+transform  : none <span class="c">(no hover lift)</span></pre>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Property</th><th class="mono">Value</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fill</td><td class="mono">#f5f5f5</td><td>Identical to the page ground. Not white.</td></tr>
+          <tr><td>Border</td><td class="mono">1px #dedee0</td><td>The only thing separating card from page</td></tr>
+          <tr><td>Radius</td><td class="mono">24px</td><td>32px on their large framed showcase blocks</td></tr>
+          <tr><td>Padding</td><td class="mono">24px</td><td>16px on the compact component card</td></tr>
+          <tr><td>Shadow</td><td class="mono">none</td><td>A shadow token exists but is used on overlays and fields, never landing cards</td></tr>
+          <tr><td>Hover</td><td class="mono">border-color</td><td>No lift, no scale, no shadow anywhere in the stylesheet</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-6">
+      <div class="card span-3">
+        <span class="verdict keep">In the reference</span>
+        <p>Colour arrives through the graphic inside the card, at full saturation. The panel behind the copy stays neutral.</p>
+      </div>
+      <div class="card span-3">
+        <span class="verdict drop">Not in the reference</span>
+        <p>Gradient fills, brand-hue washes at the card foot, dot fields, drop shadows, and <code>translateY</code> on hover. All four read as "faded" against the real thing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ CONTROLS ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Components</p>
+      <h2>Controls</h2>
+      <p>Buttons are 24px-radius capsules at three heights, all weight 500. The press state is a scale, not a colour shift.</p>
+    </div>
+
+    <div class="rail">
+      <div class="demo">
+        <div class="btnrow">
+          <button type="button" class="button button--primary">Get started</button>
+          <button type="button" class="button button--secondary">Documentation</button>
+          <button type="button" class="button button--tertiary">Browse</button>
+        </div>
+        <div class="btnrow">
+          <button type="button" class="button button--primary button--sm">Small · 36</button>
+          <button type="button" class="button button--primary">Medium · 40</button>
+          <button type="button" class="button button--primary button--lg">Large · 44</button>
+        </div>
+        <p style="color:var(--muted);font-size:0.8125rem">Press any of them — the scale is the real transition value.</p>
+      </div>
+      <pre class="src">height        : 40px   <span class="c">sm 36 · lg 44</span>
+padding-inline: 16px
+border-radius : 24px   <span class="c">radius × 3</span>
+font-size     : 14px   <span class="c">lg 16px</span>
+font-weight   : 500
+gap           : 8px
+
+transition:
+  transform 0.25s ease,
+  background-color 0.1s var(--ease-out)
+
+:active  transform: scale(0.97)
+         <span class="c">sm 0.98 · lg 0.96</span></pre>
+    </div>
+
+    <div class="stack" style="gap:16px">
+      <h3 style="font-size:1.0625rem">Chips</h3>
+      <div class="btnrow">
+        <span class="chip chip--accent">Accent</span>
+        <span class="chip chip--success">Success</span>
+        <span class="chip chip--warning">Warning</span>
+        <span class="chip chip--danger">Danger</span>
+        <span class="chip chip--soft">Soft</span>
+        <span class="chip chip--default">Default</span>
+      </div>
+      <p class="ledger-note">Three sizes: sm is 12px type at 4px inline padding, md is 12px, lg is 14px at weight 500 with 12px inline padding. Every semantic hue ships a solid and a soft variant; the soft variant is the hue mixed to 15% with the foreground text sitting at 70–92% of the hue.</p>
+    </div>
+  </section>
+
+  <!-- ============================ LAYOUT ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Structure</p>
+      <h2>Layout &amp; grid</h2>
+      <p>A 992px measure, a six-column grid with 16px gutters, and an 80px rhythm between sections. This page is laid out on it.</p>
+    </div>
+
+    <div class="griddemo">
+      <div class="col">1</div><div class="col">2</div><div class="col">3</div>
+      <div class="col">4</div><div class="col">5</div><div class="col">6</div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Measure</th><th class="mono">Value</th><th>Used for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Standard section</td><td class="mono">992px</td><td>Most content bands</td></tr>
+          <tr><td>Wide showcase</td><td class="mono">1172px</td><td>Full-bleed template galleries</td></tr>
+          <tr><td>Narrow band</td><td class="mono">1024px</td><td>Centred copy-led sections</td></tr>
+          <tr><td>Section rhythm</td><td class="mono">80px</td><td>Vertical space between bands</td></tr>
+          <tr><td>Heading → content</td><td class="mono">48px</td><td>After every section header block</td></tr>
+          <tr><td>Gutter</td><td class="mono">16px</td><td>All grid gaps</td></tr>
+          <tr><td>Page inset</td><td class="mono">16–24px</td><td>Horizontal padding, tighter below md</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="ledger-note">Cards span 2, 3 or 4 of the six columns. Below <code>lg</code> the grid collapses to two columns; below <code>md</code> it becomes a single column capped at 500px and centred. The section header is centred, the card grid is not.</p>
+  </section>
+
+  <!-- ============================ MOTION ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Behaviour</p>
+      <h2>Motion</h2>
+      <p>Short, small, and mostly on controls. Surfaces do not move.</p>
+    </div>
+
+    <div class="grid-6">
+      <div class="card span-2">
+        <h3 style="font-size:1rem">Durations</h3>
+        <p>100ms for colour, 250ms for transform, 480ms for the orchestrated section cross-fade. Nothing longer.</p>
+      </div>
+      <div class="card span-2">
+        <h3 style="font-size:1rem">Easing</h3>
+        <p class="mono" style="font-size:0.75rem">ease-out<br>cubic-bezier(0, 0, .2, 1)<br><br>ease-out-fluid<br>cubic-bezier(.32,.72,0,1)</p>
+      </div>
+      <div class="card span-2">
+        <h3 style="font-size:1rem">Reduced motion</h3>
+        <p>Handled twice: a <code>prefers-reduced-motion</code> query and a <code>data-reduce-motion</code> attribute, both killing transition-property outright.</p>
+      </div>
+    </div>
+
+    <p class="ledger-note">The only transforms in the system are <code>scale(0.97)</code> on button press, <code>scale(1.1)</code> on a colour swatch hover, and <code>scale(1.02)</code> on a grouped hover target. There is no card lift, no parallax, and no scroll-driven reveal on the marketing pages.</p>
+  </section>
+
+  <!-- ============================ CONTRAST ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Accessibility</p>
+      <h2>Contrast ledger</h2>
+      <p>Measured against their own grounds. The system fails WCAG AA in several places — adopting it wholesale means adopting these, so they are listed rather than hidden.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Pair</th><th class="mono">Colours</th><th class="num">Ratio</th><th>Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Foreground on ground</td><td class="mono">#18181b / #f5f5f5</td><td class="num">16.25</td><td><span class="verdict keep">Passes AA</span></td></tr>
+          <tr><td>Corrected accent as text</td><td class="mono">#0067c9 / #f5f5f5</td><td class="num">5.09</td><td><span class="verdict keep">Passes AA</span></td></tr>
+          <tr><td>Muted body on ground</td><td class="mono">#71717a / #f5f5f5</td><td class="num">4.43</td><td><span class="verdict add">Just under 4.5</span></td></tr>
+          <tr><td>Danger as text</td><td class="mono">#db3b3e / #f5f5f5</td><td class="num">4.09</td><td><span class="verdict drop">Fails AA</span></td></tr>
+          <tr><td>White on accent fill</td><td class="mono">#fcfcfc / #0485f7</td><td class="num">3.59</td><td><span class="verdict drop">Fails AA text</span></td></tr>
+          <tr><td>Accent as text on ground</td><td class="mono">#0485f7 / #f5f5f5</td><td class="num">3.38</td><td><span class="verdict drop">Fails AA</span></td></tr>
+          <tr><td>Second display tone</td><td class="mono">#a6a6ab / #f5f5f5</td><td class="num">2.22</td><td><span class="verdict drop">Fails large-text 3.0</span></td></tr>
+          <tr><td>Success as text</td><td class="mono">#17c964 / #f5f5f5</td><td class="num">2.01</td><td><span class="verdict drop">Fails AA</span></td></tr>
+          <tr><td>Warning as text</td><td class="mono">#f5a524 / #f5f5f5</td><td class="num">1.87</td><td><span class="verdict drop">Fails AA</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="ledger-note">Their dark theme fares better: foreground reaches 19.74, muted 7.72, and the accent clears 5.5 on <code>#060607</code>. The failures above are a light-theme problem specifically, and the accent is the centre of it.</p>
+
+    <div class="card is-addition">
+      <span class="verdict add">Addition — not from the reference</span>
+      <h3 style="font-size:1rem">The smallest set of fixes that passes</h3>
+      <p>Keep <code>#0485f7</code> as a <em>fill</em>, where the bar is 3:1 rather than 4.5:1, and darken it to <code>#0067c9</code> only where it becomes small type. That single substitution clears the accent-as-text and button-label rows without changing what the page looks like at a glance. Semantic hues need the same treatment: use them as fills and dots, not as text.</p>
+    </div>
+  </section>
+
+  <!-- ============================ RULES ============================ -->
+  <section class="band">
+    <div class="head">
+      <p class="eyebrow">Working rules</p>
+      <h2>What to do, and what breaks it</h2>
+      <p>The failure modes below are the ones that actually came up building against this system.</p>
+    </div>
+
+    <div class="grid-6">
+      <div class="card span-3">
+        <span class="verdict keep">Do</span>
+        <p>Let the border carry the card. On a grey ground, a 1px <code>#dedee0</code> outline at 24px radius is the whole treatment.</p>
+      </div>
+      <div class="card span-3">
+        <span class="verdict drop">Don't</span>
+        <p>Reach for a fill gradient or a hue wash to make a card feel designed. It is the specific thing that makes a page read as washed out next to the reference.</p>
+      </div>
+      <div class="card span-3">
+        <span class="verdict keep">Do</span>
+        <p>Set every heading at weight 500 and let size do the work. The scale runs 72 / 48 / 32 / 20.</p>
+      </div>
+      <div class="card span-3">
+        <span class="verdict drop">Don't</span>
+        <p>Bold a heading to give it emphasis. There is no 600 or 700 in the system, and one bold heading visibly leaves it.</p>
+      </div>
+      <div class="card span-3">
+        <span class="verdict keep">Do</span>
+        <p>Put colour in the illustration inside the card, at full saturation.</p>
+      </div>
+      <div class="card span-3">
+        <span class="verdict drop">Don't</span>
+        <p>Decorate the eyebrow. Theirs is a plain accent line of 16px text with nothing drawn beside it — no dash, no pill, no icon.</p>
+      </div>
+      <div class="card span-6">
+        <span class="verdict add">Watch</span>
+        <p>Two patterns look like system components but are not. The dot field belongs to their colour-picker, not to cards; and the <code>--surface</code> shadow token is used on overlays, dialogs and form fields, never on a landing card. Borrowing either onto a card is the most likely way to drift.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Values read from <span class="mono">heroui.pro/_next/static/immutable/chunks/29qranzd3vz4s.css</span> and the rendered homepage markup, 19 August 2026.</p>
+    <p>Contrast ratios computed to WCAG 2.1 relative luminance against the stated grounds. HeroUI is the trademark of its owners; this document records observed public design values for implementation reference.</p>
+  </footer>
+
+</div>

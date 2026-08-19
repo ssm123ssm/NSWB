@@ -66,7 +66,7 @@ export default function CookieBanner() {
       <h2 id="consent-banner-title" className="mt-1.5 text-[0.95rem]">
         This website uses cookies
       </h2>
-      <p className="mt-2 text-[0.85rem] leading-relaxed text-muted">
+      <p className="mt-2 text-sm leading-[1.43] text-muted">
         One cookie remembers your choice, and we count page views only if you
         accept. No advertising, nothing sold.{" "}
         <Link className="link-muted" href="/legal/website-privacy">

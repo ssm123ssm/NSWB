@@ -56,33 +56,72 @@ export const heroStats = [
 ];
 
 /**
- * The bento. Three disciplines, and the first one spans two columns because it
- * is the one the studio leads with.
+ * The founders' statement, set as type on the ground directly after the hero.
+ *
+ * The "@" opener is deliberate and stays lowercase, matching the wordmark —
+ * it is the studio signing its own sentence, not an abbreviation to expand.
+ * The copy is the founders' own and is not edited for the repetition of
+ * "engineered"; that is how they say it.
  */
-export const capabilities = [
-  {
-    title: "Software platforms",
-    body: "Products people use daily, built to stay legible under load — clear state, predictable failure, and no surprises in the parts nobody looks at.",
-    icon: "layers",
-    accent: "violet",
-    wide: true,
-    points: ["Web platforms", "APIs and integrations", "Analytics that answer a question"],
-  },
-  {
-    title: "Cryptographic R&D",
-    body: "Encryption designed so that trusting us is not part of the threat model.",
-    icon: "lock",
-    accent: "cyan",
-    points: ["Client-side encryption", "Key handling", "Zero-trust architecture"],
-  },
-  {
-    title: "Applied AI",
-    body: "Models put to work on real problems, with the limits stated as plainly as the results.",
-    icon: "neural",
-    accent: "blue",
-    points: ["Research to product", "Evaluation first", "Stated limits"],
-  },
-];
+export const founders = {
+  opener: "@ neurasense,",
+  statement:
+    "we believe the best software is thoughtfully designed, intelligently " +
+    "engineered, and built to create lasting value.",
+  coda: "So, we build interesting software that is carefully engineered.",
+  names: "Supun & Isuru",
+  role: "Co-founders",
+};
+
+/**
+ * The three design principles, set as chat clouds.
+ *
+ * Each principle marks one or two words in its own hue — the studio's own
+ * emphasis, given at direction: protect in red (`clay`), intelligent in green
+ * (`emerald`), simple and useful in amber. The mark reuses `--brand-soft` and
+ * `--brand-text` from the existing brand scopes rather than raw semantic hues,
+ * because #17c964 and #f5a524 as text measure 2.01:1 and 1.87:1 on the ground
+ * and are unreadable. The scope values were already measured against their own
+ * tinted pill, which is the tightest ground a mark sits on.
+ *
+ * `segments` carries the sentence in order; `mark: true` is the emphasis.
+ */
+export const designPrinciples = {
+  title: "Our every platform is powered by 3 main design principles.",
+  closing:
+    "Secure by design. Intelligent by purpose. Engineered for reality.",
+  items: [
+    {
+      icon: "lock",
+      accent: "signal-red",
+      segments: [
+        { text: "Encryption / cryptography backed to " },
+        { text: "protect", mark: true },
+        { text: " what matters." },
+      ],
+    },
+    {
+      icon: "neural",
+      accent: "signal-green",
+      segments: [
+        { text: "Applied AI features to make software genuinely " },
+        { text: "intelligent", mark: true },
+        { text: "." },
+      ],
+    },
+    {
+      icon: "users",
+      accent: "signal-amber",
+      segments: [
+        { text: "Human-centered design — make complexity " },
+        { text: "simple", mark: true },
+        { text: " and " },
+        { text: "useful", mark: true },
+        { text: "." },
+      ],
+    },
+  ],
+};
 
 /** The closing call. */
 export const closing = {
@@ -342,6 +381,14 @@ export const products = [
     name: "Vault",
     wordmark: ["va", "ult"],
     tagline: "Zero-trust storage built around client-side encryption.",
+    // Same mark treatment as the design-principle clouds — the highlighted
+    // word takes the card's own accent (`data-brand="cyan"` on the card),
+    // rather than a colour chosen here.
+    taglineSegments: [
+      { text: "Zero-trust storage built around " },
+      { text: "client-side encryption", mark: true },
+      { text: "." },
+    ],
     description:
       "End-to-end encrypted file storage where plaintext never touches the server. Encrypted manifests and policy-based access by design.",
     discipline: "Cryptographic R&D",

@@ -4,16 +4,17 @@ import {
   ArrowIcon,
   DocIcon,
   LayersIcon,
+  UsersIcon,
   LockIcon,
   NeuralIcon,
   ShieldIcon,
 } from "./components/Icons";
 import ProductBento from "./components/ProductBento";
 import {
-  capabilities,
   closing,
+  designPrinciples,
+  founders,
   hero,
-  heroStats,
   principles,
 } from "./data/site";
 
@@ -23,6 +24,7 @@ export const metadata = {
 
 const icons = {
   layers: LayersIcon,
+  users: UsersIcon,
   lock: LockIcon,
   neural: NeuralIcon,
   shield: ShieldIcon,
@@ -33,7 +35,8 @@ export default function HomePage() {
   return (
     <main id="main">
       <Hero />
-      <Capabilities />
+      <FoundersNote />
+      <DesignPrinciples />
       <ProductBento />
       <Principles />
       <Closing />
@@ -58,12 +61,12 @@ function Hero() {
           <ArrowIcon className="h-3.5 w-3.5" />
         </Link>
 
-        <h1 className="rise mt-7 max-w-4xl text-[clamp(2.5rem,6.4vw,4.75rem)]">
+        <h1 className="rise mt-7 max-w-4xl text-[clamp(3rem,6.4vw,4.5rem)]">
           {hero.headlineHead}{" "}
           <span className="display-tone">{hero.headlineTail}</span>
         </h1>
 
-        <p className="lead lead-center rise text-[clamp(1.0625rem,1.7vw,1.25rem)]">
+        <p className="lead lead-center rise">
           {hero.lead}
         </p>
 
@@ -79,17 +82,33 @@ function Hero() {
       </div>
 
       <div className="shell pb-16 md:pb-24">
-        <dl className="grid grid-cols-2 gap-6 border-y border-[color:var(--border)] py-10 md:grid-cols-4">
-          {heroStats.map((stat) => (
-            <div className="text-center" key={stat.label}>
-              <dt className="sr-only">{stat.label}</dt>
-              <dd>
-                <span className="stat-value display-tone block">{stat.value}</span>
-                <span className="stat-label block">{stat.label}</span>
-              </dd>
-            </div>
-          ))}
-        </dl>
+        <ProductBrands />
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   The founders' statement
+
+   Type on the ground straight after the stats band — no card, no rule, no
+   quotation mark. The reference has no quote component, so this is set as the
+   32px sub-section size rather than borrowing an object that would have to be
+   invented. Left-aligned, like every other section on the site.
+   ------------------------------------------------------------------------- */
+function FoundersNote() {
+  return (
+    <section className="section-tight">
+      <div className="shell">
+        <p className="statement">
+          <span className="statement-opener">{founders.opener}</span>{" "}
+          {founders.statement}
+        </p>
+        <p className="statement-coda">{founders.coda}</p>
+        <p className="statement-sign">
+          <span className="names">{founders.names}</span>
+          <span className="role">{founders.role}</span>
+        </p>
       </div>
     </section>
   );
@@ -98,46 +117,41 @@ function Hero() {
 /* -------------------------------------------------------------------------
    Capabilities, as a bento
    ------------------------------------------------------------------------- */
-function Capabilities() {
+function DesignPrinciples() {
   return (
     <section className="section section-subtle" id="capabilities">
       <div className="shell">
-        <p className="eyebrow">What we do</p>
-        <h2 className="section-title max-w-2xl">
-          Three disciplines, kept in the same room
-        </h2>
-        <p className="lead">
-          Most of what breaks in software breaks between the disciplines that
-          built it. We keep them together and argue early instead.
-        </p>
+        <h2 className="section-title max-w-3xl">{designPrinciples.title}</h2>
 
         <div className="bento mt-12">
-          {capabilities.map((capability) => {
-            const Icon = icons[capability.icon];
+          {designPrinciples.items.map((item) => {
+            const Icon = icons[item.icon];
             return (
               <article
-                className={`card card-hover card-tinted ${capability.wide ? "bento-wide" : ""}`}
-                data-brand={capability.accent}
-                key={capability.title}
+                className="card card-hover cloud"
+                data-brand={item.accent}
+                key={item.segments.map((seg) => seg.text).join("")}
               >
-                <span className="icon-tile icon-tile-lg">
-                  <Icon className="h-6 w-6" />
+                <span className="icon-tile">
+                  <Icon className="h-8 w-8" />
                 </span>
-                <h3 className="mt-5 text-xl">{capability.title}</h3>
-                <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
-                  {capability.body}
+                <p className="mt-5 text-base leading-[1.5] text-muted">
+                  {item.segments.map((seg, i) =>
+                    seg.mark ? (
+                      <span className="mark" key={i}>
+                        {seg.text}
+                      </span>
+                    ) : (
+                      <span key={i}>{seg.text}</span>
+                    )
+                  )}
                 </p>
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  {capability.points.map((point) => (
-                    <li className="chip" key={point}>
-                      {point}
-                    </li>
-                  ))}
-                </ul>
               </article>
             );
           })}
         </div>
+
+        <p className="principle-closing">{designPrinciples.closing}</p>
       </div>
     </section>
   );
@@ -166,14 +180,14 @@ function Principles() {
               >
                 <div className="flex items-center gap-3">
                   <span className="icon-tile icon-tile-soft">
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-6 w-6" />
                   </span>
                   <span className="font-mono text-sm text-faint">
                     {principle.label}
                   </span>
                 </div>
                 <h3 className="mt-5 text-lg">{principle.title}</h3>
-                <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">
+                <p className="mt-2 text-base leading-[1.5] text-muted">
                   {principle.description}
                 </p>
                 {principle.note && (
@@ -200,10 +214,10 @@ function Closing() {
       <div className="shell">
         <div className="gradient-panel">
           <div className="relative z-10 mx-auto max-w-2xl">
-            <h2 className="text-[clamp(1.75rem,3.6vw,2.75rem)] font-bold tracking-tight">
+            <h2 className="text-[clamp(2.25rem,3.6vw,3rem)]">
               {closing.title}
             </h2>
-            <p className="mt-4 text-[1.0625rem] leading-relaxed text-white/85">
+            <p className="mt-4 text-base leading-[1.5] text-white/85">
               {closing.body}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -221,5 +235,29 @@ function Closing() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Product brands in the hero
+
+   A muted-color grid of the six product brands, matching the stats band style.
+   Displayed below the hero statistics, using faint text color like the stat labels.
+
+   Marks are set exactly as given — nsqr, vault, coLab, presence, lipidhub, aes —
+   not the capitalised/spaced `name` field from data/site.js.
+   ------------------------------------------------------------------------- */
+const brandMarks = ["nsqr", "vault", "coLab", "presence", "lipidhub", "aes"];
+
+function ProductBrands() {
+  return (
+    <dl className="grid grid-cols-3 gap-6 border-y border-[color:var(--border)] py-10 md:grid-cols-6">
+      {brandMarks.map((mark) => (
+        <div className="text-center" key={mark}>
+          <dt className="sr-only">{mark}</dt>
+          <dd className="product-mark display-tone">{mark}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

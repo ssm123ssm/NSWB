@@ -24,7 +24,7 @@ export default function SiteFooter() {
           <Link href="/" aria-label={`${site.name} home`}>
             <Wordmark />
           </Link>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
+          <p className="mt-4 max-w-xs text-sm leading-[1.43] text-muted">
             {site.footerLine}
           </p>
           <div className="mt-5 flex items-center gap-2">

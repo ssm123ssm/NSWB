@@ -64,10 +64,10 @@ export default function ProductsPage() {
         <div className="shell">
           <div className="gradient-panel">
             <div className="relative z-10 mx-auto max-w-2xl">
-              <h2 className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-bold tracking-tight">
+              <h2 className="text-[clamp(2.25rem,3.6vw,3rem)]">
                 {closing.title}
               </h2>
-              <p className="mt-4 text-[1.0625rem] leading-relaxed text-white/85">
+              <p className="mt-4 text-base leading-[1.5] text-white/85">
                 {closing.body}
               </p>
               <ContactButton className="btn btn-lg mt-8 bg-white text-[color:var(--text)] hover:opacity-90">
@@ -95,7 +95,7 @@ function ProductCard({ product }) {
         </span>
       </div>
 
-      <p className="mt-5 text-base leading-relaxed text-ink">
+      <p className="mt-5 text-base leading-[1.5] text-ink">
         {product.tagline}
       </p>
 

@@ -50,7 +50,7 @@ export default function ProductBento() {
           <p className="text-center text-base font-medium text-[color:var(--accent-text)] max-md:text-sm">
             What we build
           </p>
-          <div className="text-center text-5xl font-bold tracking-[-0.03em] max-md:text-4xl">
+          <div className="text-center text-5xl font-medium tracking-[-0.015em] max-md:text-4xl">
             <p className="mb-0">Six products.</p>
             <p className="text-[color:var(--display-muted)]">One standard.</p>
           </div>
@@ -75,15 +75,27 @@ export default function ProductBento() {
 function BentoCard({ product, span, height, Graphic }) {
   return (
     <article
-      className={`bento-card flex flex-col overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] transition-colors hover:border-[color:var(--brand)] ${span} ${height} max-lg:col-span-1`}
+      className={`bento-card flex flex-col overflow-hidden rounded-[24px] border border-solid border-[color:var(--border)] ${span} ${height} max-lg:col-span-1`}
       data-brand={product.accent}
     >
       <div className="p-6 pb-0">
         <h3 className="brand-tag">
           <ProductName product={product} />
         </h3>
-        <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted">
-          {product.tagline}
+        <p className="mt-4 text-base leading-[1.5] text-muted">
+          {product.taglineSegments ? (
+            product.taglineSegments.map((seg, i) =>
+              seg.mark ? (
+                <span className="mark" key={i}>
+                  {seg.text}
+                </span>
+              ) : (
+                <span key={i}>{seg.text}</span>
+              )
+            )
+          ) : (
+            product.tagline
+          )}
         </p>
       </div>
 
@@ -332,7 +344,7 @@ function AesGraphic() {
         ))}
       </div>
       <div
-        className="grid h-16 w-16 shrink-0 place-items-center rounded-full text-lg font-bold"
+        className="grid h-16 w-16 shrink-0 place-items-center rounded-full text-lg font-medium"
         style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
       >
         A−

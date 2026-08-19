@@ -4,11 +4,20 @@
 - Next.js 14 (App Router) marketing site using React 18.
 - Styling is plain Tailwind CSS over a CSS-variable design system. There is no
   component library — NextUI and framer-motion were removed.
-- Two fonts, loaded in `app/layout.js` with `next/font`: Plus Jakarta Sans
-  (`--font-sans`) and IBM Plex Mono (`--font-mono`, used for eyebrows, labels
-  and numerals).
+- Two fonts, loaded in `app/layout.js` with `next/font`: Inter (`--font-sans`,
+  which is what heroui.pro itself sets) and JetBrains Mono (`--font-mono`, used
+  for labels and numerals).
 
 ## The design system
+
+> **The spec is `docs/design-handoff.html`.** Open it in a browser. Every token,
+> size, radius, duration and contrast ratio in it was read out of heroui.pro's
+> compiled stylesheet (`chunks/29qranzd3vz4s.css`) and rendered markup on
+> 19 Aug 2026 — it is measured, not estimated, and it is the reference this
+> codebase is built to. When this file and the handoff disagree, the handoff
+> wins and this file is the thing to correct. The document is built in the
+> system it documents, so its own cards and buttons are live specimens.
+
 The palette is **heroui.pro's, duplicated** — values read out of their live
 stylesheet (`/_next/static/immutable/chunks/29qranzd3vz4s.css`), not estimated.
 It is baked into `:root` in `app/globals.css`; it is not a variant any more.
@@ -19,14 +28,24 @@ and `warning`. "HeroUI's colours" is ambiguous — this is the site's.
 
 The language, in four rules:
 
-1. **The ground is grey (`#f5f5f5`) and nothing is a flat white panel.** Their
-   cards carry `bg-background` — the same grey as the page — and are made to
-   read by a border and a wash rather than by a white fill. Ours follow: every
-   card runs a gradient off `--bg-sunken` into `--card-foot`, a trace of the
-   product hue. `.bento-card` adds the fuller treatment — a radially-masked dot
-   field at 8.4px and a hue wash rising from the bottom edge, both of which are
-   theirs.
-   **Beams** are the other borrowed effect: a narrow gradient window swept
+1. **The ground is grey (`#f5f5f5`) and a card is the same grey.** Their landing
+   card resolves to `--landing-card-background: var(--background)` — the page
+   colour — with a 1px `#dedee0` border at 24px radius and `p-6`. The border is
+   the *only* thing that makes it an object. There is **no fill gradient, no
+   hue wash, no dot field, no shadow and no hover lift** on a card anywhere in
+   their stylesheet; hover moves the border colour and nothing else.
+
+   An earlier pass here washed the product hue up from the card foot and added
+   a masked dot field. Both were removed — the wash is exactly what read as
+   faded next to the reference, and their only dot pattern belongs to the
+   colour-picker component, not to cards. Two things that look like card
+   treatments but are not: that dot field, and the `--surface` shadow token,
+   which they use on overlays, dialogs and form fields only.
+
+   **Colour on a card lives in the graphic inside it, at full saturation** —
+   never in the panel behind the copy.
+
+   **Beams** remain the one borrowed effect: a narrow gradient window swept
    across an SVG in user space, so one animation lights whichever part of a
    curve it crosses and the paths themselves never move. Their window is 34px
    on `cubic-bezier(0.16, 1, 0.3, 1)`, staggered 4–6.5s so a set never pulses
@@ -38,28 +57,84 @@ The language, in four rules:
    would be wrong. Under `prefers-reduced-motion` the beams are removed
    entirely rather than frozen, which would strand a bright patch mid-curve;
    the static connector lines still draw.
+1b. **One measure, one grid, one ground.** `.shell` is 62rem (992px), their
+   standard section measure; `.shell-wide` is 73.25rem (1172px) for full-bleed
+   showcase graphics only. `.bento` is a fixed six-column grid with a 16px
+   gutter — not an auto-fit track list — and cards span 2, 3 or 6 of it so the
+   spans always sum to a whole row. It collapses to two columns below `lg` and
+   to one capped at 500px and centred below `md`, which is the ladder their
+   markup carries. Sections do **not** alternate fills: `.section-subtle` is
+   the same `#f5f5f5` as everything else and is separated by a rule, because a
+   lighter band under a card that is itself the ground colour inverts the
+   reference and leaves the card darker than the band it sits in.
 
-   **Washes are anchored to the foot of a card, never the top.** Colour belongs
-   where the graphics and chips are, not under body copy: a top-down wash put
-   `--text-muted` at 4.1–4.3:1, below even the 4.43:1 it manages on the plain
-   ground, so tinting was making an already-marginal token worse rather than
-   inheriting a known problem. `--card-foot` is also what a graphic's fade must
-   dissolve into — fading to `--surface` stops the gradient against a colour
-   the card is not.
+1c. **There are no gradient fills.** Not on buttons, not on icons, not on
+   chips, not on the closing panel — their stylesheet contains none, and no
+   coloured drop shadow under any of them either. `.btn-gradient` keeps its
+   name and is a flat `--brand` fill hovering to a 10% snow mix; `.icon-tile`
+   is not a tile at all (see 1e); `.gradient-panel` is flat
+   `#18181b`, their dark surface. The one `linear-gradient` left in the
+   stylesheet is `.bento-fade`, which is a transparent-to-ground fade rather
+   than a colour ramp. Buttons are 40/36/44px at 24px radius, 14px weight 500,
+   pressing to `scale(0.97)` — 0.98 small, 0.96 large, which is theirs.
+
+1d. **Two additions the reference does not have**, both made at direction and
+   both built from their card rather than invented alongside it:
+
+   - `.statement` — the founders' note after the hero. Type on the ground at
+     the 32px size, no card, no rule, no quotation mark.
+   - `.cloud` — the chat-cloud frame on the three design principles. Their card
+     exactly (same ground fill, same 1px border, same 24px radius) plus a tail.
+     The tail is a rotated square carrying two of the card's borders, with a
+     second pseudo-element masking the segment of the card's own bottom border
+     it joins — without that mask the border runs straight across the mouth of
+     the tail, because the fill and the page are the same colour.
+
+   `.mark` is the highlighted word inside a cloud. It takes `--brand-soft` as a
+   fill and `--brand-text` as the type, both from the card's own brand scope —
+   **never the raw semantic hues.** `#17c964` and `#f5a524` as text measure
+   2.01:1 and 1.87:1 on the ground and are unreadable; the scope values were
+   already measured against exactly this tint. A highlight is a fill, and a
+   fill only has to clear 3:1.
+
+1e. **Icons are strokes, not tiles.** By direction: no filled square, no soft
+   tint, no shape of any kind behind an icon — just the line drawing in the
+   scope's colour. `.icon-tile` keeps its name because it is on four call sites
+   and still marks "the icon that heads a card", but it draws no tile. It
+   needs `align-self: flex-start`: the explicit width it used to carry is what
+   kept it off the left edge of a flex-column card, and without one it
+   stretches and centres its own content.
+
+   `--brand` is the right token for a stroke. WCAG 1.4.11 asks 3:1 of a
+   graphical object and every scope clears it on the ground — violet 5.23,
+   blue 4.74, clay 4.43, emerald 3.46, cyan 3.43, amber 3.06. A stroke is not
+   type and does not owe 4.5:1.
+
 2. **The display heading is two-tone.** `.display-tone` is flat
    `--display-muted` grey on its own line — not a gradient, despite the ramp
    tokens still existing for fills. It reads as emphasis and de-emphasis.
 3. **Colour appears once above the fold**, as a plain blue line of text.
-   `.pill` has no border, background or chip behind it.
-4. **Weight carries hierarchy.** 700 display at `-0.045em`, 600 headings, 500
-   controls, 400 body. Inter.
+   `.pill` has no border, background or chip behind it. The section eyebrow is
+   the same idea: `text-accent`, 16px, weight 500, with **nothing drawn beside
+   it** — the gradient dash that used to head `.eyebrow` is not in their markup
+   and has been removed.
+4. **Size carries hierarchy, not weight.** Every heading in their stylesheet is
+   `font-medium` — there is no 600 or 700 anywhere in their type. The scale is
+   72 / 48 / 32 / 20 at weight 500, body 16 at 400, and all three of their
+   tracking values (`-1.08px`, `-0.72px`, `-0.48px`) are `-0.015em` of their
+   own size, so one letter-spacing serves the lot. Bolding a heading to give it
+   emphasis visibly leaves the system.
+
+   Two card-title sizes exist and are **not** interchangeable: 14px/500 title
+   with 12px body is their compact showcase tile; feature cards (`p-6`, 240px+)
+   take 20px/500 with 16px body. Ours are feature cards.
 
 **Product hues are six distinct colours**, one per product — a deliberate
 departure from heroui.pro, whose chart hues are steps of one accent ramp. That
 works for a site selling one product and made four of these six the same blue.
 NSQR keeps the house accent as the flagship; the rest are spaced around the
-wheel. Every fill clears 3:1 on both grounds (the white card and the `#f5f5f5`
-page) and every `--brand-text` clears 4.5:1 on both.
+wheel. Every fill clears 3:1 on the ground (a card is that same `#f5f5f5`, so
+there is one ground to clear, not two) and every `--brand-text` clears 4.5:1.
 
 **NSQR is violet and coLab is blue**, which is what the `accent` field in
 `site.js` has always said. An earlier pass had the two swapped when the palette
@@ -74,10 +149,9 @@ tried and removed, because these lockups already are the marks and an icon
 beside one only repeats it.
 
 **The tail is text.** `.lockup-tail` resolves `--brand-text`, which clears
-4.5:1 on a white card, on the `#f5f5f5` page **and on the lockup's own tinted
-pill**. The pill is the tightest of the three and is what set the values — the
-teal, green and amber tails all cleared white and the ground comfortably and
-failed on their own chip. Never set a tail to `--brand`, which is a fill and is
+4.5:1 on the `#f5f5f5` ground **and on the lockup's own tinted pill**. The pill
+is the tighter of the two and is what set the values — the teal, green and
+amber tails all cleared the ground comfortably and failed on their own chip. Never set a tail to `--brand`, which is a fill and is
 only held to 3:1.
 
 **AES is "Automated AI-based Essay Scoring", not Advanced Encryption
@@ -88,9 +162,11 @@ it a cipher mark.
 **CONTRAST: this palette fails WCAG in seven places, deliberately.** It is
 their design, duplicated at explicit direction after every failure was measured
 and reported. `--text-muted` on the ground is 4.43:1; the accent as text is
-3.68:1 on a card and 3.38:1 on the ground; white on an accent fill is 3.68:1;
-`--display-muted` is 2.33:1 against a 3.0 floor; danger/success/warning as text
-are 4.09/2.01/1.87. **Do not silently "fix" these** — the corrected values live
+3.38:1 (a card is the ground colour now, so there is one figure, not two);
+white on an accent fill is 3.59:1; `--display-muted` — their `text-muted/60`,
+which resolves to `#a6a6ab` — is 2.22:1 against a 3.0 floor;
+danger/success/warning as text are 4.09/2.01/1.87. The full ledger, with the
+dark-theme figures, is in `docs/design-handoff.html`. **Do not silently "fix" these** — the corrected values live
 in `[data-palette="corrected"]`, which keeps `#0485f7` as a *fill* (a fill needs
 only 3:1) and darkens it to `#0067c9` only where it becomes small type. Moving
 to it is one attribute on `<html>`.
@@ -113,7 +189,8 @@ Delete either once it is clear it will never be wanted.
 
 ## Key paths
 - `app/data/site.js`: **single source of truth** for the hero copy, products,
-  capabilities, principles and all product content. Every page reads from here.
+  the founders' note, the design principles, principles and all product
+  content. Every page reads from here.
 - `app/layout.js`: root layout, Inter + JetBrains Mono, metadata defaults,
   organization schema.
 - `app/globals.css`: design tokens + all component classes. ~1,000 lines, down
@@ -181,7 +258,7 @@ Delete either once it is clear it will never be wanted.
   is `ShareCard.js` and the OG routes, which are rendered by Satori outside the
   document and cannot read a CSS variable.
 - **`--brand` is a fill; `--brand-text` is for words.** `--brand` is the hue's
-  500 and goes on icon tiles, dots, rules and gradients. Anything that sets a
+  500 and goes on icon strokes, dots and rules. Anything that sets a
   colour on text uses `--brand-text` (or `--accent-text`), which is the 600/700
   step chosen to read on both white and its own soft tint.
 - **Per-product accent.** Put `data-brand="violet|blue|cyan|emerald|amber|clay"`

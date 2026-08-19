@@ -122,14 +122,14 @@ export function FeatureBento({ eyebrow, title, lead, items, subtle = false }) {
             return (
               <article className="card card-hover" key={item.title}>
                 <span className="icon-tile">
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-7 w-7" />
                 </span>
                 <h3 className="mt-5 text-lg">{item.title}</h3>
-                <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">
+                <p className="mt-2 text-base leading-[1.5] text-muted">
                   {item.description}
                 </p>
                 {item.scenario && (
-                  <p className="mt-4 rounded-token bg-[color:var(--bg-subtle)] p-3.5 text-sm leading-relaxed text-muted">
+                  <p className="mt-4 rounded-token bg-[color:var(--bg-subtle)] p-3.5 text-sm leading-[1.43] text-muted">
                     {item.scenario}
                   </p>
                 )}
@@ -155,7 +155,7 @@ export function StepList({ eyebrow, title, lead, steps, subtle = false }) {
           {steps.map((step, index) => (
             <li className="step" data-active={index === 0} key={step.title}>
               <h3 className="text-lg">{step.title}</h3>
-              <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">
+              <p className="mt-2 text-base leading-[1.5] text-muted">
                 {step.description}
               </p>
             </li>
@@ -178,7 +178,7 @@ export function PricingCards({ eyebrow, title, lead, plans }) {
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:max-w-4xl">
           {plans.map((plan, index) => (
             <article
-              className={`card ${index === 1 ? "card-tinted" : ""}`}
+              className={`card ${index === 1 ? "card-featured" : ""}`}
               key={plan.name}
             >
               <div className="flex items-center justify-between gap-3">
@@ -217,7 +217,7 @@ export function FaqList({ eyebrow, title, faqs, subtle = false }) {
           {faqs.map((faq) => (
             <article className="card" key={faq.question}>
               <h3 className="text-base">{faq.question}</h3>
-              <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
+              <p className="mt-2.5 text-base leading-[1.5] text-muted">
                 {faq.answer}
               </p>
             </article>
@@ -235,10 +235,10 @@ export function ProductClosing({ product, title, body, action }) {
       <div className="shell">
         <div className="gradient-panel">
           <div className="relative z-10 mx-auto max-w-2xl">
-            <h2 className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-bold tracking-tight">
+            <h2 className="text-[clamp(2.25rem,3.6vw,3rem)]">
               {title}
             </h2>
-            <p className="mt-4 text-[1.0625rem] leading-relaxed text-white/85">
+            <p className="mt-4 text-base leading-[1.5] text-white/85">
               {body}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

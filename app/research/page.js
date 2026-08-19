@@ -34,7 +34,7 @@ export default function ResearchPage() {
             ))}
           </ol>
 
-          <p className="mt-10 max-w-2xl text-sm leading-relaxed text-faint">
+          <p className="mt-10 max-w-2xl text-sm leading-[1.43] text-faint">
             Authors are listed in publication order. Entries marked with a
             university affiliation were carried out with collaborators at that
             institution.
@@ -71,7 +71,7 @@ function PublicationEntry({ paper }) {
           )}
         </div>
 
-        <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted">
+        <p className="mt-3 text-base leading-[1.5] text-muted">
           {paper.summary}
         </p>
 

@@ -151,9 +151,9 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
         {status === "sent" ? (
           <div>
             <span className="icon-tile mb-4">
-              <CheckIcon className="h-5 w-5" />
+              <CheckIcon className="h-6 w-6" />
             </span>
-            <p className="text-[0.95rem] leading-relaxed text-muted">
+            <p className="text-base leading-[1.5] text-muted">
               Thanks — we have your details and will come back to you shortly,
               usually within two working days.
             </p>
@@ -179,7 +179,7 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
               aria-hidden="true"
             />
 
-            <p className="text-[0.925rem] leading-relaxed text-muted">
+            <p className="text-base leading-[1.5] text-muted">
               {isAccessRequest
                 ? `Tell us a little about your team and we'll send ${productName} documentation, onboarding steps, and timelines.`
                 : productName

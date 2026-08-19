@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { legalDocs, products } from "../data/site";
 import { readDoc } from "../components/LegalDoc";
+import { ArrowIcon } from "../components/Icons";
 import ProductName from "../components/ProductName";
 
 export const metadata = {
@@ -11,42 +12,36 @@ export const metadata = {
 };
 
 export default function LegalIndexPage() {
-  const site = legalDocs.filter((doc) => !doc.product);
-  const nsqr = legalDocs.filter((doc) => doc.product === "NSQR");
+  const siteDocs = legalDocs.filter((doc) => !doc.product);
+  const nsqrDocs = legalDocs.filter((doc) => doc.product === "NSQR");
   const nsqrProduct = products.find((product) => product.name === "NSQR");
 
   return (
     <main id="main">
-      <section className="border-b border-[color:var(--border)]">
-        <div className="shell pb-10 pt-12">
-          {/* Deliberately the same masthead as a document page rather than a
-              marketing hero — people arrive here with an errand, not to be
-              introduced to the section. */}
-          <div className="legal-measure">
-            <p className="eyebrow">Legal</p>
-            <h1 className="display mt-3 text-[clamp(1.6rem,3.4vw,2.25rem)]">
-              Policies, in plain order.
-            </h1>
-            <p className="mt-4 text-[0.9rem] leading-relaxed text-muted">
-              Each document states at the top which product it governs.
-            </p>
-          </div>
+      {/* Deliberately a quieter masthead than the marketing pages — people
+          arrive here with an errand, not to be introduced to the section. */}
+      <section className="relative isolate overflow-hidden border-b border-[color:var(--border)]">
+        <div className="shell pb-12 pt-20 md:pt-24">
+          <p className="eyebrow">Legal</p>
+          <h1 className="section-title max-w-2xl text-[clamp(2rem,4vw,2.75rem)]">
+            Policies, in plain order
+          </h1>
+          <p className="lead">
+            Each document states at the top which product it governs, and when
+            it was last updated.
+          </p>
         </div>
       </section>
 
-      <section className="pb-24 pt-10">
+      <section className="section-tight pb-24">
         <div className="shell">
-          <div className="legal-measure">
-            <Register docs={site} label="This website" />
-            {/* The register heading names the product, so it wears the lockup
-                and the product's accent rather than plain uppercase text. */}
-            <Register
-              brand={nsqrProduct.accent}
-              className="mt-12"
-              docs={nsqr}
-              label={<ProductName className="text-sm" product={nsqrProduct} />}
-            />
-          </div>
+          <Register docs={siteDocs} label="This website" />
+          <Register
+            brand={nsqrProduct.accent}
+            className="mt-14"
+            docs={nsqrDocs}
+            label={<ProductName product={nsqrProduct} />}
+          />
         </div>
       </section>
     </main>
@@ -56,10 +51,8 @@ export default function LegalIndexPage() {
 function Register({ brand, className = "", docs, label }) {
   return (
     <section className={className} data-brand={brand}>
-      <h2 className="text-xs uppercase tracking-[0.14em] text-faint">
-        {label}
-      </h2>
-      <div className="legal-register mt-3">
+      <h2 className="text-sm font-semibold text-faint">{label}</h2>
+      <div className="legal-register mt-4">
         {docs.map((doc) => (
           <DocRow doc={doc} key={doc.slug} />
         ))}
@@ -75,9 +68,14 @@ function DocRow({ doc }) {
 
   return (
     <Link className="legal-row" href={doc.href}>
-      <span className="legal-row-title">{doc.title}</span>
-      {updated && <span className="legal-row-date">{updated}</span>}
-      <span className="legal-row-note">{doc.note}</span>
+      <span className="min-w-0">
+        <span className="legal-row-title block">{doc.title}</span>
+        <span className="legal-row-note block">{doc.note}</span>
+      </span>
+      <span className="flex flex-shrink-0 items-center gap-4">
+        {updated && <span className="chip chip-neutral">{updated}</span>}
+        <ArrowIcon className="h-4 w-4 text-[color:var(--brand-text)]" />
+      </span>
     </Link>
   );
 }

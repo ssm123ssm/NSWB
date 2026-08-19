@@ -1,23 +1,24 @@
-import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import SiteChrome from "./components/SiteChrome";
 import { site } from "./data/site";
 import "./globals.css";
 
-// The handoff loaded only 300/400 so a bold could not be reached. That rule is
-// gone and weight is an open decision, so the usable range is loaded again —
-// headings currently sit at 600, which would otherwise render as faux bold.
-// The typeface itself is still the handoff's and is also an open decision.
-const jakarta = Plus_Jakarta_Sans({
+// Inter, which is what HeroUI itself sets. Weight carries hierarchy in this
+// system — 700 display, 600 headings, 500 controls, 400 body — so all four
+// steps are loaded and all four are used.
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
-const plexMono = IBM_Plex_Mono({
+// Mono is no longer a semantic marker of machine output the way the old brand
+// used it. It is here for code, hashes and figures, and nothing else.
+const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400"],
+  weight: ["400", "500"],
   variable: "--font-mono",
 });
 
@@ -89,9 +90,9 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={`${jakarta.variable} ${plexMono.variable}`}>
+      <body className={`${inter.variable} ${mono.variable}`}>
         <a
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-[color:var(--surface)] focus:px-4 focus:py-2 focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-token-lg focus:bg-[color:var(--surface)] focus:px-4 focus:py-2 focus:shadow-float"
           href="#main"
         >
           Skip to content

@@ -66,13 +66,13 @@ export default function LegalDoc({ doc }) {
       <section className="border-b border-[color:var(--border)]">
         <div className="shell pb-10 pt-12">
           <div className="legal-measure">
-            <Link className="link-faint text-sm" href="/legal">
+            <Link className="link-muted text-sm" href="/legal">
               ← All policies
             </Link>
             <p className="eyebrow mt-6">{doc.scope}</p>
             {/* Held smaller than a marketing hero — a document masthead, not a
                 headline, so the dense body below reads as one continuous text. */}
-            <h1 className="display mt-3 text-[clamp(1.6rem,3.4vw,2.25rem)]">
+            <h1 className="mt-3 text-[clamp(1.75rem,3.4vw,2.5rem)] font-bold tracking-tight">
               {title ?? doc.title}
             </h1>
             {updated && (

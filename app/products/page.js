@@ -1,98 +1,83 @@
 import Link from "next/link";
-import { ArrowIcon, ExternalIcon } from "../components/Icons";
 import { ContactButton } from "../components/SiteChrome";
+import { ArrowIcon, CheckIcon, LayersIcon } from "../components/Icons";
 import ProductName from "../components/ProductName";
-import RequestAccessLink from "../components/RequestAccessLink";
-import { principles, products } from "../data/site";
+import { closing, products } from "../data/site";
 
 export const metadata = {
   title: "Products",
   description:
-    "NSQR, Vault, coLab, Presence, Lipd Hub and AES — a focused product line for secure, modern intelligence.",
+    "Every product in the studio — what each one does, whether it is live, and where to see it.",
   alternates: { canonical: "/products" },
 };
 
 export default function ProductsPage() {
-  const live = products.filter((p) => p.status === "live");
-  const upcoming = products.filter((p) => p.status !== "live");
+  const live = products.filter((product) => product.status === "live");
+  const building = products.filter((product) => product.status !== "live");
 
   return (
     <main id="main">
-      <section className="relative overflow-hidden border-b border-[color:var(--border)]">
-        <div className="grid-field pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="shell relative grid gap-12 pb-16 pt-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-          <div>
-            <h1 className="display max-w-2xl text-[clamp(2rem,4.6vw,3.25rem)]">
-              A focused product line for secure, modern intelligence.
-            </h1>
-            <p className="lead mt-5 max-w-xl">
-              Each platform blends clean interaction design with research-grade
-              engineering. Built to feel calm, precise, and dependable.
-            </p>
-          </div>
-
-          <dl className="card p-6">
-            <dt className="text-xs uppercase tracking-[0.14em] text-faint">
-              Core themes
-            </dt>
-            <dd className="mt-5 space-y-3.5">
-              {principles.map((item, index) => (
-                <div
-                  className={`flex items-center justify-between gap-4 text-sm ${
-                    index < principles.length - 1
-                      ? "border-b border-[color:var(--border)] pb-3.5"
-                      : ""
-                  }`}
-                  key={item.label}
-                >
-                  <span className="text-muted">{item.title}</span>
-                  <span className="font-[family-name:var(--font-mono)] text-xs text-faint">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </dd>
-          </dl>
+      <section className="relative isolate overflow-hidden">
+        <div
+          className="blob blob-from left-[-6%] top-[-10rem] h-[24rem] w-[24rem]"
+          aria-hidden="true"
+        />
+        <div className="shell pb-14 pt-20 md:pt-24">
+          <p className="eyebrow">The studio</p>
+          <h1 className="section-title max-w-3xl text-[clamp(2.25rem,5vw,3.5rem)]">
+            Six products, one standard
+          </h1>
+          <p className="lead">
+            Some of these you can open right now. Some are still being built,
+            and are marked as such rather than described as though they were
+            finished.
+          </p>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section-tight">
         <div className="shell">
-          <h2 className="text-xs uppercase tracking-[0.14em] text-faint">
-            Available now
-          </h2>
-          <div className="mt-6 space-y-5">
+          <h2 className="sr-only">Live products</h2>
+          <div className="bento">
             {live.map((product) => (
-              <ProductRow key={product.slug} product={product} />
+              <ProductCard key={product.slug} product={product} />
             ))}
           </div>
-
-          {upcoming.length > 0 && (
-            <>
-              <h2 className="mt-16 text-xs uppercase tracking-[0.14em] text-faint">
-                In development
-              </h2>
-              <div className="mt-6 space-y-5">
-                {upcoming.map((product) => (
-                  <ProductRow key={product.slug} product={product} />
-                ))}
-              </div>
-            </>
-          )}
         </div>
       </section>
 
-      <section className="section section-subtle">
-        <div className="shell text-center">
-          <h2 className="section-title">
-            Tell us what you want to build next.
-          </h2>
-          <p className="lead mx-auto mt-4 max-w-xl">
-            From AI tooling to secure platforms, we help you design and ship
-            products that feel refined and trustworthy from day one.
-          </p>
-          <div className="mt-8">
-            <ContactButton>Start a project</ContactButton>
+      {building.length > 0 && (
+        <section className="section section-subtle">
+          <div className="shell">
+            <p className="eyebrow">Still being built</p>
+            <h2 className="section-title max-w-2xl">Not finished yet</h2>
+            <p className="lead">
+              Real work, not vapour — but not shipped, so nothing here claims a
+              date it cannot keep.
+            </p>
+            <div className="bento mt-12">
+              {building.map((product) => (
+                <ProductCard key={product.slug} product={product} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="section-tight pb-20">
+        <div className="shell">
+          <div className="gradient-panel">
+            <div className="relative z-10 mx-auto max-w-2xl">
+              <h2 className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-bold tracking-tight">
+                {closing.title}
+              </h2>
+              <p className="mt-4 text-[1.0625rem] leading-relaxed text-white/85">
+                {closing.body}
+              </p>
+              <ContactButton className="btn btn-lg mt-8 bg-white text-[color:var(--text)] hover:opacity-90">
+                Start a conversation
+              </ContactButton>
+            </div>
           </div>
         </div>
       </section>
@@ -100,80 +85,54 @@ export default function ProductsPage() {
   );
 }
 
-function ProductRow({ product }) {
-  const isLive = product.status === "live";
-  // Proprietary products are shipped but gated, so asking for access is the
-  // primary action rather than an afterthought.
-  const byRequest = product.access === "request";
-
+function ProductCard({ product }) {
   return (
-    <article
-      className="card card-hover card-accent grid gap-6 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr]"
-      data-brand={product.accent}
-    >
-      <div>
-        <div className="flex flex-wrap items-center gap-3">
-          <h3 className="text-2xl">
-            <ProductName product={product} />
-          </h3>
-          <span className={`badge ${isLive ? "" : "badge-outline"}`}>
-            {isLive ? (
-              <>
-                <span className="dot" aria-hidden="true" />
-                {byRequest ? "Live · by request" : "Live"}
-              </>
-            ) : (
-              "In development"
-            )}
-          </span>
-        </div>
-        <p className="mt-3 text-[0.95rem]">{product.tagline}</p>
-        <p className="mt-2 text-sm text-faint">{product.discipline}</p>
+    <article className="card card-hover" data-brand={product.accent}>
+      <div className="flex items-start justify-between gap-4">
+        <span className="icon-tile">
+          <LayersIcon className="h-5 w-5" />
+        </span>
+        <span
+          className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}
+        >
+          {product.status === "live" ? "Live" : "In development"}
+        </span>
       </div>
 
-      <div className="flex flex-col">
-        <p className="text-[0.95rem] leading-relaxed text-muted">
-          {product.description}
-        </p>
+      <h3 className="mt-5 text-xl">
+        <ProductName product={product} />
+      </h3>
+      <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">
+        {product.tagline}
+      </p>
 
-        <ul className="mt-5 flex flex-wrap gap-1.5">
-          {product.highlights.map((highlight) => (
-            <li
-              key={highlight}
-              className="rounded-md border border-[color:var(--border)] px-2 py-1 text-[0.7rem] text-faint"
-            >
+      {product.highlights && (
+        <ul className="check-list">
+          {product.highlights.slice(0, 3).map((highlight) => (
+            <li key={highlight}>
+              <CheckIcon className="h-4 w-4" />
               {highlight}
             </li>
           ))}
         </ul>
+      )}
 
-        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6">
-          {product.detail && (
-            <Link className="link-arrow" href={product.detail}>
-              Explore <ProductName product={product} />
-              <ArrowIcon />
-            </Link>
-          )}
-          {/* Products with a detail page send people there first; the app link
-              lives on that page, so the card does not duplicate it. */}
-          {product.app && !product.detail && (
-            <a
-              className="link-arrow"
-              href={product.app}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Visit <ProductName product={product} />
-              <ExternalIcon className="h-3.5 w-3.5" />
-            </a>
-          )}
-          <RequestAccessLink
-            product={product.name}
-            label={isLive && !byRequest ? "Talk to us" : "Request access"}
-            className={isLive && !byRequest ? "link-muted" : "link-arrow"}
-            withArrow={!isLive || byRequest}
-          />
-        </div>
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+        {product.detail ? (
+          <Link className="link-arrow" href={product.detail}>
+            Explore {product.name}
+            <ArrowIcon />
+          </Link>
+        ) : (
+          <ContactButton
+            className="link-arrow"
+            subject={product.name}
+            intent="access"
+          >
+            Request access
+            <ArrowIcon />
+          </ContactButton>
+        )}
       </div>
     </article>
   );

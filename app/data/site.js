@@ -9,6 +9,11 @@ export const site = {
   description:
     "Neurasense is a studio for software, cryptography, and applied AI, building products and systems for people who can’t afford to guess.",
   url: "https://neurasense.io",
+  // The two lines the footer sets. Kept here rather than in the component so
+  // the footer stays a layout and the words stay with the rest of the copy.
+  footerLine:
+    "A studio for software, cryptography, and applied AI, building for people who cannot afford to guess.",
+  footerNote: "Built in the open, tested against the worst case.",
   linkedin: "https://www.linkedin.com/company/neurasns/?viewAsMember=true",
   github: "https://github.com/neurasense",
 };
@@ -17,6 +22,75 @@ export const site = {
    at #approach had nothing left to scroll to and went. Research is a route
    rather than an anchor — it is the one page a stranger can check against a
    third party, so it has to be linkable on its own. */
+/**
+ * The hero.
+ *
+ * `headline` and `lead` are fixed copy and are not to be rewritten — they are
+ * the two lines the studio is named by. `headline` is split only so the tail
+ * can carry the house gradient; joined back together it is the sentence
+ * verbatim, which is what `headlinePlain` is for (metadata, OG images, and
+ * anywhere the gradient cannot follow).
+ */
+export const hero = {
+  pill: { tag: "New", text: "coLab is open for early teams" },
+  headlineHead: "We think about what breaks —",
+  headlineTail: "before it breaks",
+  headlinePlain: "We think about what breaks — before it breaks",
+  lead: "A studio for software, cryptography, and applied AI. Nothing here is assumed to work.",
+  actions: {
+    primary: { label: "See what we build", href: "/#products" },
+    secondary: { label: "Read the research", href: "/research" },
+  },
+};
+
+/**
+ * The strip under the hero. Figures only — anything here has to be true and
+ * checkable, so it counts things the site itself can account for rather than
+ * claiming reach we cannot evidence.
+ */
+export const heroStats = [
+  { value: "6", label: "Products in the studio" },
+  { value: "3", label: "Disciplines under one roof" },
+  { value: "100%", label: "Client-side encrypted, in Vault" },
+  { value: "0", label: "Assumptions taken on trust" },
+];
+
+/**
+ * The bento. Three disciplines, and the first one spans two columns because it
+ * is the one the studio leads with.
+ */
+export const capabilities = [
+  {
+    title: "Software platforms",
+    body: "Products people use daily, built to stay legible under load — clear state, predictable failure, and no surprises in the parts nobody looks at.",
+    icon: "layers",
+    accent: "violet",
+    wide: true,
+    points: ["Web platforms", "APIs and integrations", "Analytics that answer a question"],
+  },
+  {
+    title: "Cryptographic R&D",
+    body: "Encryption designed so that trusting us is not part of the threat model.",
+    icon: "lock",
+    accent: "cyan",
+    points: ["Client-side encryption", "Key handling", "Zero-trust architecture"],
+  },
+  {
+    title: "Applied AI",
+    body: "Models put to work on real problems, with the limits stated as plainly as the results.",
+    icon: "neural",
+    accent: "blue",
+    points: ["Research to product", "Evaluation first", "Stated limits"],
+  },
+];
+
+/** The closing call. */
+export const closing = {
+  eyebrow: "Work with us",
+  title: "Tell us what you cannot afford to get wrong",
+  body: "Bring the part of the system that worries you. We will tell you what we would test first, and whether we are the right people for it.",
+};
+
 export const navLinks = [
   { label: "Capabilities", href: "/#capabilities" },
   { label: "Products", href: "/#products" },

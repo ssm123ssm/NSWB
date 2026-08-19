@@ -157,7 +157,7 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
               Thanks — we have your details and will come back to you shortly,
               usually within two working days.
             </p>
-            <button className="btn btn-secondary mt-6 w-full" type="button" onClick={onClose}>
+            <button className="btn btn-bordered mt-6 w-full" type="button" onClick={onClose}>
               Close
             </button>
           </div>
@@ -259,7 +259,7 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
             )}
 
             <button
-              className="btn btn-primary mt-1 w-full"
+              className="btn btn-gradient mt-1 w-full"
               type="submit"
               disabled={status === "sending"}
             >

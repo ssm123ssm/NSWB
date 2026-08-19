@@ -3,91 +3,154 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Design tokens — BLANK SLATE
+   Design tokens
 
-   The neurasense brand handoff has been stripped out and nothing has replaced
-   it yet. This file is deliberately undesigned: greyscale ground and ink,
-   square corners, no elevation, no gradient, no hue anywhere.
+   The system is HeroUI's. The values below are not an impression of it — they
+   are lifted from `@heroui/theme@2.4.26` itself: `dist/colors/semantic.js` for
+   the palette and `dist/default-layout.js` for radius, elevation and type
+   scale. Nothing from HeroUI is installed or bundled here; this is a plain
+   Tailwind site that adopts their token values and builds its own components
+   on top.
 
-   What survives is structure. Every token *name* the components layer reads is
-   still defined below, and all ~230 component classes still resolve, so the
-   site lays out and reads exactly as it did — it simply carries no aesthetic
-   decision. Filling a value in here is how a decision gets made, and it
-   propagates to the whole site from this one place.
+   The shape of the language:
+   - White ground, near-black ink (#11181C), zinc for every neutral step.
+   - One saturated primary (#006FEE) spent freely — buttons, links, icon
+     tiles, gradients. There is no accent budget.
+   - Generous radius (8/12/14px, scaled up for large surfaces) and soft,
+     wide, low-opacity shadows. A card is a raised object, not a hairline box.
+   - Weight carries hierarchy: 700 display, 600 headings, 500 controls,
+     400 body.
+   - One gradient pair, --grad-from → --grad-to, re-pointed per product.
 
-   Known caveat: the site had two further palettes living down in the
-   components layer, outside this block — the `--pop` triples on
-   .showcase-panel and the eight-hue `[data-hue]` screen scale. Both are
-   neutralised in place at their own definitions rather than here, and both
-   need re-deciding alongside these tokens. See the notes at each.
-
-   Light only, one definition per colour. Do not add a `data-theme` selector or
-   a `prefers-color-scheme` block — there is no switch to serve them.
+   Light only. One definition per colour — no data-theme, no
+   prefers-color-scheme block.
    ========================================================================== */
 
 @layer base {
   :root {
-    /* --- Ground and ink -------------------------------------------------
-       Greyscale only. No hue is chosen anywhere in this file yet. */
+    /* --- Ground -----------------------------------------------------------
+       HeroUI's light base: background #FFFFFF, and content1–4 as the raised
+       and sunken steps. Depth is elevation and tint, never a paper/white
+       split. */
     --bg: #ffffff;
-    --bg-subtle: #f4f4f4;
-    --surface: #ffffff;
-    --surface-raised: #ffffff;
+    --surface: #ffffff; /* content1 */
+    --bg-subtle: #f4f4f5; /* content2 / zinc-100 */
+    --bg-sunken: #fafafa; /* zinc-50 */
+    --bg-muted: #e4e4e7; /* content3 / zinc-200 */
 
-    --border: #dcdcdc;
-    --border-strong: #b4b4b4;
+    --border: #e4e4e7;
+    --border-strong: #d4d4d8;
 
-    --text: #111111;
-    --text-muted: #555555;
-    --text-faint: #767676;
+    /* Foreground DEFAULT, then down the zinc ramp. */
+    --text: #11181c;
+    --text-muted: #52525b; /* zinc-600 */
+    --text-faint: #71717a; /* zinc-500 */
 
-    /* The accent slot is unfilled. It resolves to ink so that everything
-       wired to it still renders and still reads — a button is legible, a
-       focus ring is visible — without claiming a house colour. This is the
-       first decision to make, not a default to inherit. */
-    --accent: #111111;
-    --accent-hover: #000000;
-    --accent-soft: #f0f0f0;
+    /* --- Primary ----------------------------------------------------------
+       blue-500 is the house colour and the focus ring. 600 is the step that
+       is safe on words against white. */
+    --accent: #006fee;
+    --accent-hover: #005bc4;
+    --accent-soft: #e6f1fe; /* blue-50 */
     --accent-on: #ffffff;
-    --accent-text: #111111;
+    --accent-text: #005bc4; /* blue-600 */
 
+    /* --brand is the per-product alias. It defaults to the house colour and
+       is re-pointed by [data-brand] below. --brand is a fill; --brand-text is
+       the only one of the pair that goes on words. */
     --brand: var(--accent);
     --brand-hover: var(--accent-hover);
     --brand-soft: var(--accent-soft);
     --brand-text: var(--accent-text);
 
-    /* Elevation is off. A card is separated by its border, nothing else. */
-    --shadow-sm: none;
-    --shadow-md: none;
-    --shadow-lg: none;
+    /* One gradient, everywhere. Blue into cyan-600. Re-pointed per product,
+       never a second pair invented locally. */
+    --grad-from: #006fee;
+    --grad-to: #06b7db;
 
-    /* Square. Radius is a decision and has not been made. */
-    --radius: 0;
-    --radius-lg: 0;
+    /* --- Elevation --------------------------------------------------------
+       HeroUI's boxShadow small/medium/large, plus a resting step below them.
+       Wide, soft and very low opacity — the 1px 0.3 alpha ring in each is
+       what keeps the edge legible. */
+    --shadow-xs: 0px 0px 1px 0px rgb(0 0 0 / 0.2);
+    --shadow-sm: 0px 0px 5px 0px rgb(0 0 0 / 0.02),
+      0px 2px 10px 0px rgb(0 0 0 / 0.06), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
+    --shadow-md: 0px 0px 15px 0px rgb(0 0 0 / 0.03),
+      0px 2px 30px 0px rgb(0 0 0 / 0.08), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0px 0px 30px 0px rgb(0 0 0 / 0.04),
+      0px 30px 60px 0px rgb(0 0 0 / 0.12), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
 
-    /* Structural, not stylistic: the header's real height in flow (the h-16
-       row plus its 1px bottom border). .hero-screen subtracts it, so the two
-       must move together. */
-    --header-h: calc(4rem + 1px);
+    /* --- Radius -----------------------------------------------------------
+       HeroUI's 8/12/14px ladder, with two larger steps for panels and
+       sections — the library's `large` is sized for a Card, not for a hero
+       plate. Nothing on this site is square. */
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    --header-h: 4rem;
 
     color-scheme: light;
   }
 
-  /* The six product accents all resolve to ink. The attribute names and every
-     `accent` field in app/data/site.js are left exactly as they were, so the
-     moment real hues are chosen they drop straight in here and the whole site
-     picks them up. Until then no product is coloured, and no product is
-     accidentally privileged by carrying a hue the others lack. */
-  [data-brand="violet"],
-  [data-brand="blue"],
-  [data-brand="cyan"],
-  [data-brand="emerald"],
-  [data-brand="amber"],
+  /* --- Product accents ----------------------------------------------------
+     Each product gets one of HeroUI's semantic scales. Every hue is a set:
+     --brand is the 500 (fills, tiles, dots, gradients), --brand-soft is the
+     50 (chips and washes), --brand-text is the 600/700 step that is safe on
+     words against both white and its own soft tint.
+
+     The attribute values are the ones `app/data/site.js` already uses, so the
+     data did not have to move for the palette to. */
+  [data-brand="violet"] {
+    --brand: #006fee; /* primary — NSQR, and the house colour */
+    --brand-hover: #005bc4;
+    --brand-soft: #e6f1fe;
+    --brand-text: #005bc4;
+    --grad-from: #006fee;
+    --grad-to: #06b7db;
+  }
+  [data-brand="cyan"] {
+    --brand: #06b7db; /* cyan — Vault */
+    --brand-hover: #0e8aaa;
+    --brand-soft: #e6fafe;
+    --brand-text: #0b6a83;
+    --grad-from: #06b7db;
+    --grad-to: #006fee;
+  }
+  [data-brand="blue"] {
+    --brand: #7828c8; /* secondary — coLab */
+    --brand-hover: #6020a0;
+    --brand-soft: #f2eafa;
+    --brand-text: #6020a0;
+    --grad-from: #7828c8;
+    --grad-to: #006fee;
+  }
+  [data-brand="emerald"] {
+    --brand: #17c964; /* success — Presence */
+    --brand-hover: #12a150;
+    --brand-soft: #e8faf0;
+    --brand-text: #0e793c;
+    --grad-from: #17c964;
+    --grad-to: #06b7db;
+  }
+  [data-brand="amber"] {
+    --brand: #f5a524; /* warning — Lipd Hub */
+    --brand-hover: #c4841d;
+    --brand-soft: #fefce8;
+    --brand-text: #8a5a00;
+    --grad-from: #f5a524;
+    --grad-to: #f31260;
+  }
   [data-brand="clay"] {
-    --brand: var(--accent);
-    --brand-hover: var(--accent-hover);
-    --brand-soft: var(--accent-soft);
-    --brand-text: var(--accent-text);
+    --brand: #f31260; /* danger — AES */
+    --brand-hover: #c20e4d;
+    --brand-soft: #fee7ef;
+    --brand-text: #c20e4d;
+    --grad-from: #f31260;
+    --grad-to: #7828c8;
   }
 
   * {
@@ -96,141 +159,7 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
-  }
-
-  /* ---------------------------------------------------------------------
-     The first screen
-
-     The hero is its own screen: one viewport tall, and the scroll settles
-     either on it or fully past it, never half-way. Two mechanisms, kept
-     deliberately separate so one failing does not take the other with it —
-     snap decides where the scroll can rest, and the fade is decoration on top.
-
-     An earlier version pinned the hero and had the page slide over it. That
-     read better but needed the hero sticky, every section opaque and on a
-     higher layer, and a negative scroll-margin to cancel the header offset —
-     three things that had to stay true together across every page. This is
-     the plainer mechanism and it holds on its own.
-     --------------------------------------------------------------------- */
-  /* One screen. Exactly one viewport tall with its content centred in it, so
-     the page opens as a sequence of screens rather than a wall of scroll. The
-     home page uses two: the hero, and the statement that follows it. Add the
-     class to a section and it joins the sequence — nothing else to wire up. */
-  .screen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100svh;
-  }
-
-  /* The first screen is the one that shares the fold with the header. The
-     header is `position: sticky`, so it is in flow above this section and takes
-     its own height off the top of the viewport — a 100svh hero therefore ends
-     one header-height *below* the fold, and everything the layout parks against
-     its bottom edge goes with it. That is what pushed the product strip off the
-     first screen: the strip sat where it was asked to, at the floor of the
-     section, but the floor was under the fold.
-
-     Subtracting the header makes the first screen actually one viewport, so the
-     strip lands on the fold as intended. Only the hero needs this — every later
-     screen arrives with the header scrolled off and wants the full 100svh. */
-  .hero-screen {
-    min-height: calc(100svh - var(--header-h));
-  }
-
-  /* Where the scroll may rest: on a screen, or fully past it. Nothing in
-     between, so no screen is ever stranded half in view.
-
-     `proximity`, not `mandatory`. Mandatory applies to the whole scrolling
-     box, and every section below the screens is taller than the viewport — the
-     reader would be pulled back to a section start every time they stopped in
-     the middle of one, unable to read the bottom half.
-
-     `scroll-snap-stop: always` is what stops a fast flick sailing past a
-     screen. Off below 768px, where a screen already exceeds the display, and
-     off under reduced-motion.
-     Everything here is the fallback. ScreenPager takes the wheel event and
-     moves a whole screen per gesture, which is firmer than snap can be on its
-     own; when it is running it puts .screens-paged on <html> and this stands
-     down, so the two never fight over the same scroll. Without JS — or on a
-     browser where the pager bails out — this is what holds the screens
-     together. */
-  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    html:not(.screens-paged) {
-      scroll-snap-type: y proximity;
-    }
-
-    html:not(.screens-paged) .screen {
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      /* html sets scroll-padding-top so in-page anchors clear the sticky
-         header. A screen has to land flush instead — the 5rem of clearance
-         would otherwise leave a strip of the previous screen showing above it
-         — and a negative scroll-margin cancels the padding for these alone. */
-      scroll-margin-top: -5rem;
-    }
-
-    /* The first screen is not a snap target. It has nothing above it to arrive
-       from, and its resting place is the top of the document, which the scroll
-       already starts at.
-
-       Leaving it in the set is what made the page load 65px down: the negative
-       scroll-margin above puts the hero's snap position behind the top of the
-       document, proximity snapping resolves that to the nearest valid offset,
-       and the page settled one header-height in — far enough to start
-       `hero-recede` and hand the visitor a hero already faded to 79% before
-       they had touched anything.
-
-       This never showed while ScreenPager was mounted, because that component
-       switched this whole block off and the fallback was therefore never the
-       thing running. Worth knowing if the pager is ever restored: it hides this
-       rather than fixes it.
-
-       Every later screen keeps snapping, and still lands flush. */
-    html:not(.screens-paged) .hero-screen {
-      scroll-snap-align: none;
-    }
-
-    /* The far side of the last screen, so the scroll has something to commit
-       to once it leaves the last one. Deliberately no negative scroll-margin:
-       this is an ordinary section with a heading, and it keeps the 5rem of
-       header clearance that the nav links rely on. */
-    html:not(.screens-paged) .snap-edge {
-      scroll-snap-align: start;
-    }
-  }
-
-  /* The fade, as pure decoration over the snap above. Driven by scroll
-     position rather than a timer, so it tracks the reader's own movement in
-     both directions and cannot fall out of sync with the page.
-
-     Longhand, not the `animation` shorthand: the shorthand resets duration to
-     0s, and a scroll-driven animation with a 0s duration lands on its end
-     state immediately instead of tracking scroll — it looks like nothing is
-     happening at all. `auto` is what hands timing to the timeline. */
-  @supports (animation-timeline: scroll()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .hero-screen > * {
-        animation-name: hero-recede;
-        animation-duration: auto;
-        /* Eases out rather than running linear, so most of the fade is spent
-           in the first part of the gesture. The screen commits early and the
-           tail is nearly clear, instead of hanging around at half opacity for
-           the whole scroll — which is what made the handover feel draggy. */
-        animation-timing-function: ease-out;
-        animation-fill-mode: both;
-        animation-timeline: scroll(root block);
-        animation-range: 0 55svh;
-      }
-    }
-  }
-
-  @keyframes hero-recede {
-    to {
-      opacity: 0;
-      transform: translateY(-2rem);
-    }
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
   }
 
   body {
@@ -238,37 +167,40 @@
     color: var(--text);
     font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
       "Segoe UI", sans-serif;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
-    line-height: 1.6;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Type carries no decision yet. Headings are the browser's own weight and
-     scale, distinguished from body text only by being headings. Weight,
-     tracking and display sizing are all decisions to make; none is assumed
-     here. */
+  /* Weight carries hierarchy. Display is 700 and tightly tracked; headings
+     600; controls 500; body 400. */
   h1,
   h2,
   h3,
   h4 {
     color: var(--text);
     font-weight: 600;
-    letter-spacing: normal;
-    line-height: 1.25;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
     text-wrap: balance;
   }
 
+  h1 {
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+
   ::selection {
-    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
   }
 
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -277,3453 +209,822 @@
    ========================================================================== */
 
 @layer components {
-  /* --- Layout ------------------------------------------------------------ */
-
+  /* --- Layout -------------------------------------------------------------
+     One measure for the whole site. 80rem is wider than the old 78rem shell
+     because this language leans on cards sitting side by side rather than on
+     empty margin. */
   .shell {
     width: 100%;
-    max-width: 68rem;
+    max-width: 80rem;
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: clamp(1.25rem, 4vw, 2.5rem);
   }
 
-  @media (min-width: 640px) {
-    .shell {
-      padding-inline: 2rem;
-    }
-  }
-
-  /* Two thirds of any layout should be empty — the brand's layout rule and
-     the biggest single difference between this and a generic software site.
-     These two are where most of that emptiness is spent. */
   .section {
-    padding-block: clamp(5rem, 11vw, 9rem);
+    padding-block: clamp(4rem, 9vw, 7.5rem);
   }
 
-  /* Two thirds of the standard rhythm, for pages short enough that the full
-     one reads as a gap rather than a breath. Used across /nsqr — apply it to
-     every section on a page or none of them, because the whole point is that
-     the spacing stays even down the page. */
   .section-tight {
-    padding-block: clamp(3.5rem, 7vw, 6rem);
+    padding-block: clamp(3rem, 6vw, 5rem);
   }
 
+  /* A band that carries more weight than white without going dark. */
   .section-subtle {
-    background: var(--bg-subtle);
+    background: var(--bg-sunken);
     border-block: 1px solid var(--border);
   }
 
-  /* --- Type -------------------------------------------------------------- */
+  /* --- Section headings ---------------------------------------------------
+     The eyebrow is a small caps-tracked line in the brand colour; the title
+     is the 600 heading under it; the lead is one muted paragraph. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--brand-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
 
-  /* Every other page overrides this with its own size, so the base is in
-     practice the home hero's. It carries the whole fold on its own now that
-     the strip of product marks has moved to the foot of the page, so it is
-     sized to fill that room — light type wants scale, not weight. */
-  .display {
-    font-size: clamp(2.75rem, 7.6vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.042em;
+  .eyebrow::before {
+    content: "";
+    width: 1.375rem;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      to right,
+      var(--grad-from),
+      var(--grad-to)
+    );
   }
 
   .section-title {
-    font-size: clamp(1.6rem, 3.4vw, 2.35rem);
-    line-height: 1.15;
+    margin-top: 0.875rem;
+    font-size: clamp(1.875rem, 3.6vw, 2.75rem);
+    font-weight: 700;
     letter-spacing: -0.03em;
+    line-height: 1.1;
   }
 
   .lead {
+    margin-top: 1rem;
+    max-width: 42rem;
     color: var(--text-muted);
-    font-size: clamp(1rem, 1.6vw, 1.125rem);
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
     line-height: 1.65;
   }
 
-  /* The hero strapline, set in the mono face. Worth knowing that this bends
-     rule 4 — mono is meant to mark machine output, and this is a sentence a
-     person wrote. It earns the exception by sitting under the display line as
-     a strapline rather than a paragraph, where the mono reads as a system
-     label. It is sized well above the 11px the small mono tags use, because a
-     hero subhead still has to be read. */
-  .lead-mono {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: clamp(0.8125rem, 1.05vw, 0.9375rem);
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    line-height: 1.75;
-    color: var(--text-muted);
-    text-wrap: balance;
+  .lead-center {
+    margin-inline: auto;
+    text-align: center;
   }
 
-  /* Product lockup. Inherits its size from context so one rule covers the hero
-     strip, card headings and inline links. */
-  .wordmark {
-    display: inline-block;
-    font-weight: 400;
-    letter-spacing: -0.04em;
-    text-transform: lowercase;
-    color: var(--text);
+  /* --- Gradient type ------------------------------------------------------ */
+  .gradient-text {
+    background: linear-gradient(
+      120deg,
+      var(--grad-from),
+      var(--grad-to)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* The clip leaves descenders on the edge of the box; a hair of padding
+       and a matching negative margin keeps them from being shaved. */
+    padding-inline: 0.06em;
+    margin-inline: -0.06em;
   }
 
-  /* --brand-text, not --brand. The tail is type, and --brand is a fill value
-     from the chart set — violet and cyan both land under 4.5:1 against the page
-     when they are used as letterforms, which is what put the wordmark on the
-     contrast report. --brand-text is the same hue carried to where it clears
-     AA, and using it here is what the pair was defined for. */
-  .wordmark-tail {
-    color: var(--brand-text);
-  }
-
-  /* The parent lockup. It reuses .wordmark for the letterforms and adds only
-     the floor the brand sets: below 19px the mark is not shrunk, it is
-     replaced by the `ns` avatar. The tail resolves from --brand, which with no
-     data-brand ancestor is the house violet — 500 on paper, 400 on ink, which
-     is what the brand asks for on each. It is never inverted: `neura` holds
-     the ink and `sense` the violet, in that order, on every surface. */
-  .brand-wordmark {
-    /* 19px is the brand's floor, not its size — sitting exactly on it makes the
-       mark read as timid next to 15px nav links. 22px puts clear daylight
-       between the two while staying quiet. The max() keeps the floor honest if
-       the root size ever changes. Tracking is the wordmark's own -0.045em,
-       tighter than the -0.04em the product lockups use. */
-    font-size: max(19px, 1.375rem);
-    letter-spacing: -0.045em;
-  }
-
-  /* The brand's `ns` avatar is not implemented: it is the mark for surfaces too
-     small for the lockup, and the site has none. It is also the only thing that
-     would need weight 500, so leaving it out keeps the whole system on the two
-     weights the brand loads. Add it back here — and add 500 to the font in
-     app/layout.js — if a favicon or app icon ever needs it. */
-
-  .eyebrow {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.6875rem;
-    font-weight: 400;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .text-muted {
-    color: var(--text-muted);
-  }
-  .text-faint {
-    color: var(--text-faint);
-  }
-  .text-brand {
-    color: var(--brand-text);
-  }
-
-  /* --- Chips ------------------------------------------------------------- */
-
-  /* The product lockup set as a tinted chip — the treatment the home hero gives
-     the featured product, lifted into a class so a product page can wear its own
-     mark the same way. Type size comes from context, and the lockup inside keeps
-     its own colours: head in --text, tail in --brand. */
-  .brand-tag {
-    display: inline-flex;
-    align-items: center;
-    border-radius: 999px;
-    padding: 0.3rem 0.85rem;
-    background: var(--brand-soft);
-    line-height: 1.5;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    border-radius: 999px;
-    padding: 0.2rem 0.6rem;
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.65rem;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    background: var(--brand-soft);
-    color: var(--brand-text);
-  }
-
-  .badge-outline {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    color: var(--text-faint);
-  }
-
-  /* A lockup inside a badge keeps its own face. The badge sets mono for label
-     text, which the mark would otherwise inherit — and the mark's tight
-     tracking reads as cramped on a monospace face. Slightly larger than the
-     label around it so the product still reads as the subject of the chip. */
-  .badge .wordmark {
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: -0.03em;
-  }
-
-  .dot {
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 999px;
-    background: currentColor;
-  }
-
-  /* --- Buttons ----------------------------------------------------------- */
-
+  /* --- Buttons ------------------------------------------------------------
+     Full-radius, 500 weight, and a small lift on press. The gradient button
+     is the primary call; solid is the quieter version of it; bordered and
+     ghost step down from there. */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.625rem;
-    padding: 0.7rem 1.3rem;
+    height: 2.75rem;
+    padding-inline: 1.25rem;
+    border-radius: var(--radius-full);
     font-size: 0.9375rem;
-    font-weight: 400;
-    line-height: 1.2;
+    font-weight: 500;
     white-space: nowrap;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: background-color 0.16s ease, border-color 0.16s ease,
-      color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+    transition: transform 0.15s ease, box-shadow 0.2s ease,
+      background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
   }
 
   .btn:active {
-    transform: translateY(1px);
+    transform: scale(0.97);
   }
 
-  .btn-primary {
-    background: var(--accent);
-    color: var(--accent-on);
-    box-shadow: var(--shadow-sm);
-  }
-  .btn-primary:hover {
-    background: var(--accent-hover);
+  .btn-sm {
+    height: 2.25rem;
+    padding-inline: 0.9375rem;
+    font-size: 0.875rem;
   }
 
-  .btn-brand {
+  .btn-lg {
+    height: 3.25rem;
+    padding-inline: 1.75rem;
+    font-size: 1rem;
+  }
+
+  .btn-gradient {
+    background: linear-gradient(
+      120deg,
+      var(--grad-from),
+      var(--grad-to)
+    );
+    color: #ffffff;
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--grad-from) 65%, transparent);
+  }
+
+  .btn-gradient:hover {
+    opacity: 0.9;
+    box-shadow: 0 12px 26px -8px color-mix(in srgb, var(--grad-from) 70%, transparent);
+  }
+
+  .btn-solid {
     background: var(--brand);
     color: var(--accent-on);
-    box-shadow: var(--shadow-sm);
   }
-  .btn-brand:hover {
+
+  .btn-solid:hover {
     background: var(--brand-hover);
   }
 
-  /* The lockup's own chip turned into a button. A solid fill flattens the mark
-     to a single colour, so a CTA whose label is a product name wears the brand
-     as a tint instead and lets the mark keep its face: head in --text, tail in
-     --brand. Quieter than .btn-brand by design — reach for it only where the
-     product name is the label. */
-  .btn-brand-soft {
+  /* HeroUI's "flat" — the soft tint carrying its own text colour. */
+  .btn-flat {
     background: var(--brand-soft);
-    color: var(--text);
-    border-color: color-mix(in srgb, var(--brand) 20%, transparent);
-  }
-  .btn-brand-soft:hover {
-    background: color-mix(in srgb, var(--brand) 8%, var(--brand-soft));
-    border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+    color: var(--brand-text);
   }
 
-  .btn-secondary {
-    background: var(--surface);
-    color: var(--text);
-    border-color: var(--border-strong);
+  .btn-flat:hover {
+    background: color-mix(in srgb, var(--brand) 16%, #ffffff);
   }
-  .btn-secondary:hover {
-    border-color: var(--text-faint);
-    background: var(--bg-subtle);
+
+  .btn-bordered {
+    border: 2px solid var(--border-strong);
+    color: var(--text);
+    background: transparent;
+  }
+
+  .btn-bordered:hover {
+    border-color: var(--brand);
+    color: var(--brand-text);
   }
 
   .btn-ghost {
-    background: transparent;
     color: var(--text-muted);
   }
+
   .btn-ghost:hover {
     background: var(--bg-subtle);
     color: var(--text);
   }
 
-  .btn-sm {
-    padding: 0.48rem 0.95rem;
-    font-size: 0.875rem;
+  /* --- Chips --------------------------------------------------------------
+     The announcement pill above a hero headline, and the small status chip. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    height: 2rem;
+    padding-inline: 0.375rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: border-color 0.2s ease, transform 0.15s ease;
   }
 
-  /* A filled button already sits on the accent, so the lockup's own colours
-     have nowhere to land — the head would go dark and the tail would vanish
-     into the fill. Inside one, the mark wears the button's foreground and
-     keeps only its lowercase, tightened setting. */
-  .btn-primary .wordmark,
-  .btn-primary .wordmark-tail,
-  .btn-brand .wordmark,
-  .btn-brand .wordmark-tail {
-    color: inherit;
+  a.pill:hover {
+    border-color: var(--brand);
+    transform: translateY(-1px);
   }
 
-  /* --- Surfaces ---------------------------------------------------------- */
+  .pill-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 1.375rem;
+    padding-inline: 0.5rem;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      120deg,
+      var(--grad-from),
+      var(--grad-to)
+    );
+    color: #ffffff;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
 
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    height: 1.625rem;
+    padding-inline: 0.625rem;
+    border-radius: var(--radius-full);
+    background: var(--brand-soft);
+    color: var(--brand-text);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .chip-neutral {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+  }
+
+  .chip-dot::before {
+    content: "";
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: var(--radius-full);
+    background: var(--brand);
+  }
+
+  /* --- Cards --------------------------------------------------------------
+     A card is a raised, rounded object: large radius, soft shadow, and a lift
+     on hover. This is the loudest single signal in the language. */
   .card {
     position: relative;
-    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.5rem, 2.4vw, 2rem);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease,
-      transform 0.2s ease;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.25s ease,
+      border-color 0.2s ease;
   }
 
   .card-hover:hover {
-    border-color: var(--border-strong);
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--brand) 35%, var(--border));
     box-shadow: var(--shadow-md);
-    transform: translateY(-3px);
   }
 
-  /* Hairline of brand colour along the top edge of a card. */
-  .card-accent::before {
-    content: "";
-    position: absolute;
-    inset-inline: var(--radius);
-    top: -1px;
-    height: 1px;
+  /* A card that wears its product's hue as a wash rather than a border. */
+  .card-tinted {
+    border-color: color-mix(in srgb, var(--brand) 22%, var(--border));
     background: linear-gradient(
-      90deg,
-      transparent,
-      var(--brand),
-      transparent
+      170deg,
+      var(--brand-soft) 0%,
+      var(--surface) 55%
     );
-    opacity: 0;
-    transition: opacity 0.25s ease;
   }
 
-  .card-accent:hover::before {
-    opacity: 0.9;
+  /* The bento: a card grid where a few cells span two columns. */
+  .bento {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
   }
 
+  .bento-wide {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 40rem) {
+    .bento-wide {
+      grid-column: span 1;
+    }
+  }
+
+  /* --- Icon tile ----------------------------------------------------------
+     The gradient square that heads a card. Always the house gradient, never a
+     locally invented pair. */
   .icon-tile {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 0.7rem;
-    background: var(--brand-soft);
-    color: var(--brand);
-  }
-
-  /* --- Principle track ----------------------------------------------------
-
-     The capabilities section: heading held on the left, the principles moving
-     past it on the right. See PrincipleTrack.js for why.
-
-     Single column and no stickiness below 768px — there is not enough width to
-     hold a column still beside another, and a short viewport makes the whole
-     device pointless. Mobile gets a plain card each, which is what the steps
-     already are. */
-  .principle-track {
-    display: grid;
-    gap: 2.5rem;
-  }
-
-  /* Base is a plain vertical list of cards, which is what mobile keeps and
-     what renders without JS. The deck below is the enhancement. */
-  .principle-deck {
-    display: grid;
-    gap: 1.25rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .principle-step {
-    display: grid;
-  }
-
-  /* The plate is a two-zone card: copy on one side, mark on the other.
-
-     The mark gets a column of its own rather than the corner watermark the
-     timeline cards use. Those carry enough content to bury a mark behind; this
-     one holds two sentences, so a watermark ends up crossing the copy — which
-     reads as a mistake rather than as texture. In its own column it can also
-     sit at a weight where it is actually legible as a drawing. */
-  .principle-plate {
-    position: relative;
-    display: grid;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  .principle-motif {
-    --motif-alpha: 0.16;
-
-    justify-self: end;
-    width: 6rem;
-    height: 6rem;
-    color: var(--brand);
-    opacity: var(--motif-alpha);
-    pointer-events: none;
-    transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .principle-title {
-    font-size: clamp(1.45rem, 2.6vw, 1.95rem);
-    line-height: 1.15;
-    letter-spacing: -0.025em;
-    text-wrap: balance;
-  }
-
-  /* Wider than body default and held to a readable measure: at this size the
-     description is the card's main text, not a caption under a heading. */
-  .principle-copy {
-    max-width: 34ch;
-    font-size: 1.05rem;
-    line-height: 1.65;
-  }
-
-  /* Fine print under the copy, and set as fine print: below body size, faint,
-     so it reads as a pointer off the card rather than as a third sentence of
-     it. Only the research principle carries one. */
-  .principle-note {
-    font-size: 0.8rem;
-    line-height: 1.6;
-    color: var(--text-faint);
-  }
-
-  .principle-rail {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .principle-track {
-      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-      gap: 4rem;
-      align-items: start;
-    }
-
-    /* 7rem clears the sticky header — html sets scroll-padding-top: 5rem for
-       the same header — and leaves the heading optically centred against the
-       step beside it rather than jammed under the chrome. */
-    .principle-aside {
-      position: sticky;
-      top: 7rem;
-    }
-
-    .principle-aside .section-title,
-    .principle-aside .lead {
-      margin-inline: 0;
-      text-align: start;
-    }
-
-    .principle-plate {
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 2.5rem;
-    }
-
-    .principle-motif {
-      width: 9.5rem;
-      height: 9.5rem;
-    }
-
-    .principle-rail {
-      display: grid;
-      gap: 0.75rem;
-      margin-top: 2.25rem;
-    }
-
-    .principle-rail-item {
-      display: grid;
-      grid-template-columns: 1.5rem minmax(0, 1fr);
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      color: var(--text-faint);
-      transition: color 0.35s ease;
-    }
-
-    .principle-rail-item i {
-      height: 1px;
-      background: var(--border-strong);
-      transform-origin: left;
-      transition: transform 0.35s ease, background-color 0.35s ease;
-    }
-
-    .principle-rail-item.is-on {
-      color: var(--text);
-    }
-
-    .principle-rail-item.is-on i {
-      background: var(--brand);
-      transform: scaleX(1.55);
-    }
-  }
-
-  /* Emphasis only once the observer is running, and only where there is room
-     to hold a column still — on mobile every step stays at full strength.
-
-     The dim is 0.82 rather than the half-opacity this reads as in a mockup:
-     the text underneath still has to clear contrast on --bg-subtle, which
-     .section-subtle puts behind it. The border and wash do the rest of the
-     work of saying which one is live. */
-  /* Only one card is ever on screen, so the brand tint is not an emphasis
-     state to be switched on — it is simply how a card looks. It reads the same
-     way in the mobile stack, where they sit one under another and each wears
-     its own accent rather than a column of greys. */
-  .principle-plate {
-    border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
-    background: color-mix(in srgb, var(--brand) 4%, var(--surface));
-    box-shadow: 0 18px 42px -30px color-mix(in srgb, var(--brand) 65%, transparent);
-  }
-
-  /* .card-accent keeps its hairline at opacity 0 until hover. There is no
-     hover to wait for here — the card on the stage is the one being read — so
-     it stays lit rather than adding a second device. */
-  .principle-plate.card-accent::before {
-    opacity: 0.9;
-  }
-
-  /* --- The reel ------------------------------------------------------------
-
-     Enhancement only: without JS, and under reduced motion, none of this
-     applies and the section stays the plain list of cards above.
-
-     The scroll block is what makes the section long and the stage is held
-     still inside it — both unchanged. What changed is the deck: the cards used
-     to share one grid cell and cross-fade in place, and now they sit in a row
-     and travel across it, right to left, driven by how far through the block
-     the stage has been held.
-
-     The trade is dwell for continuity. Cross-fading held the reader on exactly
-     one principle at a time, which was the point of the original; a reel shows
-     the seam between two cards at the midpoints instead. What it buys is that
-     the movement now matches the gesture — scrolling down pulls the row along
-     — so the section reads as one thing being swept rather than four things
-     being swapped. It also puts it in the same language as the showcase that
-     closes the page, which sweeps sideways for the same reason.
-
-     `align-items` is left at stretch on purpose: every card takes the height
-     of the tallest, so the silhouette does not jump as the row moves and the
-     copy changes length. */
-  @media (min-width: 768px) {
-    .principle-track[data-track="on"] .principle-scroll {
-      height: calc(var(--deck-steps, 3) * 80vh);
-    }
-
-    /* Stage and column both fill the screen under the header and centre their
-       own contents in it, so while the section is held the composition is
-       centred rather than pinned to the top with the rest of the screen empty
-       under it. 5rem is the header, the same figure html's scroll-padding-top
-       uses.
-
-       overflow: hidden is what makes it a reel rather than a row spilling
-       across the page — it is the window the cards pass behind. It clips at
-       the padding box, and the stage has no padding, so the window is exactly
-       the column. Safe for the plate's shadow: at 42px blur against -30px
-       spread the shadow has no horizontal reach at all, and the card is
-       centred in a full-height stage so its 9px of bottom reach is nowhere
-       near the clip either. */
-    .principle-track[data-track="on"] .principle-stage,
-    .principle-track[data-track="on"] .principle-aside {
-      position: sticky;
-      top: 5rem;
-      height: calc(100vh - 5rem);
-      display: grid;
-      align-content: center;
-    }
-
-    .principle-track[data-track="on"] .principle-stage {
-      overflow: hidden;
-      /* minmax(0, 1fr) rather than the implicit auto track, for the same
-         reason .principle-plate spells its columns that way: an auto track
-         floors at the min-content of what sits in it, and what sits in it is
-         now a flex row four plates wide. Left implicit, the track ignored the
-         552px column and sized itself to 1192px — the deck grew to fit the row
-         instead of the row overflowing the deck, so there was nothing for
-         overflow: hidden to clip and the cards rendered at more than double
-         their slot. */
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    /* The row. --deck-shift is written by PrincipleTrack.js in px, measured
-       from the cards themselves, so nothing here has to agree with the script
-       about slot widths or gap arithmetic — the transform just consumes what
-       the measurement produced.
-
-       No transition on the transform: it is following the scroll position
-       directly, and easing it would put the row behind the reader's own hand.
-       The rail marks on the left are where the easing lives instead. */
-    .principle-track[data-track="on"] .principle-deck {
-      display: flex;
-      gap: 2rem;
-      transform: translate3d(calc(var(--deck-shift, 0px) * -1), 0, 0);
-      will-change: transform;
-    }
-
-    /* One column width each, so a card at rest fills the window exactly and
-       the next one waits just outside it. flex-basis resolves against the
-       deck, which is still the column's width — the cards overflow it to the
-       right and the stage above clips them.
-
-       min-width: 0 is load-bearing, not tidying. A flex item floors at its own
-       min-content width by default, and a plate's min-content is wide: copy at
-       34ch beside a 9.5rem mark, with the plate's padding and gap on top. Left
-       at auto the cards ignored the 100% basis and came out at 1192px in a
-       552px window, so the row was more than twice as long as it should be and
-       a card never sat flush in the window at any scroll position. */
-    .principle-track[data-track="on"] .principle-step {
-      flex: 0 0 100%;
-      min-width: 0;
-    }
-
-    /* Cards off the window are dimmed rather than hidden — they are really on
-       screen now, half of one shows at every midpoint, and hiding what the
-       reader can see would read as a bug. The card being read comes forward on
-       contrast alone.
-
-       Tabbing is handled in the script, not here: off-window cards are marked
-       inert, so the one link on the stage stays the only reachable one and
-       focus can never drag the clipped row sideways out of its window. */
-    .principle-track[data-track="on"] .principle-step {
-      opacity: 0.55;
-      transition: opacity 0.4s ease;
-    }
-
-    .principle-track[data-track="on"] .principle-step.is-on {
-      opacity: 1;
-    }
-  }
-
-  /* --- Statement ----------------------------------------------------------
-
-     One spoken sentence given the room to be read as one: ranged left against a
-     brand rule that fades out down its length, set well above body size. The
-     clause that carries the idea wears .mark-brand — coloured, over a soft
-     highlight that draws itself in as the block arrives (see the scroll-driven
-     block below; without support it is simply already drawn). */
-
-  .statement {
-    position: relative;
-    padding-inline-start: clamp(1.25rem, 3vw, 2rem);
-  }
-
-  .statement::before {
-    content: "";
-    position: absolute;
-    inset-block: 0.3rem;
-    inset-inline-start: 0;
-    width: 3px;
-    border-radius: 999px;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
     background: linear-gradient(
-      180deg,
-      var(--brand),
-      color-mix(in srgb, var(--brand) 8%, transparent)
+      135deg,
+      var(--grad-from),
+      var(--grad-to)
+    );
+    color: #ffffff;
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--grad-from) 70%, transparent);
+  }
+
+  .icon-tile-soft {
+    background: var(--brand-soft);
+    color: var(--brand-text);
+    box-shadow: none;
+  }
+
+  .icon-tile-lg {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-lg);
+  }
+
+  /* --- Decorative colour fields ------------------------------------------
+     A blob is a blurred ellipse of the gradient pair sitting behind a hero;
+     the grid is a faint dot matrix. Both are decoration and both are hidden
+     from assistive tech by being empty elements. */
+  .blob {
+    position: absolute;
+    z-index: -1;
+    border-radius: var(--radius-full);
+    filter: blur(80px);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .blob-from {
+    background: var(--grad-from);
+  }
+
+  .blob-to {
+    background: var(--grad-to);
+  }
+
+  .grid-field {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      var(--border-strong) 1px,
+      transparent 0
+    );
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 70% 60% at 50% 40%,
+      #000 10%,
+      transparent 70%
+    );
+    mask-image: radial-gradient(
+      ellipse 70% 60% at 50% 40%,
+      #000 10%,
+      transparent 70%
     );
   }
 
-  /* Sized to fill its screen rather than to body rhythm. It is the only thing
-     on a full viewport, so at a body-adjacent scale it read as a stray line of
-     copy in the middle of an empty page; at this one the sentence spans the
-     column and the emptiness around it looks intended. With the eyebrow gone
-     the sentence is the whole block, so it carries the screen alone and is set
-     larger again to do it.
-
-     The clamp is tuned per band rather than left to one viewport slope: 2rem
-     on a phone, where the line has ~320px to work with and wraps to four or
-     five lines; 6vw through the tablet range; 4.75rem at the top, which is
-     where the sentence still wraps to three lines inside a 64rem column —
-     three lines is what gives the block enough height to hold the screen, and
-     going further would drop it to two. */
-  .statement-body {
-    font-size: clamp(2rem, 6vw, 4.75rem);
-    font-weight: 600;
-    line-height: 1.14;
-    letter-spacing: -0.035em;
-    text-wrap: balance;
-  }
-
-  /* The highlight is a background image rather than a pseudo-element so it can
-     wrap across lines with the text — box-decoration-break keeps the rounding
-     on every fragment — and so its width is animatable on its own. */
-  .mark-brand {
-    color: var(--brand-text);
-    background-image: linear-gradient(
-      color-mix(in srgb, var(--brand) 15%, transparent),
-      color-mix(in srgb, var(--brand) 15%, transparent)
-    );
-    background-repeat: no-repeat;
-    background-position: 0 94%;
-    background-size: 100% 0.3em;
-    padding-inline: 0.1em;
-    border-radius: 0.14em;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
-
-  /* --- Links ------------------------------------------------------------- */
-
-  .link-arrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.875rem;
-    font-weight: 400;
-    color: var(--brand-text);
-    transition: gap 0.16s ease, opacity 0.16s ease;
-  }
-  .link-arrow:hover {
-    gap: 0.55rem;
-    opacity: 0.82;
-  }
-
-  .link-muted {
-    font-size: 0.875rem;
-    font-weight: 400;
-    color: var(--text-muted);
-    transition: color 0.16s ease;
-  }
-  .link-muted:hover {
-    color: var(--text);
-  }
-
-  /* Quieter still than .link-muted — footer-weight links. */
-  .link-faint {
-    font-size: 0.875rem;
-    font-weight: 400;
-    color: var(--text-faint);
-    transition: color 0.16s ease;
-  }
-  .link-faint:hover {
-    color: var(--text);
-  }
-
-  .nav-link {
-    position: relative;
-    font-size: 0.9375rem;
-    color: var(--text-muted);
-    transition: color 0.16s ease;
-  }
-  .nav-link:hover {
-    color: var(--text);
-  }
-
-  /* --- Header ------------------------------------------------------------ */
-
+  /* --- Header -------------------------------------------------------------
+     Sticky, translucent, and blurred — the page slides under it. The border
+     only appears once the page has moved. */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 50;
+    height: var(--header-h);
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
     border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease, background-color 0.2s ease;
   }
 
   .site-header[data-stuck="true"] {
     border-bottom-color: var(--border);
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: saturate(180%) blur(12px);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
   }
 
-  /* --- Forms ------------------------------------------------------------- */
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    height: 2rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
 
-  /* The contact form's honeypot. Positioned away rather than `display: none`
-     or `hidden`: the cruder bots skip anything obviously not rendered, and the
-     point is that this one gets filled in. Absolute, so it takes no space in
-     the form's grid and opens no gap where it sits. */
-  .honeypot {
+  .nav-link:hover {
+    color: var(--text);
+    background: var(--bg-subtle);
+  }
+
+  .nav-link[aria-current="page"] {
+    color: var(--brand-text);
+    background: var(--brand-soft);
+  }
+
+  /* --- Links -------------------------------------------------------------- */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--brand-text);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .link-arrow svg {
+    transition: transform 0.2s ease;
+  }
+
+  .link-arrow:hover svg {
+    transform: translateX(3px);
+  }
+
+  .link-muted {
+    color: var(--text-muted);
+    transition: color 0.15s ease;
+  }
+
+  .link-muted:hover {
+    color: var(--text);
+  }
+
+  /* --- Wordmark ----------------------------------------------------------- */
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(
+      135deg,
+      var(--grad-from),
+      var(--grad-to)
+    );
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  /* --- Stat ---------------------------------------------------------------- */
+  .stat-value {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    margin-top: 0.5rem;
+    color: var(--text-faint);
+    font-size: 0.875rem;
+  }
+
+  /* --- Gradient panel ------------------------------------------------------
+     The closing call. A full-bleed gradient plate with white type on it. */
+  .gradient-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    padding: clamp(2.5rem, 6vw, 4.5rem);
+    background: linear-gradient(
+      130deg,
+      var(--grad-from),
+      var(--grad-to)
+    );
+    color: #ffffff;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+
+  .gradient-panel h2 {
+    color: #ffffff;
+  }
+
+  /* The faint dot matrix over the plate, so it is not a flat wash. */
+  .gradient-panel::after {
+    content: "";
     position: absolute;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
+    inset: 0;
     pointer-events: none;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgb(255 255 255 / 0.22) 1px,
+      transparent 0
+    );
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 70% at 50% 0%,
+      #000 10%,
+      transparent 75%
+    );
+    mask-image: radial-gradient(
+      ellipse 80% 70% at 50% 0%,
+      #000 10%,
+      transparent 75%
+    );
   }
 
+  /* --- Feature row --------------------------------------------------------
+     A checked list under a card heading. */
+  .check-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .check-list svg {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    color: var(--brand);
+  }
+
+  /* --- Numbered steps ------------------------------------------------------ */
+  .steps {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    counter-reset: step;
+  }
+
+  .step {
+    position: relative;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+  }
+
+  .step::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--brand-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .step[data-active="true"] {
+    border-top-color: var(--brand);
+  }
+
+  /* --- Forms --------------------------------------------------------------- */
   .field-label {
     display: block;
-    font-size: 0.8125rem;
-    font-weight: 400;
+    margin-bottom: 0.4375rem;
     color: var(--text);
-    margin-bottom: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
   }
 
-  .field-input {
+  .field-input,
+  .field-textarea {
     width: 100%;
-    border-radius: 0.55rem;
-    border: 1px solid var(--border-strong);
-    background: var(--bg);
-    padding: 0.62rem 0.8rem;
-    font-size: 0.9375rem;
+    padding: 0.6875rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
     color: var(--text);
+    font-size: 0.9375rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .field-input:hover,
+  .field-textarea:hover {
+    background: var(--bg-muted);
+  }
+
+  .field-input:focus,
+  .field-textarea:focus {
     outline: none;
-    transition: border-color 0.16s ease, box-shadow 0.16s ease;
-  }
-
-  .field-input::placeholder {
-    color: var(--text-faint);
-  }
-
-  .field-input:focus {
+    background: var(--surface);
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
   .field-textarea {
-    min-height: 6.5rem;
+    min-height: 7rem;
     resize: vertical;
   }
 
-  /* --- Dialog ------------------------------------------------------------ */
+  .honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 
+  /* --- Dialog -------------------------------------------------------------- */
   .dialog-overlay {
-    background: color-mix(in srgb, var(--text) 45%, transparent);
-    backdrop-filter: blur(3px);
-    animation: fade-in 0.16s ease-out both;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background: color-mix(in srgb, #000000 45%, transparent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .dialog-card {
-    position: relative;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 32rem;
+    max-height: calc(100vh - 2.5rem);
+    overflow-y: auto;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
     box-shadow: var(--shadow-lg);
-    animation: rise-in 0.2s ease-out both;
-    overflow: hidden;
-  }
-
-  /* Opened from a product, the dialog carries that product's colour: promoting
-     --brand into --accent re-tints everything accent-driven inside it — the
-     submit button, the focus rings — without those rules knowing about it. */
-  .dialog-card[data-brand] {
-    --accent: var(--brand);
-    --accent-hover: var(--brand-hover);
-    --accent-soft: var(--brand-soft);
-  }
-
-  /* Brand bar along the top edge, the dialog's echo of .card-accent. */
-  .dialog-card[data-brand]::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--brand), transparent);
-  }
-
-  /* --- Consent banner ----------------------------------------------------- */
-
-  /* Anchored bottom-left rather than stretched across the viewport: it is a
-     question, not a barrier, and a full-width bar reads as one. Sits under the
-     dialog's z-60 so opening the contact form covers it. */
-  /* Phones only. The banner is a floating card beside the content from `sm` up
-     and overlaps nothing there, but below that it spans nearly the full width
-     and lands across the bottom of the hero. CookieBanner publishes its
-     measured height as --consent-height while it is on screen; the hero gives
-     up exactly that much so its product strip stays above the card.
-
-     Padding rather than a shorter min-height: .screen is a centred flex column,
-     so padding lifts the whole composition off the banner instead of only
-     moving the last row. The fallback of 0px is the answered state, which is
-     what every visit after the first one is. */
-  @media (max-width: 767px) {
-    .hero-screen {
-      padding-bottom: var(--consent-height, 0px);
-    }
-  }
-
-  .consent-banner {
-    position: fixed;
-    left: 1rem;
-    bottom: 1rem;
-    z-index: 55;
-    width: calc(100vw - 2rem);
-    max-width: 23rem;
-    padding: 1.15rem 1.25rem 1.25rem;
-    background: var(--surface-raised);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-lg);
-    animation: rise-in 0.24s ease-out both;
-  }
-
-  /* The card is also made to cost less on a phone, and the two work together:
-     the hero can only give up so much before the headline starts to crowd, so
-     the banner meets it halfway. Tighter padding and a slightly smaller lead —
-     the copy is unchanged, and both buttons keep their full size, since the
-     whole point of that row is that refusing is as easy as agreeing.
-
-     Must stay below the base rule, not above it. Both selectors are one class,
-     so a media query wins nothing on specificity and order is all there is; the
-     same block sitting earlier in the file lost to the padding it was meant to
-     replace. */
-  @media (max-width: 767px) {
-    .consent-banner {
-      padding: 0.9rem 1rem 1rem;
-    }
-    .consent-banner p {
-      font-size: 0.8rem;
-    }
   }
 
   .icon-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 0.55rem;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: background-color 0.16s ease, color 0.16s ease;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-full);
+    color: var(--text-faint);
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
+
   .icon-button:hover {
     background: var(--bg-subtle);
     color: var(--text);
   }
 
-  /* --- Product timeline -------------------------------------------------- */
-
-  /* Mobile: one rail down the left edge. Desktop: rail moves to the centre and
-     cards alternate sides (see the lg block further down). --tl-progress is
-     written from ProductTimeline on scroll. */
-  .timeline {
-    --tl-rail: 0.5rem;
-    --tl-arm: 1.5rem;
-    --tl-node: 0.85rem;
-    --tl-top: 2.6rem;
-
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .timeline-rail {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: var(--tl-rail);
-    width: 1px;
-    background: var(--border);
-  }
-
-  .timeline-rail::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      transparent,
-      var(--accent) 8%,
-      var(--accent)
-    );
-    transform: scaleY(var(--tl-progress, 0));
-    transform-origin: top;
-  }
-
-  .timeline-row {
-    position: relative;
-    padding-left: calc(var(--tl-rail) + var(--tl-arm) + 0.4rem);
-  }
-
-  .timeline-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    /* Own stacking context so the motif below can sit behind the copy. */
-    z-index: 0;
-  }
-
-  /* Per-product watermark. Decorative texture only: it inherits the row's
-     --brand, sits far below text contrast, and takes no pointer events.
-     z-index -1 paints it above the card surface but under the copy.
-
-     Deliberately not clipped to the card — card-accent::before draws the top
-     hairline at top:-1px and overflow:hidden would eat it — so the mask does
-     the work instead, holding the glyph at the bottom-right corner and
-     dissolving it before it reaches the text. */
-  .timeline-motif {
-    --motif-alpha: 0.075;
-    /* Narrow cards stack their links two-deep, so the mark has to stay small
-       enough to keep clear of them. */
-    --motif-size: 6.25rem;
-
-    position: absolute;
-    right: 0.5rem;
-    bottom: 0.5rem;
-    z-index: -1;
-    width: var(--motif-size);
-    height: var(--motif-size);
-    color: var(--brand);
-    opacity: var(--motif-alpha);
-    pointer-events: none;
-    -webkit-mask-image: linear-gradient(315deg, #000 42%, transparent 88%);
-    mask-image: linear-gradient(315deg, #000 42%, transparent 88%);
-    transition: opacity 0.45s ease;
-  }
-
-  /* Rewards attention without shouting; rides the same hover as the card. */
-  .timeline-card:hover .timeline-motif {
-    opacity: calc(var(--motif-alpha) * 2);
-  }
-
-  .timeline-index {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
-    color: var(--brand-text);
-  }
-
-  /* Node on the rail, plus the hairline that connects it to the card. */
-  .timeline-node {
-    position: absolute;
-    top: var(--tl-top);
-    left: var(--tl-rail);
-    z-index: 1;
+  /* --- Publications --------------------------------------------------------
+     The research page is a numbered bibliography, set in cards. */
+  .pub-list {
     display: grid;
-    place-items: center;
-    width: var(--tl-node);
-    height: var(--tl-node);
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    background: var(--bg);
-    transform: translate(-50%, -50%);
-    transition: border-color 0.4s ease;
-  }
-
-  .timeline-node::after {
-    content: "";
-    width: 0.375rem;
-    height: 0.375rem;
-    border-radius: 999px;
-    background: var(--border-strong);
-    transition: background-color 0.4s ease, box-shadow 0.4s ease;
-  }
-
-  .timeline-row.is-in .timeline-node {
-    border-color: color-mix(in srgb, var(--brand) 55%, var(--border));
-  }
-
-  .timeline-row.is-in .timeline-node::after {
-    background: var(--brand);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 15%, transparent);
-  }
-
-  /* Not shipped yet reads as a hollow node. */
-  .timeline-row[data-status="development"].is-in .timeline-node::after {
-    background: color-mix(in srgb, var(--brand) 30%, transparent);
-    box-shadow: none;
-  }
-
-  .timeline-arm {
-    position: absolute;
-    top: var(--tl-top);
-    left: var(--tl-rail);
-    width: var(--tl-arm);
-    height: 1px;
-    background: var(--border);
-    transition: background 0.5s ease;
-  }
-
-  .timeline-row.is-in .timeline-arm {
-    background: linear-gradient(90deg, var(--brand), transparent);
-  }
-
-  /* Stage label sitting on the rail. */
-  .timeline-marker {
-    position: relative;
-    padding: 0.75rem 0 0.75rem calc(var(--tl-rail) + var(--tl-arm) + 0.4rem);
-  }
-
-  .timeline-chip {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.35rem 0.85rem;
-    background: var(--bg);
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.68rem;
-    font-weight: 400;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
-  /* Reveal — only armed once ProductTimeline mounts. */
-  .timeline[data-reveal="on"] .timeline-row,
-  .timeline[data-reveal="on"] .timeline-marker {
-    opacity: 0;
-    transform: translate3d(0, 14px, 0);
-    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .timeline[data-reveal="on"] .timeline-marker {
-    opacity: 1;
-    transform: none;
-  }
-
-  .timeline[data-reveal="on"] .timeline-row.is-in {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* The motif settles a beat after its card lands. The stagger rides on the
-     transform so opacity stays free for hover. */
-  .timeline[data-reveal="on"] .timeline-motif {
-    opacity: 0;
-    transform: scale(0.94);
-  }
-
-  .timeline[data-reveal="on"] .timeline-row.is-in .timeline-motif {
-    opacity: var(--motif-alpha);
-    transform: none;
-    transition: opacity 0.45s ease,
-      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
-  }
-
-  /* Out-specifies the reveal rule above so hover still wins. */
-  .timeline .timeline-row.is-in .timeline-card:hover .timeline-motif {
-    opacity: calc(var(--motif-alpha) * 2);
-  }
-
-  @media (min-width: 1024px) {
-    .timeline {
-      --tl-rail: 50%;
-      --tl-arm: 2.5rem;
-      --tl-node: 0.95rem;
-      gap: 2rem;
-    }
-
-    .timeline-row {
-      display: grid;
-      grid-template-columns: 1fr calc(var(--tl-arm) * 2) 1fr;
-      padding-left: 0;
-    }
-
-    .timeline-row[data-side="left"] .timeline-card {
-      grid-column: 1;
-    }
-
-    .timeline-row[data-side="right"] .timeline-card {
-      grid-column: 3;
-    }
-
-    .timeline-row[data-side="left"] .timeline-arm {
-      left: auto;
-      right: 50%;
-    }
-
-    .timeline-row[data-side="left"].is-in .timeline-arm {
-      background: linear-gradient(90deg, transparent, var(--brand));
-    }
-
-    .timeline-marker {
-      display: flex;
-      justify-content: center;
-      padding-inline: 0;
-    }
-
-    /* Cards are wide enough here to carry a larger mark. */
-    .timeline-motif {
-      --motif-size: 9.5rem;
-      right: 0.75rem;
-      bottom: 0.75rem;
-    }
-
-    /* Branches drift in from their own side of the rail. */
-    .timeline[data-reveal="on"] .timeline-row[data-side="left"] {
-      transform: translate3d(-20px, 14px, 0);
-    }
-
-    .timeline[data-reveal="on"] .timeline-row[data-side="right"] {
-      transform: translate3d(20px, 14px, 0);
-    }
-
-    .timeline[data-reveal="on"] .timeline-row.is-in {
-      transform: none;
-    }
-  }
-
-  /* --- Decorative -------------------------------------------------------- */
-
-  /* Faint grid, drawn from tokens so it survives the theme flip. */
-  .grid-field {
-    background-image: linear-gradient(
-        to right,
-        var(--border) 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-    background-size: 64px 64px;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 75%);
-    -webkit-mask-image: radial-gradient(
-      ellipse 80% 60% at 50% 0%,
-      #000 20%,
-      transparent 75%
-    );
-  }
-
-  /* The hero's ground, and the light that moves over it. HeroReveal explains
-     the mechanism; this is only its surface.
-
-     Two copies of one field of tiles, the second masked to a circle at the
-     pointer. The layers differ only in which tokens they resolve — a hairline
-     and no fill below, a stronger line over --surface above — so the lit copy
-     is the same panel a shade closer to the reader rather than a second design.
-     That is the light theme's own rule about how a card lifts, and it holds in
-     dark without a separate palette.
-
-     Nothing here is text, and nothing is sized to be read: these are the shape
-     of a product surface at the size a real one would be, cropped by the edges
-     of the screen. Only the motif in each head takes --brand, which is what
-     lets six of them stay clear of the one-accent-per-screen rule — at this
-     weight they are washes, not accents. */
-  .hero-reveal {
-    --reveal-r: 24rem;
-    --rx: 50%;
-    --ry: 42%;
-
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  /* The resting field has to sit far enough back that the light has somewhere
-     to bring it — a ground the reader reads past, not a second thing to look
-     at. Held down with opacity rather than fainter tokens so the lit copy can
-     be the same tiles at full strength instead of a different drawing. */
-  .hero-reveal-layer {
-    --tile-line: var(--border);
-    --tile-fill: transparent;
-    --tile-mark: 0.35;
-
-    position: absolute;
-    inset: 0;
-    opacity: 0.5;
-  }
-
-  /* `--hero-lit` is the only thing the pointer sets besides the two
-     coordinates: 0 with the pointer away, 1 with it over the hero. Multiplying
-     rather than toggling keeps the fade in the transition, and a snap at the
-     hero's edge is the tell that gives this effect away. */
-  .hero-reveal-layer[data-lit] {
-    --tile-line: var(--border-strong);
-    --tile-fill: var(--surface);
-    --tile-mark: 0.85;
-
-    opacity: var(--hero-lit, 0);
-    transition: opacity 0.45s ease;
-    -webkit-mask-image: radial-gradient(
-      var(--reveal-r) circle at var(--rx) var(--ry),
-      #000 0%,
-      rgba(0, 0, 0, 0.6) 58%,
-      transparent 100%
-    );
-    mask-image: radial-gradient(
-      var(--reveal-r) circle at var(--rx) var(--ry),
-      #000 0%,
-      rgba(0, 0, 0, 0.6) 58%,
-      transparent 100%
-    );
-  }
-
-  .hero-tile {
-    position: absolute;
-    left: var(--at-x);
-    top: var(--at-y);
-    display: flex;
-    width: var(--at-w);
-    flex-direction: column;
-    gap: 0.7rem;
-    padding: 0.9rem;
-    border: 1px solid var(--tile-line);
-    border-radius: var(--radius);
-    background: var(--tile-fill);
-  }
-
-  /* The lift itself. A card on this site rises by being lighter than the page
-     and casting a little; the lit copy does both, which is what makes a tile
-     read as coming forward under the light rather than merely brightening —
-     and it is most of what the effect has to work with on paper, where a white
-     card on near-white ground has little else to say. */
-  .hero-reveal-layer[data-lit] .hero-tile {
-    box-shadow: var(--shadow-md);
-  }
-
-  .hero-tile-head {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-  }
-
-  .hero-tile-mark {
-    width: 1.15rem;
-    height: 1.15rem;
-    flex: none;
-    color: var(--brand);
-    opacity: var(--tile-mark);
-  }
-
-  .hero-tile-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .hero-tile-bar,
-  .hero-tile-line {
-    width: var(--w);
-    height: 0.4rem;
-    border-radius: 999px;
-    background: var(--tile-line);
-  }
-
-  /* A column of states rather than rows of text — the other shape a product
-     surface takes, and what keeps the six tiles from reading as one component
-     repeated. */
-  .hero-tile[data-shape="chips"] .hero-tile-line {
-    height: 1.4rem;
-    border: 1px solid var(--tile-line);
-    border-radius: 0.5rem;
-    background: transparent;
-  }
-
-  .hero-tile[data-shape="chart"] .hero-tile-body {
-    height: 3.75rem;
-    flex-direction: row;
-    align-items: flex-end;
-    gap: 0.4rem;
-  }
-
-  .hero-tile[data-shape="chart"] .hero-tile-line {
-    width: auto;
-    height: var(--h);
-    flex: 1;
-    border-radius: 0.25rem 0.25rem 0.125rem 0.125rem;
-  }
-
-  /* A phone has no pointer to light the field with, and the hero is tight
-     enough there that six panels would crowd the headline. Two stay, as the
-     texture the grid used to be. */
-  @media (max-width: 767px) {
-    .hero-tile:nth-child(n + 3) {
-      display: none;
-    }
-  }
-
-  /* Held down to wash strength on purpose. A hero already spends its one
-     accent on the headline phrase and its chrome on the primary button; at
-     full strength this would be a third violet in the same view, which is the
-     "not all three" the brand warns about. Faint enough to read as a tinted
-     surface, it is a wash, and washes do not count against the budget. */
-  .glow {
-    position: absolute;
-    border-radius: 999px;
-    filter: blur(150px);
-    opacity: 0.07;
-    pointer-events: none;
-  }
-
-  .rule {
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border-strong),
-      transparent
-    );
-  }
-
-  /* --- Vault illustrations -------------------------------------------------
-
-     `.vault-scene` is the looping hero on the Vault page, where a list of
-     files is locked in front of the reader. It is markup and CSS rather than
-     an image or video asset — it inherits --brand, follows the theme toggle,
-     stays sharp at any width, and costs nothing to download. The same is true
-     of `.colab-scene` and `.flow` further down.
-
-     Timing is one shared 9s bar. The scan line sweeps the list once, each row
-     flips as the line reaches it (via the --i stagger set in the markup), the
-     locked state holds for half the bar, and the last beat returns to plain so
-     the loop restarts without a jump cut. Reduced motion is handled explicitly
-     at the foot of this file rather than by the global collapse: these scenes
-     have a correct still — everything locked — and it is worth pinning. */
-
-  .vault-scene {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
-    box-shadow: var(--shadow-md);
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.72rem;
-    line-height: 1.4;
-  }
-
-  .vault-scene-head,
-  .vault-scene-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 1rem;
-    padding: 0.7rem 0.95rem;
-    color: var(--text-faint);
+    counter-reset: pub;
   }
 
-  .vault-scene-head {
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-subtle);
-  }
-
-  .vault-scene-foot {
-    border-top: 1px solid var(--border);
-  }
-
-  /* Both states of a label occupy the same cell and cross-fade in place, so
-     nothing reflows as the scene turns over. Shared by both product scenes —
-     it is the stacking only; which layer is showing when is the caller's own
-     pair of animations. */
-  .state-swap {
+  .pub-entry {
     display: grid;
-  }
-
-  .state-swap > * {
-    grid-area: 1 / 1;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    white-space: nowrap;
-  }
-
-  .vault-scene-body {
-    position: relative;
-    padding: 0.35rem 0;
-  }
-
-  .vault-row {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.42rem 0.95rem;
-  }
-
-  .vault-row-icon {
-    color: var(--text-faint);
-  }
-
-  /* Names are the whole point of the scene — they have to be able to shrink
-     without pushing the size column off the card. */
-  .vault-row-name {
-    min-width: 0;
-  }
-
-  /* Overrides the inline-flex the swap gives its layers: only the header pill
-     needs to sit an icon beside its text, and a block box is what lets a long
-     name ellipsize instead of pushing the size column off the card. */
-  .vault-row-name > * {
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .vault-row-meta {
-    justify-items: end;
-    color: var(--text-faint);
-  }
-
-  .vault-plain {
-    color: var(--text);
-    animation: vault-plain 9s linear infinite;
-    animation-delay: calc(var(--i, 0) * 0.78s);
-  }
-
-  .vault-row-meta .vault-plain {
-    color: var(--text-faint);
-  }
-
-  .vault-cipher {
-    color: var(--brand-text);
-    letter-spacing: 0.04em;
-    animation: vault-cipher 9s linear infinite;
-    animation-delay: calc(var(--i, 0) * 0.78s);
-  }
-
-  /* The sweep. A hairline of brand colour with a soft field ahead of it, so
-     the flip below reads as something the line did. */
-  .vault-scan {
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--brand), transparent);
-    box-shadow: 0 0 18px 2px color-mix(in srgb, var(--brand) 45%, transparent);
-    opacity: 0;
-    animation: vault-scan 9s ease-in-out infinite;
-  }
-
-  @keyframes vault-plain {
-    0%,
-    13% {
-      opacity: 1;
-    }
-    19%,
-    88% {
-      opacity: 0;
-    }
-    97%,
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes vault-cipher {
-    0%,
-    13% {
-      opacity: 0;
-    }
-    19%,
-    88% {
-      opacity: 0.85;
-    }
-    97%,
-    100% {
-      opacity: 0;
-    }
-  }
-
-  @keyframes vault-scan {
-    0%,
-    8% {
-      top: -2px;
-      opacity: 0;
-    }
-    14% {
-      opacity: 1;
-    }
-    42% {
-      opacity: 1;
-    }
-    48% {
-      top: 100%;
-      opacity: 0;
-    }
-    100% {
-      top: 100%;
-      opacity: 0;
-    }
-  }
-
-  /* Label pairs run on the same bar but turn over once, after the sweep has
-     finished, so the header confirms what just happened to the list. */
-  .vault-state-open {
-    animation: vault-plain 9s linear infinite;
-    animation-delay: 2.6s;
-  }
-
-  .vault-state-locked {
-    color: var(--brand-text);
-    animation: vault-cipher 9s linear infinite;
-    animation-delay: 2.6s;
-  }
-
-  /* --- coLab scene ---------------------------------------------------------
-
-     One project as coLab holds it: dates across the top, the work planned
-     against them underneath, and a week passing over the whole thing. Same
-     construction as the Vault scene above — markup, one shared timing bar, no
-     assets — and the same reason for it.
-
-     Timing is a 12s bar. The milestone fill advances across the first third,
-     each task row turns over as it is reached (the --i stagger, 0.85s a row),
-     and the head and foot counters follow at 3.2s, once every row has moved:
-     the counter is the consequence, so it has to land after the cause. The
-     last beat returns to the opening state so the loop restarts without a jump
-     cut.
-
-     Reduced motion is pinned at the foot of this file rather than left to the
-     global duration collapse — the layers of a swap are stacked in one grid
-     cell and both would otherwise be painted at once. */
-
-  .colab-scene {
-    position: relative;
-    overflow: hidden;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.25rem 1rem;
+    padding: 1.5rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     background: var(--surface);
-    box-shadow: var(--shadow-md);
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.72rem;
-    line-height: 1.4;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.25s ease,
+      border-color 0.2s ease;
   }
 
-  .colab-scene-head,
-  .colab-scene-foot {
+  .pub-entry:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--brand) 35%, var(--border));
+    box-shadow: var(--shadow-md);
+  }
+
+  .pub-index {
+    counter-increment: pub;
+    grid-row: span 4;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.7rem 0.95rem;
-    color: var(--text-faint);
-  }
-
-  .colab-scene-head {
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-subtle);
-  }
-
-  .colab-scene-foot {
-    border-top: 1px solid var(--border);
-  }
-
-  /* The head and foot say what changed rather than what is changing, so they
-     wait for the rows. Set here rather than on the elements so the swap layers
-     keep one definition between them. */
-  .colab-scene-head .colab-before,
-  .colab-scene-head .colab-after,
-  .colab-scene-foot .colab-before,
-  .colab-scene-foot .colab-after {
-    animation-delay: 3.2s;
-  }
-
-  /* --- the milestone rail --- */
-
-  .colab-track {
-    position: relative;
-    height: 3.1rem;
-    margin-inline: 0.95rem;
-  }
-
-  .colab-track-line,
-  .colab-track-fill {
-    position: absolute;
-    left: 0;
-    top: 1.15rem;
-    height: 1px;
-  }
-
-  .colab-track-line {
-    right: 0;
-    background: var(--border);
-  }
-
-  /* Where the project has got to. The scene's one moving accent — the nodes
-     stay neutral so a rail of four brand marks does not read as decoration. */
-  .colab-track-fill {
-    width: 8%;
-    background: var(--brand);
-    box-shadow: 0 0 10px 1px color-mix(in srgb, var(--brand) 40%, transparent);
-    animation: colab-advance 12s ease-in-out infinite;
-  }
-
-  @keyframes colab-advance {
-    0%,
-    8% {
-      width: 8%;
-    }
-    40%,
-    90% {
-      width: 62%;
-    }
-    97%,
-    100% {
-      width: 8%;
-    }
-  }
-
-  /* Positioned from the data as a percentage, so a date can move without this
-     stylesheet knowing anything about it. Top is the line's 1.15rem less half
-     the node, which is what sits the node on the rail rather than beside it. */
-  .colab-milestone {
-    position: absolute;
-    top: 0.9rem;
-    left: var(--at);
-    display: grid;
-    justify-items: center;
-    gap: 0.4rem;
-    transform: translateX(-50%);
-    font-size: 0.65rem;
-    letter-spacing: 0.04em;
-    color: var(--text-faint);
-  }
-
-  .colab-milestone-node {
-    width: 0.5rem;
-    height: 0.5rem;
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    background: var(--surface);
-  }
-
-  /* --- the work --- */
-
-  .colab-rows {
-    padding-bottom: 0.35rem;
-  }
-
-  .colab-row {
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.42rem 0.95rem;
-  }
-
-  .colab-box {
-    display: grid;
-    place-items: center;
-    width: 0.85rem;
-    height: 0.85rem;
-    border: 1px solid var(--border-strong);
-    border-radius: 0.25rem;
-  }
-
-  .colab-check {
-    opacity: 0;
-    color: var(--brand-text);
-  }
-
-  .colab-row[data-done] .colab-check {
-    animation: colab-after 12s linear infinite;
-    animation-delay: calc(var(--i, 0) * 0.85s);
-  }
-
-  .colab-row[data-done] .colab-box {
-    animation: colab-box 12s linear infinite;
-    animation-delay: calc(var(--i, 0) * 0.85s);
-  }
-
-  @keyframes colab-box {
-    0%,
-    14% {
-      border-color: var(--border-strong);
-    }
-    20%,
-    90% {
-      border-color: var(--brand);
-    }
-    97%,
-    100% {
-      border-color: var(--border-strong);
-    }
-  }
-
-  /* The titles are the point of the list — they have to be able to shrink
-     without pushing the owner and the state off the card. */
-  .colab-row-title {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    color: var(--text);
-  }
-
-  .colab-row-owner {
-    color: var(--text-faint);
-  }
-
-  .colab-row-state {
-    justify-items: end;
-  }
-
-  /* Three states, and only two of them are worth a colour: what is moving and
-     what is finished. "To do" is the unremarkable case and stays the plain
-     pill, which is what makes the other two worth noticing. */
-  .colab-state {
-    padding: 0.05rem 0.45rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    font-size: 0.62rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
-  /* --brand-text on --brand-soft: the pair is defined against each other, so
-     the label clears 4.5:1 inside the chip in both themes. */
-  .colab-state[data-state="Doing"] {
-    border-color: transparent;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
     background: var(--brand-soft);
     color: var(--brand-text);
-  }
-
-  .colab-state[data-state="Done"] {
-    border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
-    color: var(--brand-text);
-  }
-
-  .colab-before {
-    animation: colab-before 12s linear infinite;
-    animation-delay: calc(var(--i, 0) * 0.85s);
-  }
-
-  .colab-after {
-    animation: colab-after 12s linear infinite;
-    animation-delay: calc(var(--i, 0) * 0.85s);
-  }
-
-  @keyframes colab-before {
-    0%,
-    14% {
-      opacity: 1;
-    }
-    20%,
-    90% {
-      opacity: 0;
-    }
-    97%,
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes colab-after {
-    0%,
-    14% {
-      opacity: 0;
-    }
-    20%,
-    90% {
-      opacity: 1;
-    }
-    97%,
-    100% {
-      opacity: 0;
-    }
-  }
-
-  /* --- Product showcase ----------------------------------------------------
-
-     The home page's four product panels: capabilities down the left, a drawn
-     app screen on the right, swept horizontally one panel at a time. Rendered
-     by `ProductShowcase` over the screens in `ShowcaseShots`.
-
-     COLOUR. This section runs on its own saturated `--pop` scale rather than on
-     the site's `--brand` tokens, and that is deliberate. `--brand` is derived
-     for *text* — every hue was walked down in lightness until it cleared 4.5:1
-     as letterforms on paper — which is exactly right for a link and exactly
-     wrong for a fill. Used as chart bars and tiles those values land grey and
-     tired, which is what made the first version of this section dull.
-
-     So: `--pop` is the vivid fill, `--pop-deep` is the same hue where it is
-     legible as words, and `--pop-soft` is a tint for chips and title bars.
-     Text inside a screen takes `--pop-deep`, never `--pop`. The scale is scoped
-     to `.showcase-panel` and leaks nowhere — the rest of the
-     site is untouched by it.
-
-     The panel ground is *not* on this scale. It was, and four differently
-     washed cards fought the screens sitting on them; a neutral card gives the
-     colour more force, which is what the reference does.
-
-     One panel at a time, one screen per capability. Three regions stacked in a
-     single window meant two of them were always dimmed and none had room; the
-     capture now swaps whole, which is what lets a chart be a chart. */
-
-  /* --peek is how much of the track a panel gives up so the *next* panel is
-     always showing at the edge. It is the only cue here that costs the reader
-     nothing to notice — a card cut off at the frame is read as "there is
-     another one" before any control is looked for. Small on a phone, where the
-     same fraction of the width would be a real loss of card. */
-  .showcase {
-    position: relative;
-    --peek: clamp(1.5rem, 4vw, 3.5rem);
-  }
-
-  /* The sweep, and it is the browser's own horizontal scroll — the arrows and
-     dots below only call scrollTo on it. Nothing here intercepts the wheel, so
-     the reader's vertical gesture is untouched and the track still works with
-     the component's JS removed entirely.
-
-     `mandatory` rather than `proximity`, which is the opposite of the choice
-     the vertical screens made further up: this axis holds one panel per view
-     and there is no long section to be dragged back into, so a panel left
-     half-shown is only ever a mistake — the deliberate --peek sliver is a
-     panel's width, not a resting place, and `mandatory` is what keeps it that
-     way.
-
-     overflow-x on a box forces overflow-y to a scroll value too, which would
-     clip the panels' shadow at the top and bottom edges. The padding is what
-     gives the shadow room inside the scrollport, and the negative inline
-     margins pull it back so the panels still line up with the shell. */
-  .showcase-track {
-    display: flex;
-    gap: clamp(1rem, 2vw, 1.5rem);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding: 0.75rem;
-    margin-inline: -0.75rem;
-    /* The peek and the edge buttons are the affordance; a scrollbar under a
-       card that is already snapped would be a third one saying the same
-       thing. */
-    scrollbar-width: none;
-  }
-
-  .showcase-track::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* The focus ring belongs on the scrollport rather than nowhere: it is
-     tabbable so the keyboard can reach and scroll it, and a tab stop with no
-     visible focus is the worst of both. */
-  .showcase-track:focus-visible {
-    outline: 2px solid var(--pop, var(--accent));
-    outline-offset: 4px;
-    border-radius: var(--radius-lg);
-  }
-
-  /* Neutral, not tinted. The panel wore a wash of its product's hue and the
-     result was four differently-coloured grounds fighting the screens sitting
-     on them — the colour has more force coming off a neutral card, which is
-     what the reference does. The card stays a half-step off white so the white
-     screen inside it still reads as a raised object; a pure-white card under a
-     pure-white screen loses that edge entirely.
-
-     One panel fills the track. `stretch` is load-bearing: the panels are a flex
-     row, so they all take the height of the tallest, and the section therefore
-     does not resize as it is swept. */
-  .showcase-panel {
-    /* Short of the track by --peek, so the neighbour is always in frame.
-       `center` rather than `start` is what makes that work at both ends: the
-       first and last panels have no room to centre in, so they stop against the
-       ends and spend their whole peek on their one neighbour, while the middle
-       two split it and show a sliver each side. With `start` the last panel
-       could never reach its snap point and the track would sit permanently a
-       peek short of the end. */
-    flex: 0 0 calc(100% - var(--peek));
-    scroll-snap-align: center;
-    display: grid;
-    gap: clamp(1.75rem, 3vw, 2.75rem);
-    align-items: stretch;
-    padding: clamp(1.5rem, 3vw, 2.75rem);
-    border-radius: var(--radius-lg);
-    background: var(--bg-subtle);
-  }
-
-  /* --- The two component-layer palettes ---------------------------------
-
-     Both of these were a second and third colour system living outside the
-     token block at the top of this file, and both are neutralised for the
-     restart.
-
-     `--pop` was the showcase panel's saturated per-product scale; `[data-hue]`
-     was an eight-hue categorical set the product screens used for states,
-     roles and content types. They now resolve to ink and greys.
-
-     The categorical one is a real loss and should be re-decided early: a
-     status column where every state is the same grey tells the reader nothing,
-     which is exactly the argument the original comment here made. The
-     structure of those screens still renders; only the encoding is gone. When
-     hues are chosen, they go back here as triples — fill, a text-safe
-     deepening, and a tint — and every chip, tile and avatar picks them up. */
-  .showcase-panel[data-brand="violet"],
-  .showcase-panel[data-brand="cyan"],
-  .showcase-panel[data-brand="blue"],
-  .showcase-panel[data-brand="emerald"] {
-    --pop: var(--brand);
-    --pop-deep: var(--brand-text);
-    --pop-soft: var(--brand-soft);
-  }
-
-  [data-hue="violet"],
-  [data-hue="purple"],
-  [data-hue="blue"],
-  [data-hue="teal"],
-  [data-hue="green"],
-  [data-hue="amber"],
-  [data-hue="rose"],
-  [data-hue="slate"] {
-    --h: var(--text-muted);
-    --h-deep: var(--text);
-    --h-soft: var(--bg-subtle);
-  }
-
-  /* A chip that fills with its hue — a state you want read at a glance. */
-  .chip-solid {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.22rem 0.6rem;
-    border-radius: 0.4rem;
-    background: var(--h, var(--pop));
-    color: #fff;
-    font-size: 0.68rem;
-    white-space: nowrap;
-  }
-
-  /* The quieter half of the pair, for a category that labels rather than
-     alerts. Text takes --h-deep, which is the hue carried to where it reads. */
-  .chip-soft {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.22rem 0.6rem;
-    border-radius: 0.4rem;
-    background: var(--h-soft, var(--pop-soft));
-    color: var(--h-deep, var(--pop-deep));
-    font-size: 0.68rem;
-    white-space: nowrap;
-  }
-
-  @media (min-width: 1024px) {
-    .showcase-panel {
-      grid-template-columns: 0.8fr 1.2fr;
-    }
-  }
-
-  /* --- The fifth panel -----------------------------------------------------
-
-     NSQR again, as the reel rather than as a capability list. One column at
-     every width — the reel is a whole composition and has nothing to sit
-     beside — so this overrides the two-column rule above rather than joining
-     it. The attribute is what carries the specificity, so the order of the two
-     does not matter.
-
-     `auto 1fr`: the pager takes its own height at the top and the reel takes
-     the rest. That row is what centres it — the panels are a flex row and all
-     take the height of the tallest, so with `auto auto` the reel would hang
-     from the top of a card the capability panels had stretched. */
-  .showcase-panel[data-feature] {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    gap: clamp(1rem, 2vw, 1.5rem);
-  }
-
-  .showcase-feature {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(0.9rem, 1.6vw, 1.25rem);
-    min-width: 0;
-  }
-
-  /* The reel caps itself at 56rem and centres, so this only hands it the
-     column. Its own surface, border and shadow do the rest — the panel ground
-     is a half-step off paper, which is what the reel needs behind it to read as
-     a raised object, the same way the drawn screens do on the other four. */
-  .showcase-feature-reel {
-    width: 100%;
-  }
-
-  .showcase-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .showcase-name {
-    font-size: clamp(1.6rem, 2.8vw, 2.15rem);
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-  }
-
-  /* The lockup's tail takes the vivid hue here rather than --brand-text: at
-     display size the fill is legible, and this is the one place the panel names
-     itself. */
-  .showcase-name .wordmark-tail {
-    color: var(--pop-deep);
-  }
-
-  .showcase-tagline {
-    margin-top: 0.55rem;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-
-  /* The capability list sits at the foot of the column so the panel reads the
-     same way at every height — mark at the top, list against the base. */
-  .showcase-tabs {
-    position: relative;
-    margin-top: auto;
-    display: grid;
-    gap: 0.25rem;
-    padding-left: 0.9rem;
-  }
-
-  /* One bar that travels, rather than a border on each item that blinks on and
-     off. Position and height are measured in ProductShowcase and applied
-     inline, because the items are different heights — the open one carries its
-     description — so there is no fixed step to animate along. */
-  .showcase-rule {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 2px;
-    border-radius: 2px;
-    background: var(--pop);
-    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-      height 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
-  }
-
-  .showcase-tab {
-    display: block;
-    width: 100%;
-    padding-block: 0.5rem;
-    text-align: left;
-    font-size: clamp(1.05rem, 1.7vw, 1.3rem);
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-    color: var(--text-muted);
-    transition: color 0.2s ease;
-  }
-
-  .showcase-tab:hover {
-    color: var(--text);
-  }
-
-  /* --pop-deep, not --pop: this is a word. */
-  .showcase-tabs > li[data-on] .showcase-tab {
-    color: var(--pop-deep);
-  }
-
-  /* The description closes to nothing instead of disappearing. A grid whose
-     single row goes 1fr → 0fr is the one way to animate to intrinsic height
-     without measuring it, and the child carries the overflow so the text is
-     clipped rather than squashed as it goes. */
-  .showcase-tab-fold {
-    display: grid;
-    grid-template-rows: 0fr;
-    opacity: 0;
-    transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 0.3s ease;
-  }
-
-  .showcase-tabs > li[data-on] .showcase-tab-fold {
-    grid-template-rows: 1fr;
-    opacity: 1;
-  }
-
-  .showcase-tab-body {
-    overflow: hidden;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    max-width: 34ch;
-  }
-
-  /* The padding lives on the open state only — on a closed fold it would hold
-     the row open at its own height and the collapse would stop short. */
-  .showcase-tabs > li[data-on] .showcase-tab-body {
-    padding-bottom: 0.65rem;
-  }
-
-  /* --- The capability clock ------------------------------------------------
-
-     `NsqrReel`'s beat bar, brought onto the other four panels. Same shape and
-     same three states — filled, filling, waiting — because it is answering the
-     same question there and here: this thing is on a timer, here is where it
-     has got to.
-
-     Under the list rather than over it. The open capability carries its
-     description and the closed ones do not, so the list changes height every
-     time it advances and its top edge travels with it; the foot does not. A bar
-     above the list would nudge up and down on the same clock it is reporting.
-
-     Aligned to the capability titles rather than the column, so it starts where
-     the words start — the 0.9rem is the room `.showcase-tabs` leaves for the
-     travelling rule, and the two are read as one control.
-
-     Not a duplicate of that rule. The rule says which capability is open; this
-     says how long it stays that way, and only this one is any use for knowing a
-     panel is about to move. */
-  .showcase-prog {
-    display: flex;
-    gap: 0.5rem;
-    padding-left: 0.9rem;
-  }
-
-  .showcase-prog i {
-    position: relative;
-    overflow: hidden;
-    flex: 1;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--border);
-  }
-
-  /* The fill is a scaled pseudo-element rather than an animated width, so the
-     sweep runs on the compositor and a panel holding four of these costs
-     nothing. `--pop` keeps each bar in its product's colour; the `--brand`
-     fallback is there because an undefined `--pop` would leave a track that
-     never fills, which reads as broken rather than as unstyled. */
-  .showcase-prog i::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--pop, var(--brand));
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-
-  .showcase-prog i.is-fill::after {
-    transform: scaleX(1);
-  }
-
-  .showcase-prog i.is-run::after {
-    animation: showcase-fill var(--hold, 8000ms) linear forwards;
-  }
-
-  @keyframes showcase-fill {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
-
-  /* Reduced motion stops the rotation outright in the component, so there is no
-     clock left to report — the open segment fills and the bar stays a position
-     marker, which is what the reel does under the same query. */
-  @media (prefers-reduced-motion: reduce) {
-    .showcase-prog i.is-run::after {
-      animation: none;
-      transform: scaleX(1);
-    }
-  }
-
-  .showcase-link {
-    font-size: 0.9rem;
-  }
-
-  .showcase-link .link-arrow {
-    color: var(--pop-deep);
-  }
-
-  /* --- Sweep controls ---
-
-     There is no row under the track any more. The old one put both jobs in the
-     same place and neither was done: a reader stopped on a card looks at the
-     card, so four dots below the section said "one of four" to nobody, and two
-     arrows in the same row said "there is more" while pointing at nothing in
-     particular. The two jobs split, and each went where its answer is wanted —
-     the count into the panel, the direction onto the edge it points at. */
-
-  /* --- The count, inside the panel ---
-
-     Sits at the head of the copy column, above the product's name, so the first
-     thing read on a card is that it is one of four. Rendered by every panel for
-     itself, which is why it needs no accent: the dots are ink and border, and
-     the one coloured thing in this column stays the product's own name. */
-  .showcase-pager {
-    display: flex;
-    align-items: center;
-    /* Ranged left and held together rather than spread across the column. The
-       count is a caption on the dots, not a second item in a row — pushed to
-       the far edge it reads as an unrelated number floating beside them. */
-    gap: 0.75rem;
-    /* The list is padded out for touch, so its box is taller than its marks.
-       The negative inline start pulls the first dot's padding off the column
-       edge and lines the row of marks up with the name below it. */
-    margin-inline-start: -0.55rem;
-  }
-
-  .showcase-count {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    color: var(--text-faint);
-  }
-
-  .showcase-dots {
-    display: flex;
-    align-items: center;
-    gap: 0.15rem;
-  }
-
-  /* The hit area is 1.5rem square while the mark is 0.4rem — a 6px dot is an
-     unfair target on a touch screen, and padding it out costs nothing here. */
-  .showcase-dot {
-    display: block;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 999px;
-    background-clip: content-box;
-    padding: 0.55rem;
-    background-color: var(--border-strong);
-    transition: background-color 0.2s ease, transform 0.2s ease;
-  }
-
-  .showcase-dot:hover {
-    background-color: var(--text-faint);
-  }
-
-  /* The panel's own dot, which is the one that has to read as *here* rather
-     than as one more target. It grows as well as darkens, so the row is legible
-     as a position at a glance and not only on close inspection. */
-  .showcase-dot[data-on] {
-    background-color: var(--pop-deep);
-    transform: scale(1.5);
-  }
-
-  /* --- The direction, on the track's edges ---
-
-     A button on each end of the track, over the sliver of the panel it goes to,
-     carrying that product's mark in that product's colour. It sits on the
-     panel's own padding rather than over anything it can cover: the panel pads
-     itself by at least 1.5rem and the button reaches half its width inward, so
-     the copy and the screen are never under it.
-
-     Absolutely positioned, so a missing one at either end costs no layout —
-     which is what lets it be removed rather than greyed out. */
-  .showcase-edge {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    /* Over the peeking card, which is decoration — the strip must not swallow a
-       drag that was meant for the track. Only the button takes the pointer. */
-    pointer-events: none;
-  }
-
-  .showcase-edge[data-side="prev"] {
-    left: 0;
-  }
-
-  .showcase-edge[data-side="next"] {
-    right: 0;
-  }
-
-  .showcase-edge-button {
-    pointer-events: auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    /* White and shadowed: it stands on a card, so it has to read as being in
-       front of one rather than printed on it. --surface, not --bg — the panel
-       ground is already a half-step off paper and a button in the same value
-       would sit flat on it. */
-    background: var(--surface);
-    box-shadow: 0 8px 24px -14px rgb(15 23 42 / 0.45);
-    color: var(--text-muted);
-    transition: color 0.2s ease, border-color 0.2s ease,
-      transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .showcase-edge-button:hover {
-    color: var(--brand-text);
-    border-color: var(--brand);
-    box-shadow: 0 12px 28px -14px rgb(15 23 42 / 0.5);
-  }
-
-  .showcase-edge[data-side="prev"] .showcase-edge-button:hover {
-    transform: translateX(-2px);
-  }
-
-  .showcase-edge[data-side="next"] .showcase-edge-button:hover {
-    transform: translateX(2px);
-  }
-
-  /* The destination, named. An arrow says another panel exists; the mark under
-     it says the panel is coLab, which is the difference between a control and a
-     reason to press it. Small type over a card edge, so it carries the panel's
-     ground behind it rather than sitting on whatever it lands over. */
-  .showcase-edge-name {
-    font-size: 0.7rem;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    padding: 0.25rem 0.5rem;
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--text-faint);
-    box-shadow: 0 8px 24px -18px rgb(15 23 42 / 0.5);
-  }
-
-  /* Under 640px the button is already sitting on most of the panel's padding
-     and a name beside it would reach the copy. The arrow alone carries it, and
-     the dots inside the card still say how many are left. */
-  @media (max-width: 639px) {
-    .showcase-edge-name {
-      display: none;
-    }
-
-    .showcase-edge-button {
-      width: 2.25rem;
-      height: 2.25rem;
-    }
-  }
-
-  /* --- The drawn screens ---------------------------------------------------
-
-     One chassis, twelve interiors. The primitives below (rows, people, pairs,
-     tiles, figures) are shared across products so a new screen costs markup
-     rather than a private stylesheet block. */
-
-  .showcase-stage {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-  }
-
-  /* A fixed floor so the panel does not resize as capabilities are swapped —
-     the tallest screen sets the height once and the rest sit inside it. */
-  .shot-swapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    animation: shot-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  @keyframes shot-in {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-  }
-
-  /* Mono across the whole window, as it has always been here. A drawn product
-     screen is machine output end to end — paths, states, names, counts — which
-     is rule 4, and it is also what stops these reading as marketing panels with
-     a border. The colour changed in this pass; the type did not.
-
-     SURFACE. This is the reel's surface recipe from `NsqrReel.module.css`,
-     lifted here so the four drawn screens sit at the same weight as the fifth
-     panel rather than a step behind it. Flat `--surface` with no border was
-     what put them there: on the `--bg-subtle` ground a white rectangle has no edge,
-     so the shadow was doing the whole job of lifting it and the card read soft
-     while the reel beside it read solid.
-
-     Three parts, and each answers one of those:
-       - the 1px `--border` gives the edge the shadow alone was implying;
-       - the first radial is a `--bg-subtle` wash from the top-left that falls
-         to transparent, so the ground shows through the screen rather than
-         being sealed off by it;
-       - the second is the product's own accent at 12%, pooled bottom-right.
-
-     `--pop` rather than the reel's fixed `--brand`: the recipe is shared, the
-     hue is not, so vault stays teal, colab blue and presence green and each
-     card is washed in the colour it already had. Nothing here restates a
-     colour value — swap a panel's `--pop` above and its screen follows.
-
-     The `transparent` fallback is load-bearing rather than tidy. Only four
-     brands carry a `--pop`, and a `color-mix()` over an undefined custom
-     property is invalid at computed-value time — which takes the whole
-     `background` with it, not just the one layer, and the screen would lose
-     its surface and render clear. A fifth product joining the sweep on an
-     undeclared brand should cost it this wash and nothing else. */
-  .shot {
-    width: 100%;
-    max-width: 32rem;
-    min-height: 20rem;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: radial-gradient(120% 90% at 12% 4%, var(--bg-subtle) 0%, transparent 58%),
-      radial-gradient(
-        90% 70% at 96% 100%,
-        color-mix(in srgb, var(--pop, transparent) 12%, transparent) 0%,
-        transparent 60%
-      ),
-      var(--surface);
-    font-family: var(--font-mono), ui-monospace, monospace;
-    box-shadow: 0 18px 44px -24px rgba(12, 14, 20, 0.35),
-      0 2px 6px -2px rgba(12, 14, 20, 0.08);
-  }
-
-  .shot-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.9rem;
-    background: var(--pop-soft);
-  }
-
-  .shot-dots {
-    display: inline-flex;
-    gap: 0.3rem;
-  }
-
-  .shot-dots i {
-    width: 0.45rem;
-    height: 0.45rem;
-    border-radius: 50%;
-    background: var(--pop);
-    opacity: 0.45;
-  }
-
-  .shot-path {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    color: var(--pop-deep);
-    font-size: 0.63rem;
-  }
-
-  .shot-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-    padding: 1.1rem;
-  }
-
-  .shot-title {
-    color: var(--text-faint);
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  /* --- Figures --- */
-
-  /* The one big number on a screen. Light weight at this size reads as a
-     display figure rather than as a stat block shouting. */
-  .shot-figure {
-    color: var(--pop-deep);
-    font-size: 2.5rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
+    align-self: start;
   }
 
-  .shot-figure span {
-    color: var(--text-faint);
-    font-size: 0.85rem;
-    letter-spacing: 0;
+  .pub-index::before {
+    content: counter(pub, decimal-leading-zero);
   }
 
-  .shot-banner {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-top: auto;
-    padding: 0.55rem 0.75rem;
-    border-radius: 0.55rem;
-    background: var(--pop-soft);
-    color: var(--pop-deep);
-    font-size: 0.78rem;
+  .pub-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.35;
   }
 
-  .shot-dot-live {
-    width: 0.45rem;
-    height: 0.45rem;
-    border-radius: 50%;
-    background: var(--pop);
+  .pub-authors {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
   }
 
-  .shot-sub {
-    display: block;
-    color: var(--text-faint);
-    font-size: 0.72rem;
-    line-height: 1.45;
-  }
-
-  .shot-truncate {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  .shot-truncate b {
-    display: block;
-    font-weight: 400;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  /* --- QR --- */
-
-  .shot-hero {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex: 1;
-  }
-
-  .shot-qr {
-    display: grid;
-    grid-template-columns: repeat(11, 1fr);
-    gap: 2px;
-    flex-shrink: 0;
-    width: 8.5rem;
-    aspect-ratio: 1;
-    padding: 0.55rem;
-    border-radius: 0.7rem;
-    background: var(--pop-soft);
-  }
-
-  .shot-qr span {
-    border-radius: 1.5px;
-  }
-
-  .shot-qr span[data-on] {
-    background: var(--pop);
-  }
-
-  .shot-swap {
-    min-width: 0;
-    display: grid;
-    gap: 0.3rem;
-    font-family: var(--font-mono), ui-monospace, monospace;
-  }
-
-  .shot-was {
-    color: var(--text-faint);
-    font-size: 0.82rem;
-    text-decoration: line-through;
-  }
-
-  .shot-now {
-    color: var(--pop-deep);
-    font-size: 1.05rem;
-  }
-
-  .shot-pill {
-    justify-self: start;
-    margin-top: 0.35rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    background: var(--pop);
-    color: #fff;
-    font-size: 0.68rem;
-  }
-
-  /* --- Chart --- */
-
-  .shot-chart {
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-    gap: 0.4rem;
-    min-height: 7rem;
-  }
-
-  .shot-bar-col {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.3rem;
-    height: 100%;
-  }
-
-  .shot-bar-value {
-    color: var(--pop-deep);
-    font-size: 0.6rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .shot-bar-fill {
-    width: 100%;
-    /* --bar-h, not --h: --h is the category hue set by [data-hue], and a bar
-       carrying a percentage in the same name would collide with it. */
-    height: var(--bar-h, 50%);
-    min-height: 3px;
-    border-radius: 4px 4px 0 0;
-    background: var(--pop);
-  }
-
-  .shot-bar-day {
-    color: var(--text-faint);
-    font-size: 0.62rem;
-    line-height: 1;
-  }
-
-  .shot-stats {
+  .pub-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.2rem 1.5rem;
-  }
-
-  .shot-stats > div {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-  }
-
-  .shot-stats dt {
-    color: var(--text-faint);
-    font-size: 0.7rem;
-  }
-
-  .shot-stats dd {
-    color: var(--text);
-    font-size: 0.85rem;
-  }
-
-  /* --- Tiles --- */
-
-  .shot-tiles {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.45rem;
-    align-content: center;
-  }
-
-  @media (min-width: 420px) {
-    .shot-tiles {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
-  .shot-tiles > li {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.7rem 0.3rem;
-    border-radius: 0.6rem;
-    background: var(--h-soft, var(--pop-soft));
-    color: var(--h-deep, var(--pop-deep));
-    font-size: 0.65rem;
-    text-align: center;
-    overflow: hidden;
-    transition: transform 0.18s ease;
-  }
-
-  .shot-tiles > li:hover {
-    transform: translateY(-2px);
-  }
-
-  .shot-tiles > li span {
-    max-width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  /* The selected type, filled rather than tinted — one tile in the set is what
-     tells you this is a chooser and not a legend. */
-  .shot-tiles > li[data-on] {
-    background: var(--h, var(--pop));
-    color: #fff;
-  }
-
-  /* --- Files --- */
-
-  .shot-files {
-    display: grid;
-    gap: 0.4rem;
-    font-size: 0.73rem;
-  }
-
-  .shot-files > li {
-    display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0.6rem;
-    border-radius: 0.5rem;
-    background: var(--bg-subtle);
-    color: var(--text-muted);
+    margin-top: 0.25rem;
   }
 
-  .shot-files .shot-truncate {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .shot-arrow {
-    color: var(--pop);
-    flex-shrink: 0;
-  }
-
-  .shot-cipher {
-    flex-shrink: 0;
-    color: var(--pop-deep);
-    letter-spacing: 0.02em;
-  }
-
-  /* --- People --- */
-
-  .shot-people {
-    display: grid;
-    gap: 0.4rem;
-  }
-
-  .shot-people > li {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.45rem 0.6rem;
-    border-radius: 0.55rem;
-    background: var(--bg-subtle);
-    font-size: 0.82rem;
-  }
-
-  .shot-people > li[data-guest] {
-    background: var(--pop-soft);
-  }
-
-  .shot-avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 50%;
-    background: var(--h, var(--pop));
-    color: #fff;
-    font-size: 0.7rem;
-  }
-
-  .shot-tag {
-    flex-shrink: 0;
-    padding: 0.18rem 0.5rem;
-    border-radius: 0.4rem;
-    background: var(--surface);
+  .pub-venue {
     color: var(--text-faint);
-    font-size: 0.66rem;
-    white-space: nowrap;
+    font-size: 0.875rem;
   }
 
-  /* --- Pairs --- */
-
-  .shot-pairs {
-    flex: 1;
+  /* --- Legal --------------------------------------------------------------- */
+  .legal-register {
     display: grid;
-    gap: 0.4rem;
-    align-content: center;
+    gap: 1rem;
   }
 
-  .shot-pairs > div {
+  .legal-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.6rem 0.7rem;
-    border-radius: 0.5rem;
-    background: var(--bg-subtle);
-  }
-
-  .shot-pairs dt {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-
-  .shot-pairs dd {
-    color: var(--text);
-    font-size: 0.8rem;
-    text-align: right;
-  }
-
-  /* Sealed and refused are the two states these screens exist to show, so they
-     are the two that get filled rather than written. */
-  .shot-pairs dd[data-sealed],
-  .shot-pairs dd[data-refused] {
-    padding: 0.12rem 0.5rem;
-    border-radius: 0.4rem;
-    background: var(--pop);
-    color: #fff;
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  /* --- Timeline --- */
-
-  .shot-track {
-    position: relative;
-    flex: 1;
-    min-height: 5rem;
-    margin: 1.5rem 0.5rem 0;
-  }
-
-  .shot-track-line,
-  .shot-track-fill {
-    position: absolute;
-    left: 0;
-    top: 0.7rem;
-    height: 3px;
-    border-radius: 999px;
-  }
-
-  .shot-track-line {
-    right: 0;
-    background: var(--bg-subtle);
-  }
-
-  .shot-track-fill {
-    width: var(--fill, 0%);
-    background: var(--pop);
-  }
-
-  .shot-milestone {
-    position: absolute;
-    top: 0;
-    left: var(--at, 0%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    transform: translateX(-50%);
-    color: var(--text-muted);
-    font-size: 0.72rem;
-    white-space: nowrap;
-  }
-
-  .shot-milestone[data-done] {
-    color: var(--text);
-  }
-
-  .shot-milestone-node {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.15rem;
-    height: 1.15rem;
-    border-radius: 50%;
-    border: 2px solid var(--bg-subtle);
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     background: var(--surface);
-    color: #fff;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.25s ease,
+      border-color 0.2s ease;
   }
 
-  .shot-milestone[data-done] .shot-milestone-node {
-    border-color: var(--text);
-    background: var(--text);
+  .legal-row:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--brand) 35%, var(--border));
+    box-shadow: var(--shadow-md);
   }
 
-  .shot-milestone[data-now] {
+  .legal-row-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+
+  .legal-row-note {
+    margin-top: 0.25rem;
     color: var(--text-muted);
+    font-size: 0.9375rem;
   }
 
-  .shot-milestone[data-now] .shot-milestone-node {
-    border-color: var(--border-strong);
-    background: #fff;
-    box-shadow: 0 0 0 3px var(--bg-subtle);
-  }
-
-  /* --- Decision log --- */
-
-  .shot-log {
-    display: grid;
-    gap: 0.55rem;
-  }
-
-  .shot-log > li {
-    padding: 0.65rem 0.75rem;
-    border-radius: 0.55rem;
-    background: var(--bg-subtle);
-    border-left: 3px solid var(--h, var(--pop));
-  }
-
-  .shot-log-title {
-    color: var(--text);
-    font-size: 0.85rem;
-  }
-
-  .shot-signed {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-    color: var(--text-faint);
-    font-size: 0.7rem;
-  }
-
-  .shot-signed .shot-avatar {
-    width: 1.15rem;
-    height: 1.15rem;
-    font-size: 0.6rem;
-  }
-
-  /* --- States --- */
-
-  .shot-state {
-    flex-shrink: 0;
-    padding: 0.2rem 0.55rem;
-    border-radius: 0.4rem;
-    background: var(--bg-subtle);
-    color: var(--text-faint);
-    font-size: 0.68rem;
-    white-space: nowrap;
-  }
-
-  .shot-state[data-state="In"] {
-    background: var(--text);
-    color: #fff;
-  }
-
-  .shot-state[data-state="Late"] {
-    background: var(--bg-subtle);
-    color: var(--text-muted);
-  }
-
-  .shot-state[data-state="Absent"] {
-    background: var(--bg-subtle);
-    color: var(--text-muted);
-  }
-
-  .shot-scopes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .shot-scopes > li {
-    padding: 0.35rem 0.7rem;
-    border-radius: 0.45rem;
-    background: var(--bg-subtle);
-    color: var(--text-faint);
-    font-size: 0.72rem;
-  }
-
-  .shot-scopes > li[data-on] {
-    background: var(--pop);
-    color: #fff;
-  }
-
-  /* --- Step rail ----------------------------------------------------------- */
-
-  /* An ordered explainer set on a rail with a packet descending it — Vault's
-     three beats, coLab's three, and whatever comes next. Rendered by
-     <StepRail>. The rail is vertical at every breakpoint, so the beats stay
-     legible at any width, and it borrows the vertical language of the product
-     timeline on the home page so the two read as one family.
-
-     Named for what it is rather than for the page that needed it first: the
-     markup is identical between the two callers, and a second copy of these
-     rules under a colab- prefix would have been the same forty lines twice. */
-  .flow {
-    position: relative;
-    padding-left: 2rem;
-  }
-
-  .flow-rail {
-    position: absolute;
-    left: 0.5rem;
-    top: 0.6rem;
-    bottom: 0.6rem;
-    width: 1px;
-    background: var(--border);
-  }
-
-  /* The travelling packet. `top` rather than a transform because the distance
-     is the rail's height, which only the containing block knows — and it is
-     one 8px dot, so the paint cost is nil. */
-  .flow-pulse {
-    position: absolute;
-    left: 0.5rem;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--brand);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
-    transform: translateX(-50%);
-    animation: flow-descend 5.5s ease-in-out infinite;
-  }
-
-  @keyframes flow-descend {
-    0% {
-      top: 0.6rem;
-      opacity: 0;
-    }
-    12% {
-      opacity: 1;
-    }
-    85% {
-      opacity: 1;
-    }
-    100% {
-      top: calc(100% - 0.6rem);
-      opacity: 0;
-    }
-  }
-
-  .flow-step {
-    position: relative;
-    padding-block: 0.9rem;
-  }
-
-  .flow-step + .flow-step {
-    border-top: 1px solid var(--border);
-  }
-
-  .flow-node {
-    position: absolute;
-    left: calc(-2rem + 0.5rem);
-    top: 1.55rem;
-    display: grid;
-    place-items: center;
-    width: 0.95rem;
-    height: 0.95rem;
-    border: 1px solid color-mix(in srgb, var(--brand) 55%, var(--border));
-    border-radius: 999px;
-    background: var(--bg);
-    transform: translate(-50%, -50%);
-  }
-
-  .flow-node::after {
-    content: "";
-    width: 0.375rem;
-    height: 0.375rem;
-    border-radius: 999px;
-    background: var(--brand);
-  }
-
-  /* --- Comparison ledger --------------------------------------------------- */
-
-  /* Three columns on desktop — the question, the ordinary answer, ours — and
-     stacked pairs on mobile, where three columns of prose would be unreadable.
-     Set as ruled rows rather than cards: it is a register of answers, and the
-     visual echo of the /legal register is deliberate.
-
-     Shared by /vault and /colab, which ask the reader the same kind of
-     question about two entirely different subjects. */
-  .ledger-row {
-    display: grid;
-    gap: 0.35rem 1.5rem;
-    padding: 1rem 1.15rem;
-  }
-
-  .ledger-row + .ledger-row {
-    border-top: 1px solid var(--border);
-  }
-
-  /* The column headings are a desktop affordance only: on mobile each answer
-     carries its own label instead, and the heading row is dropped. It stays in
-     the DOM either way, so the rule below keeps the first data row from
-     drawing a separator under a header nobody can see. */
-  .ledger-head {
-    display: none;
-    /* The ledger cannot use overflow:hidden to clip this row's fill into the
-       container's rounded corners — that would make the container a scroll
-       container, and the rows inside it drive their reveal from view(), which
-       resolves against the nearest scrolling ancestor. So the corners are cut
-       here instead. Inset by the container's 1px border. */
-    border-start-start-radius: calc(var(--radius) - 1px);
-    border-start-end-radius: calc(var(--radius) - 1px);
-  }
-
-  .ledger-head + .ledger-row {
-    border-top: 0;
-  }
-
-  .ledger-answer {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  /* The mobile-only label on each answer. Desktop gets a column header row
-     instead, so this hides rather than repeating it on every line. */
-  .ledger-label {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
-  @media (min-width: 768px) {
-    .ledger-row {
-      grid-template-columns: 1.1fr 1fr 1fr;
-      align-items: start;
-    }
-
-    .ledger-head {
-      display: grid;
-      background: var(--bg-subtle);
-      padding-block: 0.7rem;
-    }
-
-    .ledger-head + .ledger-row {
-      border-top: 1px solid var(--border);
-    }
-
-    .ledger-label {
-      display: none;
-    }
-  }
-
-  /* --- Scroll-driven motion ------------------------------------------------
-
-     All of the below is progressive enhancement, gated three ways: on
-     @supports, because Firefox has not shipped scroll-driven animations; on
-     prefers-reduced-motion, because a scroll timeline ignores the global
-     duration collapse and has to be switched off at the source; and — for the
-     hero — on viewport width. Every gate fails to the page as it renders
-     today, fully readable, nothing hidden.
-
-     It is CSS rather than a scroll listener on purpose. These run off the main
-     thread, they cannot jank the scroll, and the page stays a server component:
-     the only client JS on /vault is still the contact dialog. */
-
-  /* Content settles as it arrives. `translate` rather than a transform so it
-     composes with .card-hover's lift instead of overriding it — an animation
-     with a forwards fill outranks the :hover rule, and using the independent
-     property sidesteps that fight entirely. */
-  @keyframes reveal-in {
-    from {
-      opacity: 0;
-      translate: 0 18px;
-    }
-    to {
-      opacity: 1;
-      translate: none;
-    }
-  }
-
-  /* The statement's highlight, drawn left to right as the line is reached.
-     Only the width moves; the colour and the type are already there, so the
-     unsupported path is the finished state rather than a hidden one. */
-  @keyframes mark-draw {
-    from {
-      background-size: 0% 0.3em;
-    }
-    to {
-      background-size: 100% 0.3em;
-    }
-  }
-
-  /* Read-position hairline. Brand-tinted from whatever scope it sits in, above
-     the sticky header but below the consent banner and the dialog. */
-  .scroll-progress {
-    position: fixed;
-    inset-inline: 0;
-    top: 0;
-    z-index: 51;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      var(--brand),
-      color-mix(in srgb, var(--brand) 35%, transparent)
-    );
-    transform-origin: 0 50%;
-    scale: 0 1;
-    pointer-events: none;
-  }
-
-  @keyframes scroll-progress {
-    from {
-      scale: 0 1;
-    }
-    to {
-      scale: 1 1;
-    }
-  }
-
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      /* Ranged over `entry` rather than `cover`, so a block is settled by the
-         time it has climbed far enough to be read. Applied to leaf items —
-         cards, rows, heading blocks — never to a tall grid: `entry` on an
-         element taller than the viewport finishes long after it should. The
-         stagger is free, because items enter one after another. */
-      .reveal {
-        animation-name: reveal-in;
-        animation-duration: auto;
-        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-        animation-fill-mode: both;
-        animation-timeline: view();
-        animation-range: entry 5% entry 55%;
-      }
-
-      /* Ranged later than .reveal so the sentence is settled and readable
-         before the highlight starts running under it. */
-      .mark-brand {
-        animation-name: mark-draw;
-        animation-duration: auto;
-        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-        animation-fill-mode: both;
-        animation-timeline: view();
-        animation-range: entry 35% entry 75%;
-      }
-
-      .scroll-progress {
-        animation-name: scroll-progress;
-        animation-duration: auto;
-        animation-timing-function: linear;
-        animation-fill-mode: both;
-        animation-timeline: scroll(root block);
-      }
-    }
-  }
-
-  /* --- Hero scrub ----------------------------------------------------------
-
-     Above lg the scene sits beside the copy and is on screen at rest, so the
-     encryption is handed to the reader: scroll, and the sweep descends under
-     your thumb while the file names turn over. Driven from the root scroller
-     rather than view(), because at scroll 0 the scene is already in view — a
-     view() timeline would open part-way through, and the whole point is that
-     the first frame is the readable one.
-
-     Below lg the scene is stacked under the copy and half a screen down; the
-     scrub would be over before it was ever visible, so the timed loop stays.
-
-     Distances are the same 30px–380px bar for every layer, with each row given
-     the slice of it where the sweep crosses that row. */
-
-  @keyframes vault-scan-scrub {
-    0% {
-      top: 0;
-      opacity: 0;
-    }
-    12% {
-      opacity: 1;
-    }
-    88% {
-      opacity: 1;
-    }
-    100% {
-      top: 100%;
-      opacity: 0;
-    }
-  }
-
-  @keyframes vault-plain-scrub {
-    to {
-      opacity: 0;
-    }
-  }
-
-  @keyframes vault-cipher-scrub {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 0.85;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    @supports (animation-timeline: scroll()) {
-      @media (prefers-reduced-motion: no-preference) {
-        /* Longhands throughout: the `animation` shorthand resets
-           animation-timeline back to auto, which would quietly undo the line
-           below it. */
-        .vault-scan,
-        .vault-plain,
-        .vault-cipher,
-        .vault-state-open,
-        .vault-state-locked {
-          animation-duration: auto;
-          animation-timing-function: linear;
-          animation-iteration-count: 1;
-          animation-fill-mode: both;
-          animation-delay: 0s;
-          animation-timeline: scroll(root block);
-        }
-
-        .vault-scan {
-          animation-name: vault-scan-scrub;
-          animation-range: 30px 380px;
-        }
-
-        .vault-plain {
-          animation-name: vault-plain-scrub;
-        }
-
-        .vault-cipher {
-          animation-name: vault-cipher-scrub;
-        }
-
-        /* The slice of the bar where the sweep is crossing row --i. */
-        .vault-row .vault-plain,
-        .vault-row .vault-cipher {
-          animation-range: calc(40px + var(--i) * 87px)
-            calc(110px + var(--i) * 87px);
-        }
-
-        /* The labels confirm the change once the sweep has cleared the list. */
-        .vault-state-open {
-          animation-name: vault-plain-scrub;
-          animation-range: 330px 390px;
-        }
-
-        .vault-state-locked {
-          animation-name: vault-cipher-scrub;
-          animation-range: 330px 390px;
-        }
-      }
-    }
-  }
-
-  /* --- Legal prose -------------------------------------------------------- */
-
-  /* Long-form policy text rendered from `content/legal/*.md`.
-
-     Set denser than site copy so it reads as an instrument rather than
-     marketing prose — narrow measure, tight leading, close paragraph spacing.
-     The density comes from the rhythm, not from shrinking the type: these are
-     consumer privacy documents, and GDPR Art. 12 asks for information that is
-     "concise, transparent, intelligible and easily accessible". Fine print is
-     the visual language of burying terms, which is the opposite of what these
-     documents are for. 0.9rem is the floor here — don't go below it. */
-  /* One centred column shared by the masthead and the prose, so a document
-     reads as a single sheet rather than a narrow column pinned to the left of
-     a wide shell. Both must carry this class or they drift apart. */
   .legal-measure {
-    max-width: 41rem;
+    max-width: 46rem;
     margin-inline: auto;
   }
 
+  /* The policy prose. `pre-line` keeps the hard line breaks in the address
+     blocks, which is why each paragraph in the markdown must stay on one
+     line — a wrapped paragraph would render with breaks mid-sentence. */
   .legal-prose {
     color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.62;
+    font-size: 1rem;
+    line-height: 1.7;
   }
 
-  .legal-prose > * + * {
-    margin-top: 0.85rem;
-  }
-
-  /* Markdown turns a single newline into a soft break, which HTML would
-     collapse to a space — and the company identity blocks (name, registration
-     number, email) are written as consecutive lines. Preserving them means
-     each paragraph in `content/legal/*.md` must stay on one line; every
-     paragraph in those files already does. */
   .legal-prose p {
     white-space: pre-line;
+    margin-block: 1rem;
   }
 
-  /* Headings sit close to body size — the rule above and the weight carry the
-     hierarchy, so the eye reads structure without the type shouting. */
   .legal-prose h2 {
-    margin-top: 2.25rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--border);
-    color: var(--text);
-    font-size: 1.05rem;
-    font-weight: 400;
-    line-height: 1.3;
-    letter-spacing: -0.012em;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.375rem;
   }
 
   .legal-prose h3 {
-    margin-top: 1.5rem;
-    color: var(--text);
-    font-size: 0.9rem;
-    font-weight: 400;
-    letter-spacing: 0.005em;
-  }
-
-  .legal-prose strong {
-    color: var(--text);
-    font-weight: 400;
-  }
-
-  .legal-prose a {
-    color: var(--brand-text);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-    text-decoration-color: color-mix(in srgb, var(--brand) 40%, transparent);
-  }
-
-  .legal-prose a:hover {
-    text-decoration-color: var(--brand);
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.0625rem;
   }
 
   .legal-prose ul,
   .legal-prose ol {
-    padding-left: 1.15rem;
+    margin-block: 1rem;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.5rem;
   }
 
   .legal-prose ul {
@@ -3734,84 +1035,29 @@
     list-style: decimal;
   }
 
-  .legal-prose li + li {
-    margin-top: 0.3rem;
-  }
-
-  .legal-prose li::marker {
-    color: var(--text-faint);
-  }
-
-  /* --- Legal register ------------------------------------------------------
-
-     The index of policies, set as a register of records rather than a grid of
-     cards: ruled rows, name left, revision date right. Four documents do not
-     justify four bordered boxes, and the form matches the density of the
-     documents the rows lead into. */
-  .legal-register > :last-child {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .legal-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: 0.2rem 1.5rem;
-    padding: 0.9rem 0.5rem 0.95rem;
-    margin-inline: -0.5rem;
-    border-top: 1px solid var(--border);
-    border-radius: 0.4rem;
-    transition: background 0.16s ease;
-  }
-
-  .legal-row:hover {
-    background: var(--bg-subtle);
-  }
-
-  .legal-row-title {
-    color: var(--text);
-    font-size: 0.95rem;
-    font-weight: 400;
-    letter-spacing: -0.008em;
-    transition: color 0.16s ease;
-  }
-
-  .legal-row:hover .legal-row-title {
+  .legal-prose a {
     color: var(--brand-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
-  /* Dates share the mono face with the documents' own datelines, and sit in
-     their own column so "what changed most recently" is one glance. */
-  .legal-row-date {
-    color: var(--text-faint);
-    font-family: var(--font-mono), monospace;
-    font-size: 0.7rem;
-    white-space: nowrap;
-  }
-
-  .legal-row-note {
-    grid-column: 1 / -1;
-    color: var(--text-faint);
-    font-size: 0.83rem;
-    line-height: 1.5;
-  }
-
-  /* Tables scroll inside their own box so a long row never widens the page. */
-  .legal-table-scroll {
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+  .legal-prose strong {
+    color: var(--text);
+    font-weight: 600;
   }
 
   .legal-prose table {
     width: 100%;
+    margin-block: 1.25rem;
     border-collapse: collapse;
-    font-size: 0.845rem;
+    font-size: 0.9375rem;
   }
 
   .legal-prose th,
   .legal-prose td {
-    padding: 0.55rem 0.8rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border);
     text-align: left;
     vertical-align: top;
   }
@@ -3819,212 +1065,82 @@
   .legal-prose th {
     background: var(--bg-subtle);
     color: var(--text);
-    font-weight: 400;
-    white-space: nowrap;
+    font-weight: 600;
   }
 
-  .legal-prose tbody tr + tr td {
-    border-top: 1px solid var(--border);
+  .legal-table-scroll {
+    overflow-x: auto;
   }
 
-  .legal-prose code {
-    padding: 0.15em 0.4em;
-    border: 1px solid var(--border);
-    border-radius: 0.4rem;
-    background: var(--bg-subtle);
-    color: var(--text);
-    font-family: var(--font-mono), monospace;
-    font-size: 0.85em;
-  }
-
-  .legal-prose hr {
-    margin-block: 2rem;
-    border: 0;
-    border-top: 1px solid var(--border);
-  }
-
-  /* --- Publications --------------------------------------------------------
-
-     Set as a bibliography rather than a card grid: numbered entries, hanging
-     indent, ruled between.
-
-     Rule 4 does most of the work here. The sans carries the title, the authors
-     and the summary, because a person wrote them. The mono carries the entry
-     number, the venue, the date and the DOI, because they identify a record. */
-  /* The bibliography. Hanging indent via a two-column grid, so a wrapped title
-     lines up under the first word and not under the number. */
-  .pub-list > :last-child {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .pub-entry {
-    display: grid;
-    grid-template-columns: 2.25rem 1fr;
-    gap: 0 0.5rem;
-    padding: 1.35rem 0 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .pub-index {
-    color: var(--text-faint);
-    font-family: var(--font-mono), monospace;
-    font-size: 0.78rem;
-    line-height: 1.5;
-  }
-
-  .pub-title {
-    color: var(--text);
-    font-size: 1rem;
-    line-height: 1.45;
-    letter-spacing: -0.008em;
-    text-wrap: pretty;
-  }
-
-  .pub-authors {
-    margin-top: 0.4rem;
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    line-height: 1.55;
-  }
-
-  /* The citation line: venue, date and identifier, all mono, on one rule so it
-     reads as the record's spine rather than as more prose. */
-  .pub-meta {
+  /* --- Consent banner ------------------------------------------------------ */
+  .consent-banner {
+    position: fixed;
+    z-index: 90;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
+    width: min(46rem, calc(100vw - 2rem));
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.3rem 0.7rem;
-    margin-top: 0.6rem;
-    padding-top: 0.55rem;
-    border-top: 1px dotted var(--border-strong);
-    font-family: var(--font-mono), monospace;
-    font-size: 0.7rem;
-    color: var(--text-faint);
-  }
-
-  .pub-venue {
-    color: var(--text-muted);
-  }
-
-  .pub-summary {
-    margin-top: 0.75rem;
-    color: var(--text-muted);
-    font-size: 0.87rem;
-    line-height: 1.65;
-    max-width: 62ch;
-    text-wrap: pretty;
-  }
-
-  .pub-link {
-    display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-top: 0.75rem;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    border-bottom: 1px solid var(--border-strong);
-    padding-bottom: 0.1rem;
-    transition: color 0.16s ease, border-color 0.16s ease;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-lg);
   }
-
-  .pub-link:hover {
-    color: var(--brand-text);
-    border-color: var(--brand);
-  }
-
-  @media (max-width: 640px) {
-    .pub-entry {
-      grid-template-columns: 1.6rem 1fr;
-    }
-
-    .pub-summary {
-      font-size: 0.85rem;
-    }
-  }}
+}
 
 /* ==========================================================================
-   Utilities & motion
+   Utilities
    ========================================================================== */
 
 @layer utilities {
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .text-faint {
+    color: var(--text-faint);
+  }
+
+  .text-brand {
+    color: var(--brand-text);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
 
-  .animate-rise {
-    animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  .rule {
+    height: 1px;
+    background: var(--border);
+    border: 0;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  /* A single entrance, used sparingly and switched off under reduced-motion. */
+  .rise {
+    animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .card-hover:hover,
-  .btn:active {
-    transform: none;
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
   }
 
-  /* The product scenes are pinned rather than collapsed. Left to the rule above
-     they would land on whichever frame sits at 100% and, with the per-row
-     stagger, would flash through their opening state on the way there. Each
-     has a correct still — everything locked, the packet gone, the week over —
-     so it is set here outright. */
-  .vault-plain,
-  .vault-state-open,
-  .vault-scan,
-  .flow-pulse {
-    opacity: 0;
-  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise {
+      animation: none;
+    }
 
-  .vault-cipher,
-  .vault-state-locked {
-    opacity: 0.85;
-  }
-
-  .colab-before {
-    opacity: 0;
-  }
-
-  .colab-after,
-  .colab-row[data-done] .colab-check {
-    opacity: 1;
-  }
-
-  .colab-row[data-done] .colab-box {
-    border-color: var(--brand);
-  }
-
-  .colab-track-fill {
-    width: 62%;
+    * {
+      scroll-behavior: auto !important;
+    }
   }
 }

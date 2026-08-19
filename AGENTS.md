@@ -8,72 +8,78 @@
   (`--font-sans`) and IBM Plex Mono (`--font-mono`, used for eyebrows, labels
   and numerals).
 
-## The design system — BLANK SLATE
-The neurasense brand handoff has been stripped out and **nothing has replaced
-it**. The site is deliberately undesigned right now: greyscale ground and ink,
-square corners, no elevation, no gradient, no hue anywhere. The four rules the
-handoff imposed — weights capped at 400, roughly one violet per screen, a 4.5:1
-contrast floor audited by script, mono as a marker of machine output — no
-longer apply, and neither does the layout rule that two thirds of any layout
-should be empty. Nothing has been put in their place yet.
+## The design system
+The site runs on **HeroUI's design language**. The values are not an impression
+of it — they are lifted from `@heroui/theme@2.4.26` itself
+(`dist/colors/semantic.js` for the palette, `dist/default-layout.js` for radius,
+elevation and the type scale) and written into `:root` in `app/globals.css`.
+Nothing from HeroUI is installed or bundled: this is a plain Tailwind site that
+adopts their tokens and builds its own components on top.
 
-**What survived is structure.** Every token *name* the components layer reads is
-still defined, and all ~230 component classes still resolve, so every page lays
-out and reads exactly as it did — it simply carries no aesthetic decision.
-Filling a value into `:root` in `app/globals.css` is how a decision gets made,
-and it propagates site-wide from that one place.
+The neurasense brand handoff it replaced is gone — weights capped at 400, one
+violet per screen, the audited 4.5:1 floor, mono as a marker of machine output,
+and the rule that two thirds of a layout stay empty. None of them apply.
 
-**Do not quietly re-introduce a design.** If a change needs a colour, a radius,
-a shadow or a weight, that is a decision to raise, not to default. Picking a
-plausible blue in passing is how the last two systems got built by accident.
+What replaces them:
 
-Decisions still outstanding, roughly in the order they matter:
-1. **The accent.** `--accent` currently resolves to ink so buttons and focus
-   rings still read. There is no house colour.
-2. **The six product accents.** `[data-brand="violet|blue|cyan|emerald|amber|
-   clay"]` all collapse to ink in one rule. The attribute names and every
-   `accent` field in `app/data/site.js` are untouched, so real hues drop
-   straight in.
-3. **The categorical screen scale.** `[data-hue]` (eight hues) and the `--pop`
-   triples were a *second and third* palette living down in the components
-   layer, outside the token block — undocumented, and contradicting the "never
-   hardcode a colour" rule this file used to state. Both are neutralised at
-   their own definitions. This one is a real loss and should be re-decided
-   early: a status column where every state is the same grey tells the reader
-   nothing.
-4. **Radius, elevation, and type.** `--radius*` are `0`, `--shadow-*` are
-   `none`, and headings are a flat 600 with normal tracking.
+1. **Weight carries hierarchy.** 700 display, 600 headings, 500 controls, 400
+   body. Inter, which is what HeroUI itself sets. Tailwind's full weight scale
+   is available; the config no longer truncates it.
+2. **The palette is meant to be seen.** One saturated primary (`#006fee`) spent
+   freely — buttons, links, icon tiles, gradients, tinted chips, blurred colour
+   fields behind a hero. There is no per-screen accent budget.
+3. **Everything is rounded and elevated.** A card is a raised object: large
+   radius, soft wide shadow, a lift on hover. Radii come from the `--radius-*`
+   ladder and nothing is square.
+4. **The house gradient is one gradient.** `--grad-from` → `--grad-to`, blue
+   into cyan by default and re-pointed per product by `data-brand`. It appears
+   as `.gradient-text`, `.btn-gradient`, `.icon-tile`, `.brand-mark`,
+   `.gradient-panel` and the hero blobs — always the same pair, never a second
+   one invented locally.
 
-**`scripts/contrast.py` is stale** — it encodes the old violet palette and is
-not a gate. Re-point it at whatever palette replaces this, if that guarantee is
-wanted back.
+**Fixed copy.** The hero headline and lead in `hero` (`app/data/site.js`) are
+the two lines the studio is named by and are **not to be rewritten**:
+"We think about what breaks — before it breaks" and "A studio for software,
+cryptography, and applied AI. Nothing here is assumed to work." The headline is
+split into head/tail only so the tail can carry the gradient; `headlinePlain`
+holds it whole for metadata and OG images. Product names and the `legalDocs`
+registry are likewise fixed.
 
-**Deliberately not stripped:** the NSQR hero illustration
-(`app/components/NsqrScene.js` + `.module.css`) keeps its own internal palette —
-indigo, mint, coral, sun. It is hand-drawn artwork rather than a token, ~40 SVG
-stops deep, and flattening it to grey would destroy the drawing while telling
-you nothing about structure. It is therefore the one saturated thing left on
-the site, and it is an open decision, not a settled one.
+Contrast is no longer machine-audited. `scripts/contrast.py` is stale — it
+encodes the old violet palette and is not a gate. The text tokens here
+(`--text`, `--text-muted`, `--text-faint`, `--brand-text`, `--accent-text`) were
+chosen to read on both white and their own soft tint, but nothing checks it on
+every change.
+
+Layout: `.shell` is 80rem and sections are dense — separation comes from card
+edges and tinted bands rather than from empty space.
 
 ## Key paths
-- `app/data/site.js`: **single source of truth** for products, capabilities,
-  principles and Vault content. Every page reads from here.
-- `app/layout.js`: root layout, metadata defaults, organization schema.
-- `app/globals.css`: design tokens + all component classes.
-- `app/components/`: shared UI (`SiteChrome`, `SiteHeader`, `SiteFooter`,
-  `ContactDialog`, `ProductCard`, `Icons`, …).
+- `app/data/site.js`: **single source of truth** for the hero copy, products,
+  capabilities, principles and all product content. Every page reads from here.
+- `app/layout.js`: root layout, Inter + JetBrains Mono, metadata defaults,
+  organization schema.
+- `app/globals.css`: design tokens + all component classes. ~1,000 lines, down
+  from the 4,100 the old system had grown to.
+- `app/components/ProductSections.js`: the shared furniture for the three
+  product pages — `ProductHero`, `FeatureBento`, `StepList`, `PricingCards`,
+  `FaqList`, `ProductClosing`. Each product page is the same sections in a
+  different order with different data, so a change to the language lands on all
+  three at once. Every section expects a `data-brand` ancestor; the page sets
+  it once on its `<main>`.
+- `app/components/`: the rest of the shared UI (`SiteChrome`, `SiteHeader`,
+  `SiteFooter`, `ContactDialog`, `Wordmark`, `Icons`, …).
 - `app/page.js`, `app/products/page.js`: the home page and the product index.
 - `app/research/page.js`: the publications page, read from `publications` in
-  `site.js`. Adding a paper there is the whole edit. Set as a numbered
-  bibliography (`.pub-*`) under a masthead that carries the page title and
-  nothing else — no eyebrow, no lead. Links are DOIs and
-  arXiv abstracts, never Google Scholar URLs, which carry a profile id and stop
+  `site.js`. Adding a paper there is the whole edit. Links are DOIs and arXiv
+  abstracts, never Google Scholar URLs, which carry a profile id and stop
   resolving; no citation counts, which nothing here can keep current.
 - `app/nsqr/`, `app/vault/`, `app/colab/`: the three product detail pages, each
-  with its own `opengraph-image.js`. NSQR is the short one; Vault and coLab are
-  long-form and share their two structural pieces — `StepRail` (`.flow` in
-  globals) and the comparison ledger (`.ledger-*`). Neither is Vault's any
-  more, so change them with both pages in mind.
+  a thin composition of `ProductSections` plus its own `opengraph-image.js`.
+- `app/components/ShareCard.js`: the one OG card layout. Satori's CSS parser is
+  much narrower than a browser's — it rejects the page's radial dot-matrix
+  outright, so the card carries a linear-gradient grid instead. Test an OG route
+  after touching it; a parse failure is a 500, not a fallback.
 - `app/api/contact/route.js`: contact + access-request intake.
 - `content/legal/*.md`: policy prose. `app/legal/` renders it — index,
   `/legal/website-privacy`, and `/legal/nsqr/[slug]` for the three NSQR
@@ -95,35 +101,44 @@ the site, and it is an open decision, not a settled one.
   `white-space: pre-line` so the address blocks keep their line breaks, which
   means a hard-wrapped paragraph would render with breaks mid-sentence.
 - **Never hardcode a colour.** Everything resolves to a token in
-  `app/globals.css`: `--bg`, `--bg-subtle`, `--surface`, `--border`,
-  `--border-strong`, `--text`, `--text-muted`, `--text-faint`, `--accent`,
-  `--accent-text`, `--brand`, `--brand-text`. This rule was *stated* before and
-  not kept — three separate palettes had grown up in the components layer. It
-  now holds: `globals.css` has no hex outside `:root`. Keep it that way.
-- **`--brand` is a fill; `--brand-text` is for words.** Anything that sets a
-  colour on text uses `--brand-text` (or `--accent-text`). The distinction is
-  currently invisible — both are ink — but it is what makes a real palette drop
-  in safely later, so keep honouring it.
-- **The wordmark** is `Wordmark` in `app/components/Wordmark.js`: lowercase,
-  `neura` and `sense`, set entirely in ink for now. It stands alone — no avatar
-  or logo beside it. `ProductName` is the equivalent for products and reads its
-  lockup from `site.js`.
-- **One theme, and it is white.** The site had a derived dark theme, a
-  `data-theme` attribute on `<html>`, a pre-paint script and a `ThemeToggle`;
-  all four are gone. A colour therefore gets **one** definition. Do not add a
+  `app/globals.css`: `--bg`, `--bg-subtle`, `--bg-sunken`, `--surface`,
+  `--border`, `--border-strong`, `--text`, `--text-muted`, `--text-faint`,
+  `--accent`, `--accent-text`, `--brand`, `--brand-text`, `--grad-from`,
+  `--grad-to`. This rule was *stated* under the old system and not kept — three
+  separate palettes had grown up in the components layer. It holds now:
+  `globals.css` has no hex outside `:root`. Keep it that way. The one exception
+  is `ShareCard.js` and the OG routes, which are rendered by Satori outside the
+  document and cannot read a CSS variable.
+- **`--brand` is a fill; `--brand-text` is for words.** `--brand` is the hue's
+  500 and goes on icon tiles, dots, rules and gradients. Anything that sets a
+  colour on text uses `--brand-text` (or `--accent-text`), which is the 600/700
+  step chosen to read on both white and its own soft tint.
+- **Per-product accent.** Put `data-brand="violet|blue|cyan|emerald|amber|clay"`
+  on a wrapper and `--brand`, `--brand-soft`, `--brand-text`, `--grad-from` and
+  `--grad-to` all resolve for everything inside it. The attribute names are
+  historical — they are what every `accent` field in `site.js` already says —
+  and the values are HeroUI's semantic scales (primary, secondary, cyan,
+  success, warning, danger). "violet" is the house blue; nothing is purple
+  except coLab.
+- **Reuse the component classes** before writing new CSS: `.shell`, `.section`,
+  `.section-subtle`, `.card`, `.card-hover`, `.card-tinted`, `.bento`, `.btn`
+  (+ `.btn-gradient` / `.btn-solid` / `.btn-flat` / `.btn-bordered` /
+  `.btn-ghost`), `.pill`, `.chip`, `.icon-tile`, `.gradient-text`,
+  `.gradient-panel`, `.eyebrow`, `.lead`, `.section-title`, `.check-list`,
+  `.steps`, `.field-input`.
+- **The wordmark** is `Wordmark` in `app/components/Wordmark.js`: a rounded
+  gradient mark carrying `n`, then the name — `neura` in ink and `sense` in the
+  house gradient, at 700. Pass `markOnly` where there is no room for the name.
+  `ProductName` is the equivalent for products and reads its lockup from
+  `site.js`.
+- **One theme, and it is white.** A colour gets **one** definition. Do not add a
   `data-theme` selector, a `prefers-color-scheme` block, a second `themeColor`
   entry, or a dark variant of anything — there is no switch left to serve them,
   so they would be dead rules that read as live ones.
-- **Per-product accent.** Put `data-brand="violet|blue|cyan|emerald|amber|clay"`
-  on a wrapper and `--brand` / `--brand-soft` / `--brand-text` resolve for
-  everything inside it. The names are historical and the values are all ink
-  today, but the wiring is intact — keep using the attribute so a palette can
-  land in one edit.
-- **The page is white throughout.** There are no dark sections: a section that
-  needs more weight uses `.section-subtle`, a `.glow`, or `.grid-field` — never
-  a locally pinned dark palette.
-- **`.brand-tag`** is the product lockup set in a `--brand-soft` chip (home
-  hero, Vault hero). Pair it with a `.badge` for status.
+- **The page is white throughout.** There are no dark sections. A section that
+  needs more weight uses `.section-subtle` (a `--bg-sunken` band), a `.blob`,
+  `.grid-field` (a dot matrix), or — for a closing call — a `.gradient-panel`.
+  Never pin a local dark palette.
 - Pages are server components. Anything needing the contact dialog uses the
   small client islands `ContactButton` / `RequestAccessLink` rather than
   becoming a client component itself.

@@ -8,6 +8,7 @@ import {
   LockIcon,
   NeuralIcon,
   ShieldIcon,
+  WavesIcon,
 } from "./components/Icons";
 import ProductBento from "./components/ProductBento";
 import {
@@ -55,8 +56,10 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
       <div className="shell flex flex-col items-center pb-16 pt-20 text-center md:pb-24 md:pt-28">
-        <Link className="pill rise" href="/colab">
-          <span className="pill-tag">{hero.pill.tag}</span>
+        <Link className="pill rise" href="/products">
+          <span className="pill-tag">
+            <WavesIcon className="h-3 w-3" />
+          </span>
           {hero.pill.text}
           <ArrowIcon className="h-3.5 w-3.5" />
         </Link>
@@ -212,27 +215,30 @@ function Principles() {
    ------------------------------------------------------------------------- */
 function Closing() {
   return (
-    <section className="section-tight">
+    <section className="py-20" id="closing">
       <div className="shell">
-        <div className="gradient-panel">
-          <div className="relative z-10 mx-auto max-w-2xl">
-            <h2 className="text-[clamp(2.25rem,3.6vw,3rem)]">
-              {closing.title}
-            </h2>
-            <p className="mt-4 text-base leading-[1.5] text-white/85">
-              {closing.body}
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-5xl font-medium tracking-[-0.015em] max-md:text-4xl">
+            <p className="mb-0">{closing.eyebrow}.</p>
+            <p className="text-[color:var(--display-muted)]">
+              {closing.title.replace(/today$/, "")}
+              <span className="text-[color:var(--accent)]">today</span>.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <ContactButton className="btn btn-lg bg-white text-[color:var(--text)] hover:opacity-90">
-                Start a conversation
-              </ContactButton>
-              <Link
-                className="btn btn-lg border-2 border-white/40 text-white hover:border-white"
-                href="/products"
-              >
-                See the products
-              </Link>
-            </div>
+          </div>
+
+          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-[color:var(--accent)]/70 bg-[color:var(--bg-subtle)] p-1">
+            <ContactButton
+              className="rounded-full px-6 py-2.5 text-[0.95rem] font-medium bg-[color:var(--surface)] text-[color:var(--text)] shadow-sm"
+              intent="message"
+            >
+              Message us
+            </ContactButton>
+            <ContactButton
+              className="rounded-full px-6 py-2.5 text-[0.95rem] font-medium text-muted hover:text-[color:var(--text)]"
+              intent="contact"
+            >
+              Contact us
+            </ContactButton>
           </div>
         </div>
       </div>

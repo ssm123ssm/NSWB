@@ -135,14 +135,21 @@ export async function POST(request) {
   const message = field("message");
   const subject = field("subject", "General enquiry");
 
-  if (!name) {
-    return NextResponse.json({ error: "Name is required." }, { status: 400 });
-  }
-  if (!email && !phone) {
-    return NextResponse.json(
-      { error: "An email address or phone number is required." },
-      { status: 400 }
-    );
+  // The "message us" flow sends nothing but a message — no way to reach the
+  // sender at all, by design. Everything else (access requests, "contact us",
+  // the general form) still needs a name and a way back to them.
+  const isMessageOnly = Boolean(message) && !name && !email && !phone;
+
+  if (!isMessageOnly) {
+    if (!name) {
+      return NextResponse.json({ error: "Name is required." }, { status: 400 });
+    }
+    if (!email && !phone) {
+      return NextResponse.json(
+        { error: "An email address or phone number is required." },
+        { status: 400 }
+      );
+    }
   }
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return NextResponse.json(

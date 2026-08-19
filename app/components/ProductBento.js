@@ -214,7 +214,7 @@ function BeamGradient({ id, dur, from, to, span = 34 }) {
  *  site.js), read as a checked-off list rather than a row of filenames next
  *  to their own ciphertext. The hex strings looked like encryption; they
  *  did not say what the encryption is *for*. This says it directly. */
-function VaultGraphic() {
+export function VaultGraphic() {
   const values = ["Client-side encryption", "Encrypted manifests", "Policy-based access"];
   return (
     <div className="grid gap-2.5 px-6 pb-3">
@@ -257,7 +257,7 @@ function BarcodeGlyph({ className = "h-3 w-3" }) {
  *  ways a check-in actually lands — a tap and a scan — get their own small
  *  glyphs at the foot, muted rather than coloured, since they are the method
  *  and not the point. */
-function PresenceGraphic() {
+export function PresenceGraphic() {
   const rows = [
     { initials: "AK", time: "09:02", present: true },
     { initials: "RS", time: "09:04", present: true },
@@ -311,6 +311,71 @@ function PresenceGraphic() {
   );
 }
 
+/** Presence — the session boundary itself: the window it is open, who is let
+ *  in, and what happens to everyone else. Read as label/value rows rather
+ *  than prose, the way a settings panel actually states a rule. */
+export function PresenceAccessGraphic() {
+  const rows = [
+    { label: "Session", value: "Open · 09:00–09:30" },
+    { label: "Who can check in", value: "Invited members" },
+    { label: "Everyone else", value: "Refused" },
+  ];
+  return (
+    <div className="flex h-full flex-col justify-center gap-2.5 px-5 pb-4 pt-1">
+      {rows.map((row) => (
+        <div
+          className="flex items-center justify-between gap-3 border-t py-2 first:border-t-0"
+          key={row.label}
+          style={{ borderColor: "var(--border)" }}
+        >
+          <span className="text-[0.72rem]" style={{ color: "var(--text-faint)" }}>
+            {row.label}
+          </span>
+          <span className="text-[0.74rem] font-medium">{row.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Presence — the register leaving the app: scoped by session or date range,
+ *  in a shape a records office can use directly. */
+export function PresenceExportGraphic() {
+  const scopes = ["This session", "Date range"];
+  return (
+    <div className="flex h-full flex-col justify-center gap-4 px-5 pb-4 pt-1">
+      <div className="flex flex-wrap gap-2">
+        {scopes.map((scope) => (
+          <span
+            className="rounded-full border px-3 py-1 text-[0.68rem] font-medium"
+            key={scope}
+            style={{ borderColor: "var(--border-strong)", color: "var(--brand-text)" }}
+          >
+            {scope}
+          </span>
+        ))}
+      </div>
+      <div
+        className="flex items-center justify-between rounded-[12px] border p-3"
+        style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+      >
+        <div>
+          <p className="text-[0.72rem] font-semibold">01–17 Aug</p>
+          <p className="text-[0.65rem]" style={{ color: "var(--text-faint)" }}>
+            612 rows
+          </p>
+        </div>
+        <span
+          className="grid h-8 w-8 place-items-center rounded-full"
+          style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
+        >
+          <CheckIcon className="h-4 w-4" />
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /** coLab — the milestone rail as a back layer, with two of its own cards
  *  sitting side by side beneath it rather than stacked on top of one
  *  another: a "coming due" checklist and a task carrying its own context —
@@ -324,7 +389,7 @@ function PresenceGraphic() {
  *  card, the same traffic-light read as a due-date column in any tracker. */
 const STATUS = { done: "#16a34a", soon: "#d97706", overdue: "#dc2626" };
 
-function ColabGraphic() {
+export function ColabGraphic() {
   const nodes = [
     { label: "Scope", at: 40, done: true },
     { label: "Build", at: 190, done: true },
@@ -446,60 +511,243 @@ function ColabGraphic() {
   );
 }
 
-/** AES — prose resolving into a score. */
-function AesGraphic() {
+/** coLab — the decision log: entries signed and timestamped, newest first,
+ *  standing for the thing a chat thread loses ("where you landed" —
+ *  `colabCapabilities`'s "A decision log, not a scratchpad"). */
+export function ColabDecisionLogGraphic() {
+  const entries = [
+    { who: "Ann", initials: "AK", at: "Mar 4", note: "Ship the annual plan at the price Priya modelled." },
+    { who: "Sam", initials: "SR", at: "Feb 26", note: "Staging migrates the weekend before launch, not the day of." },
+    { who: "Kofi", initials: "KM", at: "Feb 19", note: "Venue confirmed for the launch review." },
+  ];
   return (
-    <div className="flex items-end justify-between gap-6 px-6 pb-3">
-      <div className="grid flex-1 gap-1.5">
-        {[100, 92, 96, 74, 88].map((w, i) => (
+    <div className="flex h-full flex-col gap-2.5 px-5 pb-4 pt-1">
+      {entries.map((entry) => (
+        <div
+          className="rounded-[12px] border p-3"
+          key={entry.who + entry.at}
+          style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+        >
+          <div className="flex items-center gap-2">
+            <span
+              className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[0.55rem] font-semibold"
+              style={{ background: "var(--brand)", color: "var(--accent-on)" }}
+            >
+              {entry.initials}
+            </span>
+            <span className="text-[0.7rem] font-semibold">{entry.who}</span>
+            <span className="ml-auto font-mono text-[0.62rem]" style={{ color: "var(--text-faint)" }}>
+              {entry.at}
+            </span>
+          </div>
+          <p className="mt-1.5 text-[0.72rem] leading-snug text-muted">{entry.note}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** coLab — who is already carrying what, open vs. overdue, before you assign
+ *  the next thing (`colabCapabilities`'s "Workloads before you assign"). */
+export function ColabWorkloadGraphic() {
+  const people = [
+    { initials: "SP", name: "Supun", open: 3, overdue: 0 },
+    { initials: "IS", name: "Isuru", open: 4, overdue: 1 },
+    { initials: "RU", name: "Ruth", open: 2, overdue: 0 },
+    { initials: "IH", name: "Ishi", open: 1, overdue: 1 },
+  ];
+  const max = 6;
+  return (
+    <div className="flex h-full flex-col justify-center gap-3 px-5 pb-4 pt-1">
+      {people.map((person) => (
+        <div className="flex items-center gap-3" key={person.initials}>
           <span
-            className="h-1.5 rounded-full"
-            key={i}
-            style={{ width: `${w}%`, background: "var(--bg-muted)" }}
-          />
-        ))}
+            className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-[0.6rem] font-semibold"
+            style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
+          >
+            {person.initials}
+          </span>
+          <span className="w-11 shrink-0 text-[0.7rem]">{person.name}</span>
+          <div className="flex h-2.5 flex-1 overflow-hidden rounded-full" style={{ background: "var(--bg-muted)" }}>
+            <span
+              className="h-full"
+              style={{ width: `${(person.open / max) * 100}%`, background: "var(--brand)" }}
+            />
+            <span
+              className="h-full"
+              style={{ width: `${(person.overdue / max) * 100}%`, background: "#dc2626" }}
+            />
+          </div>
+          <span className="w-14 shrink-0 text-right font-mono text-[0.62rem]" style={{ color: "var(--text-faint)" }}>
+            {person.open}o · {person.overdue}od
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * AES — prose resolving into a score, same idea as before, now carried
+ * through to the thing that score is actually made of: a per-criterion
+ * breakdown (`aes`'s highlights: "Consistent scoring", "Actionable
+ * feedback"), not just a single letter with nothing under it. Access-only,
+ * like Lipd Hub below, so this stays a diagram of the mechanism rather than
+ * a drawn screen — inventing a UI for a product a stranger can't open would
+ * be a capture of something that doesn't exist. */
+export function AesGraphic() {
+  const criteria = [
+    { label: "Structure", score: 92 },
+    { label: "Argument", score: 88 },
+    { label: "Grammar", score: 96 },
+  ];
+  return (
+    <div className="flex h-full flex-col justify-center gap-4 px-6 pb-3">
+      <div className="flex items-end justify-between gap-6">
+        <div className="grid flex-1 gap-1.5">
+          {[100, 92, 96, 74, 88].map((w, i) => (
+            <span
+              className="h-1.5 rounded-full"
+              key={i}
+              style={{ width: `${w}%`, background: "var(--bg-muted)" }}
+            />
+          ))}
+        </div>
+        <div
+          className="grid h-16 w-16 shrink-0 place-items-center rounded-full text-lg font-medium"
+          style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
+        >
+          A−
+        </div>
       </div>
-      <div
-        className="grid h-16 w-16 shrink-0 place-items-center rounded-full text-lg font-medium"
-        style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
-      >
-        A−
+
+      <div className="grid gap-2 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+        {criteria.map((entry) => (
+          <div className="flex items-center gap-2.5" key={entry.label}>
+            <span className="w-16 shrink-0 text-[0.68rem]" style={{ color: "var(--text-faint)" }}>
+              {entry.label}
+            </span>
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full" style={{ background: "var(--bg-muted)" }}>
+              <span
+                className="block h-full rounded-full"
+                style={{ width: `${entry.score}%`, background: "var(--brand)" }}
+              />
+            </div>
+            <span className="w-7 shrink-0 text-right font-mono text-[0.62rem]" style={{ color: "var(--brand-text)" }}>
+              {entry.score}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-/** Lipd Hub — a lipid bilayer, one head picked out of the membrane. */
-function LipdGraphic() {
+/**
+ * Lipd Hub — the bilayer (unchanged) resolving into what it's actually for:
+ * a pattern flagged, then the two things `lipd-hub`'s highlights promise
+ * happen next — a referral opened, a research-ready export. Kept as a
+ * diagram rather than a screen for the same reason as AES above. */
+export function LipdGraphic() {
   const heads = [0, 1, 2, 3, 4, 5, 6, 7];
+  const flow = [
+    { label: "Pattern flagged" },
+    { label: "Referral opened" },
+    { label: "Research export" },
+  ];
   return (
-    <div className="grid gap-1 px-6 pb-3">
-      <div className="flex justify-between">
-        {heads.map((i) => (
-          <span
-            className="h-3 w-3 rounded-full"
-            key={`t${i}`}
-            style={{ background: i === 3 ? "var(--brand)" : "var(--bg-muted)" }}
-          />
+    <div className="flex h-full flex-col justify-center gap-4 px-6 pb-3">
+      <div className="grid gap-1">
+        <div className="flex justify-between">
+          {heads.map((i) => (
+            <span
+              className="h-3 w-3 rounded-full"
+              key={`t${i}`}
+              style={{ background: i === 3 ? "var(--brand)" : "var(--bg-muted)" }}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between">
+          {heads.map((i) => (
+            <span
+              className="h-6 w-[2px]"
+              key={`l${i}`}
+              style={{ background: i === 3 ? "var(--brand)" : "var(--border-strong)" }}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between">
+          {heads.map((i) => (
+            <span
+              className="h-3 w-3 rounded-full"
+              key={`b${i}`}
+              style={{ background: "var(--bg-muted)" }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+        {flow.map((step, i) => (
+          <div className="flex items-center gap-1.5" key={step.label}>
+            <span
+              className="whitespace-nowrap rounded-full px-2.5 py-1 text-[0.62rem] font-medium"
+              style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
+            >
+              {step.label}
+            </span>
+            {i < flow.length - 1 && (
+              <ArrowIcon className="h-3 w-3 shrink-0" />
+            )}
+          </div>
         ))}
       </div>
-      <div className="flex justify-between">
-        {heads.map((i) => (
-          <span
-            className="h-6 w-[2px]"
-            key={`l${i}`}
-            style={{ background: i === 3 ? "var(--brand)" : "var(--border-strong)" }}
-          />
-        ))}
-      </div>
-      <div className="flex justify-between">
-        {heads.map((i) => (
-          <span
-            className="h-3 w-3 rounded-full"
-            key={`b${i}`}
-            style={{ background: "var(--bg-muted)" }}
-          />
-        ))}
+    </div>
+  );
+}
+
+/** NSQR — a QR module grid with the three finder squares fixed in their
+ *  corners and the data cells randomised once per render, since the product
+ *  is not any single code but the ability to generate and restyle them. */
+export function NsqrGraphic() {
+  const size = 9;
+  // Standard QR finder ring: solid 3x3 with its middle ring hollowed out —
+  // on everywhere except the second ring in from each edge.
+  const isFinderRing = (r, c) => r === 0 || r === 2 || c === 0 || c === 2;
+  const inCorner = (r, c, originR, originC) => {
+    const dr = r - originR;
+    const dc = c - originC;
+    return dr >= 0 && dr < 3 && dc >= 0 && dc < 3;
+  };
+  const corners = [
+    [0, 0],
+    [0, size - 3],
+    [size - 3, 0],
+  ];
+  const filled = new Set([
+    "1,4", "3,4", "4,3", "4,5", "4,7", "5,4", "6,6", "7,4", "2,5", "6,1", "7,7", "3,7",
+  ]);
+  return (
+    <div className="grid place-items-center px-6 pb-3">
+      <div
+        className="grid gap-[3px] rounded-[10px] p-3"
+        style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`, background: "var(--bg-subtle)" }}
+      >
+        {Array.from({ length: size * size }).map((_, idx) => {
+          const r = Math.floor(idx / size);
+          const c = idx % size;
+          const corner = corners.find(([or, oc]) => inCorner(r, c, or, oc));
+          const on = corner
+            ? isFinderRing(r - corner[0], c - corner[1])
+            : filled.has(`${r},${c}`);
+          return (
+            <span
+              className="h-[7px] w-[7px] rounded-[1.5px]"
+              key={idx}
+              style={{ background: on ? "var(--brand)" : "transparent" }}
+            />
+          );
+        })}
       </div>
     </div>
   );

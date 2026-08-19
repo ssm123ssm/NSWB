@@ -32,7 +32,7 @@ export const site = {
  * anywhere the gradient cannot follow).
  */
 export const hero = {
-  pill: { tag: "New", text: "coLab is open for early teams" },
+  pill: { text: "Visit our product studio" },
   headlineHead: "We think about what breaks —",
   headlineTail: "before it breaks",
   headlinePlain: "We think about what breaks — before it breaks",
@@ -125,9 +125,9 @@ export const designPrinciples = {
 
 /** The closing call. */
 export const closing = {
-  eyebrow: "Work with us",
-  title: "Tell us what you cannot afford to get wrong",
-  body: "Bring the part of the system that worries you. We will tell you what we would test first, and whether we are the right people for it.",
+  eyebrow: "Get in touch",
+  title: "Let's start building today",
+  body: "Tell us what you are working on. We will tell you what we would build first, and whether we are the right studio for it.",
 };
 
 export const navLinks = [

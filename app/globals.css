@@ -491,12 +491,30 @@
     background: var(--brand);
     color: var(--accent-on);
     box-shadow: none;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   .btn-gradient:hover {
     background: color-mix(in oklab, var(--brand) 90%, var(--accent-on) 10%);
     opacity: 1;
     box-shadow: none;
+  }
+
+  /* Once the page has scrolled, the header sheds the solid brand fill for a
+     quiet grey pill — the blue block only earns its weight at rest, against
+     the hero. Scrolling further to the closing section's own CTA uses the
+     same look, since that is already the muted state. */
+  .btn-gradient.btn-scrolled,
+  .btn-gradient.btn-muted {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .btn-gradient.btn-scrolled:hover,
+  .btn-gradient.btn-muted:hover {
+    background: var(--border);
   }
 
   .btn-solid {

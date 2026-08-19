@@ -8,26 +8,52 @@
   (`--font-sans`) and IBM Plex Mono (`--font-mono`, used for eyebrows, labels
   and numerals).
 
-## The brand system
-The site follows the neurasense brand handoff. Four rules govern it, and they
-are not preferences:
-1. **Weights stay between 300 and 400.** No 500+ anywhere. Hierarchy comes from
-   size, space and one accent — never from bold. Display type (`h1`, `h2`,
-   `.display`, `.statement-body`) is 300; everything else is 400. Tailwind's
-   weight scale is replaced in `tailwind.config.js` so heavier classes do not
-   exist, and only 300/400 are loaded in `app/layout.js`. The brand names one
-   exception — the `ns` avatar at 500 — which the site does not use.
-2. **Roughly one violet element per screen.** A button, a rule, or a live
-   indicator — not all three. Violet washes (`--accent-soft`, `.glow`) are
-   surfaces, not accents, and do not count. Never place two violets adjacent.
-3. **Contrast is a hard limit.** Every text pair clears 4.5:1. Run
-   `python3 scripts/contrast.py` after touching any colour — it derives the
-   text-safe companions and audits the palette.
-4. **Mono marks what the machine produced** — paths, timestamps, states,
-   hashes, IDs, labels. The sans is anything a person wrote.
+## The design system — BLANK SLATE
+The neurasense brand handoff has been stripped out and **nothing has replaced
+it**. The site is deliberately undesigned right now: greyscale ground and ink,
+square corners, no elevation, no gradient, no hue anywhere. The four rules the
+handoff imposed — weights capped at 400, roughly one violet per screen, a 4.5:1
+contrast floor audited by script, mono as a marker of machine output — no
+longer apply, and neither does the layout rule that two thirds of any layout
+should be empty. Nothing has been put in their place yet.
 
-Layout: two thirds of any layout should be empty. `.section` and `.shell` carry
-most of that; resist filling the space.
+**What survived is structure.** Every token *name* the components layer reads is
+still defined, and all ~230 component classes still resolve, so every page lays
+out and reads exactly as it did — it simply carries no aesthetic decision.
+Filling a value into `:root` in `app/globals.css` is how a decision gets made,
+and it propagates site-wide from that one place.
+
+**Do not quietly re-introduce a design.** If a change needs a colour, a radius,
+a shadow or a weight, that is a decision to raise, not to default. Picking a
+plausible blue in passing is how the last two systems got built by accident.
+
+Decisions still outstanding, roughly in the order they matter:
+1. **The accent.** `--accent` currently resolves to ink so buttons and focus
+   rings still read. There is no house colour.
+2. **The six product accents.** `[data-brand="violet|blue|cyan|emerald|amber|
+   clay"]` all collapse to ink in one rule. The attribute names and every
+   `accent` field in `app/data/site.js` are untouched, so real hues drop
+   straight in.
+3. **The categorical screen scale.** `[data-hue]` (eight hues) and the `--pop`
+   triples were a *second and third* palette living down in the components
+   layer, outside the token block — undocumented, and contradicting the "never
+   hardcode a colour" rule this file used to state. Both are neutralised at
+   their own definitions. This one is a real loss and should be re-decided
+   early: a status column where every state is the same grey tells the reader
+   nothing.
+4. **Radius, elevation, and type.** `--radius*` are `0`, `--shadow-*` are
+   `none`, and headings are a flat 600 with normal tracking.
+
+**`scripts/contrast.py` is stale** — it encodes the old violet palette and is
+not a gate. Re-point it at whatever palette replaces this, if that guarantee is
+wanted back.
+
+**Deliberately not stripped:** the NSQR hero illustration
+(`app/components/NsqrScene.js` + `.module.css`) keeps its own internal palette —
+indigo, mint, coral, sun. It is hand-drawn artwork rather than a token, ~40 SVG
+stops deep, and flattening it to grey would destroy the drawing while telling
+you nothing about structure. It is therefore the one saturated thing left on
+the site, and it is an open decision, not a settled one.
 
 ## Key paths
 - `app/data/site.js`: **single source of truth** for products, capabilities,
@@ -71,33 +97,31 @@ most of that; resist filling the space.
 - **Never hardcode a colour.** Everything resolves to a token in
   `app/globals.css`: `--bg`, `--bg-subtle`, `--surface`, `--border`,
   `--border-strong`, `--text`, `--text-muted`, `--text-faint`, `--accent`,
-  `--accent-text`, `--brand`, `--brand-text`. Reuse the component classes
-  (`.shell`, `.section`, `.card`, `.btn`, `.badge`, `.field-input`,
-  `.eyebrow`, `.lead`) before writing new CSS.
-- **`--brand` is a fill; `--brand-text` is for words.** The product accents are
-  the brand's chart hues, which are fills only — icon tiles, rules, dots,
-  motifs. Anything that sets a colour on text uses `--brand-text` (or
-  `--accent-text`), which is the same hue moved until it clears 4.5:1.
+  `--accent-text`, `--brand`, `--brand-text`. This rule was *stated* before and
+  not kept — three separate palettes had grown up in the components layer. It
+  now holds: `globals.css` has no hex outside `:root`. Keep it that way.
+- **`--brand` is a fill; `--brand-text` is for words.** Anything that sets a
+  colour on text uses `--brand-text` (or `--accent-text`). The distinction is
+  currently invisible — both are ink — but it is what makes a real palette drop
+  in safely later, so keep honouring it.
 - **The wordmark** is `Wordmark` in `app/components/Wordmark.js`: lowercase,
-  `neura` in ink and `sense` in violet, never bold, never inverted, never below
-  19px. It stands alone — no avatar or logo beside it. `ProductName` is the
-  equivalent for products and reads its lockup from `site.js`.
+  `neura` and `sense`, set entirely in ink for now. It stands alone — no avatar
+  or logo beside it. `ProductName` is the equivalent for products and reads its
+  lockup from `site.js`.
 - **One theme, and it is white.** The site had a derived dark theme, a
   `data-theme` attribute on `<html>`, a pre-paint script and a `ThemeToggle`;
   all four are gone. A colour therefore gets **one** definition. Do not add a
   `data-theme` selector, a `prefers-color-scheme` block, a second `themeColor`
   entry, or a dark variant of anything — there is no switch left to serve them,
-  so they would be dead rules that read as live ones. It is all in git if a
-  toggle is ever wanted back.
+  so they would be dead rules that read as live ones.
 - **Per-product accent.** Put `data-brand="violet|blue|cyan|emerald|amber|clay"`
   on a wrapper and `--brand` / `--brand-soft` / `--brand-text` resolve for
-  everything inside it. The names are historical; the values are the brand's
-  chart set. `violet` is the house violet rather than chart 1 — NSQR shares the
-  parent's colour so that two different violets never sit side by side.
+  everything inside it. The names are historical and the values are all ink
+  today, but the wiring is intact — keep using the attribute so a palette can
+  land in one edit.
 - **The page is white throughout.** There are no dark sections: a section that
-  needs more weight uses `.section-subtle`, a `.glow` tinted with
-  `var(--brand)`, or `.grid-field` — never a locally pinned dark palette, which
-  on a white site is a hole in the page rather than emphasis.
+  needs more weight uses `.section-subtle`, a `.glow`, or `.grid-field` — never
+  a locally pinned dark palette.
 - **`.brand-tag`** is the product lockup set in a `--brand-soft` chip (home
   hero, Vault hero). Pair it with a `.badge` for status.
 - Pages are server components. Anything needing the contact dialog uses the

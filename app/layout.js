@@ -3,12 +3,14 @@ import SiteChrome from "./components/SiteChrome";
 import { site } from "./data/site";
 import "./globals.css";
 
-// Only the two weights the brand allows. Loading more would just be inviting
-// someone to reach for a bold the system does not have.
+// The handoff loaded only 300/400 so a bold could not be reached. That rule is
+// gone and weight is an open decision, so the usable range is loaded again —
+// headings currently sit at 600, which would otherwise render as faux bold.
+// The typeface itself is still the handoff's and is also an open decision.
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
@@ -54,7 +56,7 @@ export const metadata = {
 // declaring one would put the browser's chrome in a palette the page never
 // wears.
 export const viewport = {
-  themeColor: "#f9fafd",
+  themeColor: "#ffffff",
 };
 
 /**

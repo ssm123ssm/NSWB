@@ -3,147 +3,91 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Design tokens
-   The neurasense brand system. Every surface, border and text colour on the
-   site resolves to a variable below — nothing hardcodes a hex.
+   Design tokens — BLANK SLATE
 
-   Values come from the brand handoff: violet at hue 293, a cool neutral ramp
-   at hue 264, and a six-hue chart set.
+   The neurasense brand handoff has been stripped out and nothing has replaced
+   it yet. This file is deliberately undesigned: greyscale ground and ink,
+   square corners, no elevation, no gradient, no hue anywhere.
 
-   One theme, and it is the light one the handoff specifies. The site carried a
-   derived dark theme and a toggle until they were removed: the page is white,
-   and a colour therefore needs one definition rather than two. Nothing should
-   reintroduce a `data-theme` attribute, a `prefers-color-scheme` block or a
-   second value for any token here — a section that wants more weight uses
-   `.section-subtle`, a `.glow`, or `.grid-field`.
+   What survives is structure. Every token *name* the components layer reads is
+   still defined below, and all ~230 component classes still resolve, so the
+   site lays out and reads exactly as it did — it simply carries no aesthetic
+   decision. Filling a value in here is how a decision gets made, and it
+   propagates to the whole site from this one place.
 
-   Every text pair here is checked at 4.5:1 by `scripts/contrast.py` rather
-   than assumed — run it after touching any colour.
+   Known caveat: the site had two further palettes living down in the
+   components layer, outside this block — the `--pop` triples on
+   .showcase-panel and the eight-hue `[data-hue]` screen scale. Both are
+   neutralised in place at their own definitions rather than here, and both
+   need re-deciding alongside these tokens. See the notes at each.
+
+   Light only, one definition per colour. Do not add a `data-theme` selector or
+   a `prefers-color-scheme` block — there is no switch to serve them.
    ========================================================================== */
 
 @layer base {
   :root {
-    /* Paper is the ground and white is the raised surface, so a card lifts off
-       the page by being lighter than it rather than by carrying a shadow. */
-    --bg: #f9fafd;
-    --bg-subtle: #f1f3f8;
+    /* --- Ground and ink -------------------------------------------------
+       Greyscale only. No hue is chosen anywhere in this file yet. */
+    --bg: #ffffff;
+    --bg-subtle: #f4f4f4;
     --surface: #ffffff;
     --surface-raised: #ffffff;
 
-    --border: #e7e8ef;
-    --border-strong: #d1d4db;
+    --border: #dcdcdc;
+    --border-strong: #b4b4b4;
 
-    /* Neutral 600 is the lightest step that can carry text, so --text-faint
-       stops there. Anything lighter is a border or a fill, never a word.
+    --text: #111111;
+    --text-muted: #555555;
+    --text-faint: #767676;
 
-       Two points off the ramp, though: neutral 600 (#6b727f) clears 4.5:1 on
-       paper but only 4.36:1 on --bg-subtle, and .section-subtle is a whole
-       section of text sitting on exactly that. Nudged down until it clears the
-       darker of the two grounds it actually meets. */
-    --text: #1c2231;
-    --text-muted: #4c5360;
-    --text-faint: #686e7b;
-
-    /* The house colour is violet — neurasense's own, and the only hue the
-       chrome wears. Rule 2 keeps it to roughly one element per screen, so this
-       is spent on the primary button and little else; a screen that needs a
-       second violet uses the wash below, which is a surface and does not
-       count. Products carry their own hue from the chart set via --brand. */
-    --accent: #7c3aed;
-    --accent-hover: #6924d0;
-    --accent-soft: #f5f3ff;
+    /* The accent slot is unfilled. It resolves to ink so that everything
+       wired to it still renders and still reads — a button is legible, a
+       focus ring is visible — without claiming a house colour. This is the
+       first decision to make, not a default to inherit. */
+    --accent: #111111;
+    --accent-hover: #000000;
+    --accent-soft: #f0f0f0;
     --accent-on: #ffffff;
-    /* Violet 500 is not text-safe at 3.4:1; 600 is, at 7.3:1. */
-    --accent-text: #6924d0;
+    --accent-text: #111111;
 
-    /* Per-product accent, overridden by [data-brand] below. --brand is a fill
-       and --brand-text is its text-safe companion: the chart hues are fills
-       only, so anything that sets a colour on words reaches for the latter. */
     --brand: var(--accent);
     --brand-hover: var(--accent-hover);
     --brand-soft: var(--accent-soft);
     --brand-text: var(--accent-text);
 
-    --shadow-sm: 0 1px 2px rgba(12, 14, 20, 0.06);
-    --shadow-md: 0 12px 32px -20px rgba(12, 14, 20, 0.28);
-    --shadow-lg: 0 28px 70px -32px rgba(12, 14, 20, 0.36);
+    /* Elevation is off. A card is separated by its border, nothing else. */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
 
-    --radius: 0.875rem;
-    --radius-lg: 1.375rem;
+    /* Square. Radius is a decision and has not been made. */
+    --radius: 0;
+    --radius-lg: 0;
 
-    /* The header's real height in flow: the h-16 row inside it plus the 1px
-       bottom border it always carries (transparent until stuck, but always in
-       the box). The first screen subtracts this — see .hero-screen — so keep
-       the two in step if the header row ever changes size. */
+    /* Structural, not stylistic: the header's real height in flow (the h-16
+       row plus its 1px bottom border). .hero-screen subtracts it, so the two
+       must move together. */
     --header-h: calc(4rem + 1px);
 
     color-scheme: light;
   }
 
-  /* Product accents, drawn from the handoff's six-hue chart set. Applied with
-     data-brand on any wrapper. The names are the ones the site already used,
-     kept so every data-brand attribute and the `accent` field on each product
-     in app/data/site.js still mean what they meant — only the values moved.
-
-     Each hue is a pair. --brand is the chart value and is a fill: icon tiles,
-     rules, dots, hairlines. --brand-text is that hue darkened until it clears
-     4.5:1, and is the only one of the two allowed on words. Both are spelled
-     out rather than pointing back at --accent: a scope can promote --brand into
-     --accent (see .dialog-card), and an alias in both directions would be a
-     cycle.
-
-     Derived against --brand-soft, not against paper. The chips in the hero
-     strip put a hue's own text colour on that hue's own soft tint, which is
-     the darkest ground any of these ever sits on — a companion that clears
-     4.5:1 on paper lands around 4.2:1 there, and every hue was failing it.
-     Deriving against the worst case makes the token safe everywhere by
-     construction rather than everywhere we happened to check. Run
-     `python3 scripts/contrast.py` after touching any value here; it audits
-     both grounds and prints a corrected hex for anything that slips. */
-  /* NSQR is the house violet itself, not a chart hue near it. Chart 1 (#8B72D7)
-     is a violet too, and putting it next to the brand violet on the NSQR page
-     would be two violets adjacent — which the brand calls a rendering error
-     rather than a hierarchy. So the flagship shares the parent's colour, one
-     violet stays one violet, and chart 1 is left to the charts. */
-  [data-brand="violet"] {
-    --brand: #7c3aed;
-    --brand-hover: #6924d0;
-    --brand-soft: #f5f3ff;
-    --brand-text: #6924d0;
-  }
-  /* coLab's own blue, which is the product's colour rather than chart 2's
-     #278BDB — the two are six degrees of hue apart, so the palette carries one
-     of them and not both. The chart value is in git if a chart ever wants it
-     back; nothing on the site is drawn in it today. */
-  [data-brand="blue"] {
-    --brand: #0f81bc; /* coLab */
-    --brand-hover: #0e76ab;
-    --brand-soft: #e4f2fd;
-    --brand-text: #0d72a7;
-  }
-  [data-brand="cyan"] {
-    --brand: #1697a3; /* chart 3 — Vault */
-    --brand-hover: #127e88;
-    --brand-soft: #e6f6f7;
-    --brand-text: #117a83;
-  }
-  [data-brand="emerald"] {
-    --brand: #0c9f69; /* chart 4 — Presence */
-    --brand-hover: #0a8356;
-    --brand-soft: #d9fae3;
-    --brand-text: #0a7e53;
-  }
-  [data-brand="amber"] {
-    --brand: #9e8406; /* chart 5 — Lipd Hub */
-    --brand-hover: #887205;
-    --brand-soft: #ffeed2;
-    --brand-text: #816c05;
-  }
+  /* The six product accents all resolve to ink. The attribute names and every
+     `accent` field in app/data/site.js are left exactly as they were, so the
+     moment real hues are chosen they drop straight in here and the whole site
+     picks them up. Until then no product is coloured, and no product is
+     accidentally privileged by carrying a hue the others lack. */
+  [data-brand="violet"],
+  [data-brand="blue"],
+  [data-brand="cyan"],
+  [data-brand="emerald"],
+  [data-brand="amber"],
   [data-brand="clay"] {
-    --brand: #d05f43; /* chart 6 — AES */
-    --brand-hover: #c14d30;
-    --brand-soft: #feebe9;
-    --brand-text: #b7492d;
+    --brand: var(--accent);
+    --brand-hover: var(--accent-hover);
+    --brand-soft: var(--accent-soft);
+    --brand-text: var(--accent-text);
   }
 
   * {
@@ -302,29 +246,19 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Hierarchy comes from size, space and one accent — never from weight. The
-     two display sizes take 300 because light type needs the room to look
-     deliberate; the smaller two hold 400, where 300 would start to break up. */
+  /* Type carries no decision yet. Headings are the browser's own weight and
+     scale, distinguished from body text only by being headings. Weight,
+     tracking and display sizing are all decisions to make; none is assumed
+     here. */
   h1,
   h2,
   h3,
   h4 {
     color: var(--text);
+    font-weight: 600;
+    letter-spacing: normal;
+    line-height: 1.25;
     text-wrap: balance;
-  }
-
-  h1,
-  h2 {
-    font-weight: 300;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
-  }
-
-  h3,
-  h4 {
-    font-weight: 400;
-    letter-spacing: -0.03em;
-    line-height: 1.2;
   }
 
   ::selection {
@@ -995,7 +929,7 @@
      going further would drop it to two. */
   .statement-body {
     font-size: clamp(2rem, 6vw, 4.75rem);
-    font-weight: 300;
+    font-weight: 600;
     line-height: 1.14;
     letter-spacing: -0.035em;
     text-wrap: balance;
@@ -1134,7 +1068,7 @@
   /* --- Dialog ------------------------------------------------------------ */
 
   .dialog-overlay {
-    background: color-mix(in srgb, #05070c 45%, transparent);
+    background: color-mix(in srgb, var(--text) 45%, transparent);
     backdrop-filter: blur(3px);
     animation: fade-in 0.16s ease-out both;
   }
@@ -2259,58 +2193,46 @@
     align-items: stretch;
     padding: clamp(1.5rem, 3vw, 2.75rem);
     border-radius: var(--radius-lg);
-    background: #f7f8fa;
+    background: var(--bg-subtle);
   }
 
-  /* The saturated scale. Chosen as fills first and checked as words second,
-     which is the opposite of how --brand was built. */
-  /* NSQR takes the parent's violet rather than a second one. The capsule that
-     names it at the foot of the page is --brand-soft carrying --brand-text,
-     and this is the same product introduced earlier in the page — two violets
-     a few degrees apart across one scroll read as a printing fault, which is
-     the same reason coLab was given its own blue and AES moved to clay.
-     Resolved from the tokens rather than restated, so the pair cannot drift. */
-  .showcase-panel[data-brand="violet"] {
+  /* --- The two component-layer palettes ---------------------------------
+
+     Both of these were a second and third colour system living outside the
+     token block at the top of this file, and both are neutralised for the
+     restart.
+
+     `--pop` was the showcase panel's saturated per-product scale; `[data-hue]`
+     was an eight-hue categorical set the product screens used for states,
+     roles and content types. They now resolve to ink and greys.
+
+     The categorical one is a real loss and should be re-decided early: a
+     status column where every state is the same grey tells the reader nothing,
+     which is exactly the argument the original comment here made. The
+     structure of those screens still renders; only the encoding is gone. When
+     hues are chosen, they go back here as triples — fill, a text-safe
+     deepening, and a tint — and every chip, tile and avatar picks them up. */
+  .showcase-panel[data-brand="violet"],
+  .showcase-panel[data-brand="cyan"],
+  .showcase-panel[data-brand="blue"],
+  .showcase-panel[data-brand="emerald"] {
     --pop: var(--brand);
     --pop-deep: var(--brand-text);
     --pop-soft: var(--brand-soft);
   }
-  .showcase-panel[data-brand="cyan"] {
-    --pop: #00bfa5;
-    --pop-deep: #00695f;
-    --pop-soft: #d3f6f0;
-  }
-  .showcase-panel[data-brand="blue"] {
-    --pop: #2f80ed;
-    --pop-deep: #14539f;
-    --pop-soft: #dceafd;
-  }
-  .showcase-panel[data-brand="emerald"] {
-    --pop: #22c55e;
-    --pop-deep: #15703c;
-    --pop-soft: #d6f7e2;
-  }
 
-  /* --- The screen palette --------------------------------------------------
-
-     A screen is not restricted to its product's hue. A status column where
-     every state is the same colour tells you nothing — the colour has to carry
-     the meaning, which is why "to do", "in progress" and "done" are three hues
-     in every tracker anyone has used. This is the set the screens draw from for
-     anything that is a *category*: states, roles, content types, urgency.
-
-     Each hue is a triple — fill, a text-safe deepening of it, and a tint — so
-     `[data-hue]` can be dropped on any chip, tile or avatar and the three parts
-     resolve together. The product's own `--pop` stays the screen's primary and
-     carries everything that is not a category. */
-  [data-hue="violet"] { --h: #7c4dff; --h-deep: #5b21b6; --h-soft: #ede6ff; }
-  [data-hue="purple"] { --h: #a855f7; --h-deep: #7314bb; --h-soft: #f3e6ff; }
-  [data-hue="blue"]   { --h: #2f80ed; --h-deep: #14539f; --h-soft: #dfeafd; }
-  [data-hue="teal"]   { --h: #00bfa5; --h-deep: #00695f; --h-soft: #d3f6f0; }
-  [data-hue="green"]  { --h: #22c55e; --h-deep: #15703c; --h-soft: #d8f7e3; }
-  [data-hue="amber"]  { --h: #f5a524; --h-deep: #8a5a00; --h-soft: #fdeecd; }
-  [data-hue="rose"]   { --h: #f5576c; --h-deep: #b1132a; --h-soft: #fde2e6; }
-  [data-hue="slate"]  { --h: #94a3b8; --h-deep: #4c5360; --h-soft: #eef1f5; }
+  [data-hue="violet"],
+  [data-hue="purple"],
+  [data-hue="blue"],
+  [data-hue="teal"],
+  [data-hue="green"],
+  [data-hue="amber"],
+  [data-hue="rose"],
+  [data-hue="slate"] {
+    --h: var(--text-muted);
+    --h-deep: var(--text);
+    --h-soft: var(--bg-subtle);
+  }
 
   /* A chip that fills with its hue — a state you want read at a glance. */
   .chip-solid {
@@ -2764,7 +2686,7 @@
      SURFACE. This is the reel's surface recipe from `NsqrReel.module.css`,
      lifted here so the four drawn screens sit at the same weight as the fifth
      panel rather than a step behind it. Flat `--surface` with no border was
-     what put them there: on a `#f7f8fa` ground a white rectangle has no edge,
+     what put them there: on the `--bg-subtle` ground a white rectangle has no edge,
      so the shadow was doing the whole job of lifting it and the card read soft
      while the reel beside it read solid.
 
@@ -2859,7 +2781,7 @@
   .shot-figure {
     color: var(--pop-deep);
     font-size: 2.5rem;
-    font-weight: 300;
+    font-weight: 600;
     line-height: 1;
     letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
@@ -3247,7 +3169,7 @@
   }
 
   .shot-milestone[data-done] {
-    color: #15703c;
+    color: var(--text);
   }
 
   .shot-milestone-node {
@@ -3263,18 +3185,18 @@
   }
 
   .shot-milestone[data-done] .shot-milestone-node {
-    border-color: #22c55e;
-    background: #22c55e;
+    border-color: var(--text);
+    background: var(--text);
   }
 
   .shot-milestone[data-now] {
-    color: #8a5a00;
+    color: var(--text-muted);
   }
 
   .shot-milestone[data-now] .shot-milestone-node {
-    border-color: #f5a524;
+    border-color: var(--border-strong);
     background: #fff;
-    box-shadow: 0 0 0 3px #fdeecd;
+    box-shadow: 0 0 0 3px var(--bg-subtle);
   }
 
   /* --- Decision log --- */
@@ -3324,18 +3246,18 @@
   }
 
   .shot-state[data-state="In"] {
-    background: #22c55e;
+    background: var(--text);
     color: #fff;
   }
 
   .shot-state[data-state="Late"] {
-    background: #fdeecd;
-    color: #8a5a00;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
   }
 
   .shot-state[data-state="Absent"] {
-    background: #fde2e6;
-    color: #b1132a;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
   }
 
   .shot-scopes {

@@ -23,17 +23,17 @@ export function shareCard({ accent, headline, emphasis, footer }) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#f9fafd",
+          background: "#ffffff",
           padding: "80px",
           // The hairline grid from the hero, flattened to two gradients.
           backgroundImage:
-            "linear-gradient(to right, #eceaf6 1px, transparent 1px), linear-gradient(to bottom, #eceaf6 1px, transparent 1px)",
+            "linear-gradient(to right, #ececec 1px, transparent 1px), linear-gradient(to bottom, #ececec 1px, transparent 1px)",
           backgroundSize: "96px 96px",
         }}
       >
         <div style={{ display: "flex", fontSize: 44, letterSpacing: "-0.03em" }}>
-          <span style={{ color: "#111827" }}>neura</span>
-          <span style={{ color: "#6924d0" }}>sense</span>
+          <span style={{ color: "#111111" }}>neura</span>
+          <span style={{ color: "#111111" }}>sense</span>
         </div>
 
         <div
@@ -43,7 +43,7 @@ export function shareCard({ accent, headline, emphasis, footer }) {
             fontSize: 76,
             lineHeight: 1.1,
             letterSpacing: "-0.035em",
-            color: "#111827",
+            color: "#111111",
           }}
         >
           <span>{headline}</span>
@@ -54,8 +54,8 @@ export function shareCard({ accent, headline, emphasis, footer }) {
           style={{
             display: "flex",
             fontSize: 26,
-            color: "#4b5563",
-            borderTop: "1px solid #d9dbe7",
+            color: "#555555",
+            borderTop: "1px solid #dcdcdc",
             paddingTop: "28px",
           }}
         >

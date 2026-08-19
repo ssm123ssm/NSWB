@@ -24,7 +24,7 @@
   --r-body: var(--text-muted);
   --r-line: var(--border);
   --r-accent: var(--brand);
-  --r-signal: #b45309;
+  --r-signal: var(--text-muted);
   --r-display: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
   --r-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   --r-sans: var(--font-sans), system-ui, -apple-system, sans-serif;

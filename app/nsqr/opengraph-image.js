@@ -11,7 +11,7 @@ export const contentType = "image/png";
 
 export default function Image() {
   return shareCard({
-    accent: "#6924d0",
+    accent: "#111111",
     headline: "Print it once.",
     emphasis: "Change it forever.",
     footer: "NSQR — dynamic QR codes with scan analytics",

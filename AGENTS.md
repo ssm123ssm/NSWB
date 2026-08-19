@@ -103,6 +103,20 @@ Delete either once it is clear it will never be wanted.
 - `app/components/`: the rest of the shared UI (`SiteChrome`, `SiteHeader`,
   `SiteFooter`, `ContactDialog`, `Wordmark`, `Icons`, …).
 - `app/page.js`, `app/products/page.js`: the home page and the product index.
+- `app/components/ProductBento.js`: the home page's products section, built to
+  heroui.pro's "What's included" bento. The measurements are theirs, read out
+  of their markup: a 992px container, `grid-cols-6` at `gap-4`,
+  `rounded-[24px]` cards with a solid border, row heights 400 / 280 / 288, and
+  their breakpoints (two columns under `lg`, one under `md` with every card at
+  `col-span-1` and the grid capped at 500px). **Their row three is three
+  `col-span-2` cards — we have six products where they have seven cards, so
+  ours is two `col-span-3`s.** That is the only deviation.
+  Each card is a fixed-height frame with copy at the top and a graphic bleeding
+  out of the bottom, faded into the surface by a
+  `linear-gradient(to bottom, transparent, var(--surface))` overlay. That fade
+  is what lets an illustration run past the frame without the card containing
+  it — keep it if the graphics change. The graphics themselves are ours; theirs
+  demo their own component library and would say nothing here.
 - `app/research/page.js`: the publications page, read from `publications` in
   `site.js`. Adding a paper there is the whole edit. Links are DOIs and arXiv
   abstracts, never Google Scholar URLs, which carry a profile id and stop

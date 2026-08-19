@@ -2,21 +2,19 @@ import Link from "next/link";
 import { ContactButton } from "./components/SiteChrome";
 import {
   ArrowIcon,
-  CheckIcon,
   DocIcon,
   LayersIcon,
   LockIcon,
   NeuralIcon,
   ShieldIcon,
 } from "./components/Icons";
-import ProductName from "./components/ProductName";
+import ProductBento from "./components/ProductBento";
 import {
   capabilities,
   closing,
   hero,
   heroStats,
   principles,
-  products,
 } from "./data/site";
 
 export const metadata = {
@@ -36,7 +34,7 @@ export default function HomePage() {
     <main id="main">
       <Hero />
       <Capabilities />
-      <Products />
+      <ProductBento />
       <Principles />
       <Closing />
     </main>
@@ -139,86 +137,6 @@ function Capabilities() {
               </article>
             );
           })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
-   Products
-
-   Every product in the studio, as a card. The three with a page of their own
-   link to it; the rest open the contact dialog, because sending someone to a
-   page that does not exist is worse than saying so.
-   ------------------------------------------------------------------------- */
-function Products() {
-  return (
-    <section className="section" id="products">
-      <div className="shell">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="eyebrow">The studio</p>
-            <h2 className="section-title max-w-2xl">What we build</h2>
-          </div>
-          <Link className="link-arrow" href="/products">
-            All products
-            <ArrowIcon />
-          </Link>
-        </div>
-
-        <div className="bento mt-12">
-          {products.map((product) => (
-            <article
-              className="card card-hover"
-              data-brand={product.accent}
-              key={product.slug}
-            >
-              <div className="flex items-start justify-between gap-4">
-                {/* The lockup is the product's logo, so it leads the card
-                    rather than sitting under an icon that repeats it. */}
-                <h3 className="brand-tag">
-                  <ProductName product={product} />
-                </h3>
-                <span
-                  className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}
-                >
-                  {product.status === "live" ? "Live" : "In development"}
-                </span>
-              </div>
-
-              <p className="mt-5 text-base leading-relaxed text-ink">
-                {product.tagline}
-              </p>
-
-              <ul className="check-list">
-                {product.highlights?.slice(0, 3).map((highlight) => (
-                  <li key={highlight}>
-                    <CheckIcon className="h-4 w-4" />
-                    {highlight}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-6 pt-1">
-                {product.detail ? (
-                  <Link className="link-arrow" href={product.detail}>
-                    Explore {product.name}
-                    <ArrowIcon />
-                  </Link>
-                ) : (
-                  <ContactButton
-                    className="link-arrow"
-                    subject={product.name}
-                    intent="access"
-                  >
-                    Request access
-                    <ArrowIcon />
-                  </ContactButton>
-                )}
-              </div>
-            </article>
-          ))}
         </div>
       </div>
     </section>

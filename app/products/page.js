@@ -18,10 +18,6 @@ export default function ProductsPage() {
   return (
     <main id="main">
       <section className="relative isolate overflow-hidden">
-        <div
-          className="blob blob-from left-[-6%] top-[-10rem] h-[24rem] w-[24rem]"
-          aria-hidden="true"
-        />
         <div className="shell pb-14 pt-20 md:pt-24">
           <p className="eyebrow">The studio</p>
           <h1 className="section-title max-w-3xl text-[clamp(2.25rem,5vw,3.5rem)]">

@@ -46,23 +46,13 @@ export default function HomePage() {
 /* -------------------------------------------------------------------------
    The hero
 
-   Centred, on white, with two blurred gradient blobs and a dot field behind
-   it. The headline is the studio's own sentence and does not change; only its
-   tail carries the gradient.
+   Centred on the grey ground, with nothing behind it. The headline is the
+   studio's own sentence and does not change; only its second tone moves, onto
+   its own line.
    ------------------------------------------------------------------------- */
 function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
-      <div className="grid-field" aria-hidden="true" />
-      <div
-        className="blob blob-from left-[-10%] top-[-8rem] h-[26rem] w-[26rem]"
-        aria-hidden="true"
-      />
-      <div
-        className="blob blob-to right-[-8%] top-[-4rem] h-[24rem] w-[24rem]"
-        aria-hidden="true"
-      />
-
       <div className="shell flex flex-col items-center pb-16 pt-20 text-center md:pb-24 md:pt-28">
         <Link className="pill rise" href="/colab">
           <span className="pill-tag">{hero.pill.tag}</span>
@@ -72,7 +62,7 @@ function Hero() {
 
         <h1 className="rise mt-7 max-w-4xl text-[clamp(2.5rem,6.4vw,4.75rem)]">
           {hero.headlineHead}{" "}
-          <span className="gradient-text">{hero.headlineTail}</span>
+          <span className="display-tone">{hero.headlineTail}</span>
         </h1>
 
         <p className="lead lead-center rise text-[clamp(1.0625rem,1.7vw,1.25rem)]">
@@ -96,7 +86,7 @@ function Hero() {
             <div className="text-center" key={stat.label}>
               <dt className="sr-only">{stat.label}</dt>
               <dd>
-                <span className="stat-value gradient-text block">{stat.value}</span>
+                <span className="stat-value display-tone block">{stat.value}</span>
                 <span className="stat-label block">{stat.label}</span>
               </dd>
             </div>

@@ -47,16 +47,6 @@ const icons = {
 export function ProductHero({ product, eyebrow, headline, lead, actions = [] }) {
   return (
     <section className="relative isolate overflow-hidden">
-      <div className="grid-field" aria-hidden="true" />
-      <div
-        className="blob blob-from left-[-8%] top-[-9rem] h-[26rem] w-[26rem]"
-        aria-hidden="true"
-      />
-      <div
-        className="blob blob-to right-[-6%] top-[-5rem] h-[22rem] w-[22rem]"
-        aria-hidden="true"
-      />
-
       <div className="shell pb-16 pt-20 md:pb-20 md:pt-24">
         <div className="flex flex-wrap items-center gap-3">
           <span className="chip">

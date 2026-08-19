@@ -5,22 +5,42 @@
 /* ==========================================================================
    Design tokens
 
-   The system is HeroUI's. The values below are not an impression of it — they
-   are lifted from `@heroui/theme@2.4.26` itself: `dist/colors/semantic.js` for
-   the palette and `dist/default-layout.js` for radius, elevation and type
-   scale. Nothing from HeroUI is installed or bundled here; this is a plain
-   Tailwind site that adopts their token values and builds its own components
-   on top.
+   The palette is heroui.pro's, duplicated. The values are read out of their
+   live stylesheet (/_next/static/immutable/chunks/29qranzd3vz4s.css), not
+   estimated from a screenshot.
+
+   Note that this is NOT the @heroui/theme library palette. The library primary
+   is #006fee; their marketing site runs #0485f7 and keeps the library's
+   success and warning. "HeroUI's colours" is ambiguous — this is the site's.
 
    The shape of the language:
-   - White ground, near-black ink (#11181C), zinc for every neutral step.
-   - One saturated primary (#006FEE) spent freely — buttons, links, icon
-     tiles, gradients. There is no accent budget.
-   - Generous radius (8/12/14px, scaled up for large surfaces) and soft,
-     wide, low-opacity shadows. A card is a raised object, not a hairline box.
+   - The ground is grey (#f5f5f5) and cards are white. That inversion is why
+     surfaces lift without needing a shadow, and card shadows are off.
+   - The display heading is two-tone: near-black first line, light grey second
+     line, flat colour rather than a gradient.
+   - Colour appears once above the fold, as a plain blue line of text. No
+     pill, no border, no gradient behind it.
+   - Product hues are steps of the accent's own OKLab lightness ramp, which is
+     how their charts are built. Every product is therefore blue.
    - Weight carries hierarchy: 700 display, 600 headings, 500 controls,
      400 body.
-   - One gradient pair, --grad-from → --grad-to, re-pointed per product.
+
+   CONTRAST. This palette fails WCAG in seven places and does so deliberately —
+   it is their design, duplicated at explicit direction after the failures were
+   measured and reported:
+
+     --text-muted #71717a on the ground ....... 4.43:1  (needs 4.5)
+     --accent #0485f7 as text on a card ....... 3.68:1  (needs 4.5)
+     --accent #0485f7 as text on the ground ... 3.38:1  (needs 4.5)
+     white on an accent-filled button ......... 3.68:1  (needs 4.5)
+     --display-muted #a1a1aa on the ground .... 2.33:1  (needs 3.0, large)
+     danger #db3b3e as text ................... 4.09:1  (needs 4.5)
+     success #17c964 / warning #f5a524 as text  2.01 / 1.87:1
+
+   `[data-palette="corrected"]` is the same palette with the smallest fixes
+   that pass — it keeps #0485f7 as a *fill* (a fill needs only 3:1) and darkens
+   it to #0067c9 only where it becomes small type, so the blue survives
+   everywhere it is actually seen. Switching is one attribute on <html>.
 
    Light only. One definition per colour — no data-theme, no
    prefers-color-scheme block.
@@ -28,348 +48,7 @@
 
 @layer base {
   :root {
-    /* --- Ground -----------------------------------------------------------
-       HeroUI's light base: background #FFFFFF, and content1–4 as the raised
-       and sunken steps. Depth is elevation and tint, never a paper/white
-       split. */
-    --bg: #ffffff;
-    --surface: #ffffff; /* content1 */
-    --bg-subtle: #f4f4f5; /* content2 / zinc-100 */
-    --bg-sunken: #fafafa; /* zinc-50 */
-    --bg-muted: #e4e4e7; /* content3 / zinc-200 */
-
-    --border: #e4e4e7;
-    --border-strong: #d4d4d8;
-
-    /* Foreground DEFAULT, then down the zinc ramp. */
-    --text: #11181c;
-    --text-muted: #52525b; /* zinc-600 */
-    --text-faint: #71717a; /* zinc-500 */
-
-    /* --- Primary ----------------------------------------------------------
-       blue-500 is the house colour and the focus ring. 600 is the step that
-       is safe on words against white. */
-    --accent: #006fee;
-    --accent-hover: #005bc4;
-    --accent-soft: #e6f1fe; /* blue-50 */
-    --accent-on: #ffffff;
-    --accent-text: #005bc4; /* blue-600 */
-
-    /* --brand is the per-product alias. It defaults to the house colour and
-       is re-pointed by [data-brand] below. --brand is a fill; --brand-text is
-       the only one of the pair that goes on words. */
-    --brand: var(--accent);
-    --brand-hover: var(--accent-hover);
-    --brand-soft: var(--accent-soft);
-    --brand-text: var(--accent-text);
-
-    /* One gradient, everywhere. Blue into a deepened cyan. Re-pointed per
-       product, never a second pair invented locally.
-
-       The `to` end is #048099 rather than HeroUI's #06b7db. That bright cyan
-       carries white type at 2.39:1 and reads as gradient text on white at the
-       same ratio — it failed as a button fill and as a wordmark. Every ramp
-       below is darkened until white clears 4.6:1 across its whole length,
-       which also makes it safe as `.gradient-text`. */
-    --grad-from: #006fee;
-    --grad-to: #048099;
-    /* The text colour that sits ON a gradient fill. It is a token rather than
-       a hardcoded white because a light gradient (an amber one, say) cannot
-       carry white type at 4.5:1 — such a palette sets this to ink instead. */
-    --grad-on: #ffffff;
-
-    /* --- Elevation --------------------------------------------------------
-       HeroUI's boxShadow small/medium/large, plus a resting step below them.
-       Wide, soft and very low opacity — the 1px 0.3 alpha ring in each is
-       what keeps the edge legible. */
-    --shadow-xs: 0px 0px 1px 0px rgb(0 0 0 / 0.2);
-    --shadow-sm: 0px 0px 5px 0px rgb(0 0 0 / 0.02),
-      0px 2px 10px 0px rgb(0 0 0 / 0.06), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
-    --shadow-md: 0px 0px 15px 0px rgb(0 0 0 / 0.03),
-      0px 2px 30px 0px rgb(0 0 0 / 0.08), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0px 0px 30px 0px rgb(0 0 0 / 0.04),
-      0px 30px 60px 0px rgb(0 0 0 / 0.12), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
-
-    /* --- Radius -----------------------------------------------------------
-       HeroUI's 8/12/14px ladder, with two larger steps for panels and
-       sections — the library's `large` is sized for a Card, not for a hero
-       plate. Nothing on this site is square. */
-    --radius-sm: 8px;
-    --radius: 12px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
-    --radius-full: 9999px;
-
-    --header-h: 4rem;
-
-    color-scheme: light;
-  }
-
-  /* --- Product accents ----------------------------------------------------
-     Each product gets one of HeroUI's semantic scales. Every hue is a set:
-     --brand is the 500 (fills, tiles, dots, gradients), --brand-soft is the
-     50 (chips and washes), --brand-text is the 600/700 step that is safe on
-     words against both white and its own soft tint.
-
-     The attribute values are the ones `app/data/site.js` already uses, so the
-     data did not have to move for the palette to. */
-  [data-brand="violet"] {
-    --brand: #006fee; /* primary — NSQR, and the house colour */
-    --brand-hover: #005bc4;
-    --brand-soft: #e6f1fe;
-    --brand-text: #005bc4;
-    --grad-from: #006fee;
-    --grad-to: #048099;
-  }
-  [data-brand="cyan"] {
-    --brand: #06b7db; /* cyan — Vault */
-    --brand-hover: #0e8aaa;
-    --brand-soft: #e6fafe;
-    --brand-text: #0b6a83;
-    --grad-from: #048099;
-    --grad-to: #006fee;
-  }
-  [data-brand="blue"] {
-    --brand: #7828c8; /* secondary — coLab */
-    --brand-hover: #6020a0;
-    --brand-soft: #f2eafa;
-    --brand-text: #6020a0;
-    --grad-from: #7828c8;
-    --grad-to: #006fee;
-  }
-  [data-brand="emerald"] {
-    --brand: #17c964; /* success — Presence */
-    --brand-hover: #12a150;
-    --brand-soft: #e8faf0;
-    --brand-text: #0e793c;
-    --grad-from: #0f8643;
-    --grad-to: #048099;
-  }
-  [data-brand="amber"] {
-    --brand: #f5a524; /* warning — Lipd Hub */
-    --brand-hover: #c4841d;
-    --brand-soft: #fefce8;
-    --brand-text: #8a5a00;
-    --grad-from: #a46808;
-    --grad-to: #e60c58;
-  }
-  [data-brand="clay"] {
-    --brand: #f31260; /* danger — AES */
-    --brand-hover: #c20e4d;
-    --brand-soft: #fee7ef;
-    --brand-text: #c20e4d;
-    --grad-from: #e60c58;
-    --grad-to: #7828c8;
-  }
-
-
-  /* ==========================================================================
-     DESIGN LAB VARIANTS — temporary
-
-     Everything in this block exists so the design can be judged on real pages
-     instead of as swatches. `DesignLab` (dev-only) writes data-palette,
-     data-radius, data-density and data-type onto <html>, and these rules
-     re-point the tokens underneath the whole site.
-
-     None of it is the design. Once a direction is chosen, the winning values
-     move up into :root above and this entire block is deleted — see the note
-     in AGENTS.md.
-
-     Every palette is contrast-checked rather than eyeballed: the --*-text
-     steps clear 4.5:1 on white and on their own soft tint, and --grad-on is
-     whatever colour actually reads on that palette's gradient. That last one
-     is why the token exists — the amber palette cannot carry white type.
-     ========================================================================== */
-
-  /* --- A. Indigo → violet -------------------------------------------------
-     Modern and a little premium. Furthest from the stock HeroUI blue while
-     staying in the same family, so it reads as a considered choice rather
-     than a different genre. */
-  [data-palette="indigo"] {
-    --accent: #4f46e5;
-    --accent-hover: #4338ca;
-    --accent-soft: #eef2ff;
-    --accent-text: #4338ca; /* 7.90:1 on white */
-    --grad-from: #4f46e5;
-    --grad-to: #9333ea; /* 5.38:1 with white type, so the whole ramp is safe */
-    --grad-on: #ffffff;
-  }
-  [data-palette="indigo"] [data-brand="violet"] {
-    --brand: #4f46e5;
-    --brand-hover: #4338ca;
-    --brand-soft: #eef2ff;
-    --brand-text: #4338ca;
-    --grad-from: #4f46e5;
-    --grad-to: #9333ea;
-  }
-
-  /* --- B. Teal → emerald --------------------------------------------------
-     Calm and verification-flavoured — the palette security tooling tends to
-     wear. The gradient is deliberately narrow: the brighter teals and
-     emeralds cannot carry white type, so the ramp stays in the 700s. */
-  [data-palette="teal"] {
-    --accent: #0f766e;
-    --accent-hover: #115e59;
-    --accent-soft: #f0fdfa;
-    --accent-text: #0f766e; /* 5.47:1 on white */
-    --grad-from: #0f766e;
-    --grad-to: #047857; /* 5.48:1 with white type */
-    --grad-on: #ffffff;
-  }
-  [data-palette="teal"] [data-brand="violet"] {
-    --brand: #0f766e;
-    --brand-hover: #115e59;
-    --brand-soft: #f0fdfa;
-    --brand-text: #0f766e;
-    --grad-from: #0f766e;
-    --grad-to: #047857;
-  }
-
-  /* --- C. Ink + amber -----------------------------------------------------
-     The one that is not a SaaS blue. Chrome is near-black — buttons, links,
-     focus — and amber is spent only on the gradient surfaces, which carry ink
-     type rather than white. Sober, editorial, and the most distinctive of the
-     three; also the one that will look most wrong if the copy is breezy. */
-  [data-palette="ink"] {
-    --accent: #18181b;
-    --accent-hover: #000000;
-    --accent-soft: #fffbeb;
-    --accent-text: #18181b;
-    /* Deep burnt amber rather than a bright one. The gradient is also used as
-       text on white (`.gradient-text` — the wordmark tail, the stat figures),
-       so a light amber would be unreadable there no matter what --grad-on
-       says. Warm and distinctive, still safe. */
-    --grad-from: #b45309;
-    --grad-to: #9a3412;
-    --grad-on: #ffffff;
-  }
-  [data-palette="ink"] [data-brand="violet"] {
-    --brand: #18181b;
-    --brand-hover: #000000;
-    --brand-soft: #fffbeb;
-    --brand-text: #92400e;
-    --grad-from: #fbbf24;
-    --grad-to: #ea580c;
-  }
-
-  /* --- D. Neutral chrome, coloured content ---------------------------------
-     The chrome stops competing with the products. Buttons, links, focus and
-     the closing panel are near-black; colour is spent entirely on the six
-     product hues, which get to be *more* saturated than the house-colour
-     scheme allowed rather than less.
-
-     The reason that works: in the other palettes a product hue has to carry
-     white type on a gradient button, which forces every hue down into the
-     700s. Here nothing structural is coloured, so a hue only has to clear 3:1
-     as a fill behind a white icon and 4.5:1 as its own text step. That is a
-     much cheaper constraint, and it buys back the vividness.
-
-     The neutral ramp is warm (stone, not zinc). A studio whose line is "we
-     think about what breaks" does not also need a cold grey.
-
-     The signature moves from one house gradient to the *spectrum* — the six
-     product hues as a set. `.gradient-text` runs blue → violet → rose, which
-     is derived from the products rather than invented next to them.
-
-     The discipline this needs: one hue per surface. A card wears its own
-     product's colour and no other. Six hues on a page is a palette; six hues
-     in one card is a rainbow. */
-  [data-palette="neutral"] {
-    --bg-sunken: #fafaf9;
-    --bg-subtle: #f5f5f4;
-    --bg-muted: #e7e5e4;
-    --border: #e7e5e4;
-    --border-strong: #d6d3d1;
-    --text: #1c1917; /* 17.49:1 */
-    --text-muted: #57534e; /* 7.63:1 */
-    --text-faint: #78716c; /* 4.80:1 */
-
-    --accent: #1c1917;
-    --accent-hover: #000000;
-    --accent-soft: #f5f5f4;
-    --accent-text: #1c1917;
-
-    /* The spectrum, used only as text and as the hero fields. */
-    --grad-from: #2563eb;
-    --grad-to: #e11d48;
-    --grad-on: #ffffff;
-  }
-
-  [data-palette="neutral"] [data-brand="violet"] {
-    --brand: #2563eb;
-    --brand-hover: #1d4ed8;
-    --brand-soft: #eff6ff;
-    --brand-text: #1d4ed8;
-    --grad-from: #2563eb;
-    --grad-to: #1d4ed8;
-  }
-  [data-palette="neutral"] [data-brand="cyan"] {
-    --brand: #0891b2;
-    --brand-hover: #0e7490;
-    --brand-soft: #ecfeff;
-    --brand-text: #0e7490;
-    --grad-from: #0891b2;
-    --grad-to: #0e7490;
-  }
-  [data-palette="neutral"] [data-brand="blue"] {
-    --brand: #7c3aed;
-    --brand-hover: #6d28d9;
-    --brand-soft: #f5f3ff;
-    --brand-text: #6d28d9;
-    --grad-from: #7c3aed;
-    --grad-to: #6d28d9;
-  }
-  [data-palette="neutral"] [data-brand="emerald"] {
-    --brand: #059669;
-    --brand-hover: #047857;
-    --brand-soft: #ecfdf5;
-    --brand-text: #047857;
-    --grad-from: #059669;
-    --grad-to: #047857;
-  }
-  [data-palette="neutral"] [data-brand="amber"] {
-    --brand: #d97706;
-    --brand-hover: #b45309;
-    --brand-soft: #fffbeb;
-    --brand-text: #b45309;
-    --grad-from: #d97706;
-    --grad-to: #b45309;
-  }
-  [data-palette="neutral"] [data-brand="clay"] {
-    --brand: #e11d48;
-    --brand-hover: #be123c;
-    --brand-soft: #fff1f2;
-    --brand-text: #be123c;
-    --grad-from: #e11d48;
-    --grad-to: #be123c;
-  }
-
-  /* --- E. heroui.pro, duplicated ------------------------------------------
-     Not an impression of their marketing site — these are the tokens their
-     live stylesheet ships, read out of
-     /_next/static/immutable/chunks/29qranzd3vz4s.css. Their marketing palette
-     is NOT the @heroui/theme library palette: the library primary is #006fee
-     and theirs is #0485f7. They kept the library's success and warning and
-     changed the blue.
-
-     Their product/chart hues are derived from the accent by OKLab lightness —
-     `oklch(from var(--accent) calc(l ± .12) c h)` — rather than being separate
-     hues, so the six product slots below are steps of that one ramp. Static
-     hex first and the relative form second, so a browser without relative
-     colour still gets the right value.
-
-     CONTRAST, STATED PLAINLY. These are their numbers, kept deliberately:
-       --muted #71717a on the #f5f5f5 ground .... 4.43:1  (needs 4.5, body)
-       --accent #0485f7 as text on a card ....... 3.68:1  (needs 4.5)
-       --accent #0485f7 as text on the ground ... 3.38:1  (needs 4.5)
-       white/#fcfcfc on an accent-filled button . 3.68:1  (needs 4.5)
-       --danger #db3b3e as text ................. 4.09:1  (needs 4.5)
-       --success #17c964 as text ................ 2.01:1  (needs 4.5)
-       --warning #f5a524 as text ................ 1.87:1  (needs 4.5)
-     `mono-fixed` is the same palette with the smallest corrections that pass.
-     ======================================================================= */
-  [data-palette="mono"] {
+    /* Their tokens, with the name each one carries in their stylesheet. */
     --bg: #f5f5f5; /* --background */
     --surface: #ffffff; /* --surface */
     --bg-sunken: #fcfcfc; /* --snow */
@@ -388,70 +67,106 @@
     --accent-on: #fcfcfc; /* --accent-foreground */
     --accent-text: #0485f7;
 
+    /* The second line of the two-tone display heading. */
     --display-muted: #a1a1aa;
+
+    --brand: var(--accent);
+    --brand-hover: var(--accent-hover);
+    --brand-soft: var(--accent-soft);
+    --brand-text: var(--accent-text);
 
     --grad-from: #0485f7;
     --grad-to: #005fce;
     --grad-on: #fcfcfc;
+
+    /* Elevation is kept for the few raised things left — the header when
+       stuck, the dialog, the lab. Cards do not use it: on a grey ground a
+       white card already reads as raised. */
+    --shadow-xs: 0px 0px 1px 0px rgb(0 0 0 / 0.2);
+    --shadow-sm: 0px 0px 5px 0px rgb(0 0 0 / 0.02),
+      0px 2px 10px 0px rgb(0 0 0 / 0.06), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
+    --shadow-md: 0px 0px 15px 0px rgb(0 0 0 / 0.03),
+      0px 2px 30px 0px rgb(0 0 0 / 0.08), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0px 0px 30px 0px rgb(0 0 0 / 0.04),
+      0px 30px 60px 0px rgb(0 0 0 / 0.12), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
+
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    --header-h: 4rem;
+
+    color-scheme: light;
   }
 
-  /* The six product slots as steps of their accent ramp, which is how their
-     charts are built. It makes every product blue — see the note in AGENTS.md
-     if product identity is wanted back. */
-  [data-palette="mono"] [data-brand="violet"] {
-    --brand: #0485f7;
+  /* --- Product accents ----------------------------------------------------
+     Steps of the accent's own OKLab lightness ramp — `oklch(from var(--accent)
+     calc(l ± .12) c h)` — which is how their chart colours are built. Static
+     hex is declared first so a browser without relative colour still lands on
+     the right value.
+
+     This is a faithful duplication and it has a cost: four of the six products
+     are the same blue at different lightnesses, so colour no longer tells them
+     apart. That is workable for a site selling one thing and is the main thing
+     to watch on /products. Six distinct hues are a fifteen-line change here if
+     it stops working. */
+  [data-brand="violet"] {
+    --brand: #0485f7; /* NSQR, and the house colour */
     --brand-hover: #0072e2;
     --brand-text: #0485f7;
     --grad-from: #0485f7;
     --grad-to: #005fce;
   }
-  [data-palette="mono"] [data-brand="cyan"] {
-    --brand: #005fce;
+  [data-brand="cyan"] {
+    --brand: #005fce; /* Vault */
     --brand: oklch(from #0485f7 calc(l - 0.12) c h);
     --brand-hover: #005fce;
     --brand-text: #005fce;
     --grad-from: #005fce;
     --grad-to: #0485f7;
   }
-  [data-palette="mono"] [data-brand="blue"] {
-    --brand: #42acff;
+  [data-brand="blue"] {
+    --brand: #42acff; /* coLab */
     --brand: oklch(from #0485f7 calc(l + 0.12) c h);
     --brand-hover: #0485f7;
     --brand-text: #0485f7;
     --grad-from: #42acff;
     --grad-to: #0485f7;
   }
-  [data-palette="mono"] [data-brand="emerald"] {
-    --brand: #6cd4ff;
+  [data-brand="emerald"] {
+    --brand: #6cd4ff; /* Presence */
     --brand: oklch(from #0485f7 calc(l + 0.24) c h);
     --brand-hover: #42acff;
     --brand-text: #005fce;
     --grad-from: #6cd4ff;
     --grad-to: #42acff;
   }
-  /* The two status hues they ship, used where a product wants to read warm. */
-  [data-palette="mono"] [data-brand="amber"] {
-    --brand: #f5a524; /* --warning */
+  /* The two status hues they ship, for the products that want to read warm. */
+  [data-brand="amber"] {
+    --brand: #f5a524; /* --warning — Lipd Hub */
     --brand-hover: #c4841d;
     --brand-text: #f5a524;
     --grad-from: #f5a524;
     --grad-to: #db3b3e;
   }
-  [data-palette="mono"] [data-brand="clay"] {
-    --brand: #db3b3e; /* --danger */
+  [data-brand="clay"] {
+    --brand: #db3b3e; /* --danger — AES */
     --brand-hover: #c2292c;
     --brand-text: #db3b3e;
     --grad-from: #db3b3e;
     --grad-to: #f5a524;
   }
 
-  /* Every product slot inherits its soft tint from the accent-mix pattern they
-     use, rather than a hand-picked 50-step. */
-  [data-palette="mono"] [data-brand] {
+  /* Soft tints follow the accent-mix pattern they use rather than hand-picked
+     50-steps. */
+  [data-brand] {
     --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
   }
 
-  /* --- E2. heroui.pro, contrast-corrected ---------------------------------
+  /* --- A. heroui.pro, contrast-corrected ---------------------------------
      Identical to `mono` except for the values that fail WCAG. Each moves the
      minimum distance needed and no further:
 
@@ -466,7 +181,7 @@
        --danger  #db3b3e -> #c42b2e as text
        success/warning stay as fills only; they are never set on words.
      ======================================================================= */
-  [data-palette="mono-fixed"] {
+  [data-palette="corrected"] {
     --bg: #f5f5f5;
     --surface: #ffffff;
     --bg-sunken: #fcfcfc;
@@ -493,42 +208,42 @@
     --grad-on: #ffffff;
   }
 
-  [data-palette="mono-fixed"] [data-brand="violet"] {
+  [data-palette="corrected"] [data-brand="violet"] {
     --brand: #0485f7;
     --brand-hover: #0072e2;
     --brand-text: #0067c9;
     --grad-from: #0067c9;
     --grad-to: #005fce;
   }
-  [data-palette="mono-fixed"] [data-brand="cyan"] {
+  [data-palette="corrected"] [data-brand="cyan"] {
     --brand: #005fce;
     --brand-hover: #00519f;
     --brand-text: #005fce;
     --grad-from: #005fce;
     --grad-to: #0067c9;
   }
-  [data-palette="mono-fixed"] [data-brand="blue"] {
+  [data-palette="corrected"] [data-brand="blue"] {
     --brand: #42acff;
     --brand-hover: #0485f7;
     --brand-text: #0067c9;
     --grad-from: #0067c9;
     --grad-to: #005fce;
   }
-  [data-palette="mono-fixed"] [data-brand="emerald"] {
+  [data-palette="corrected"] [data-brand="emerald"] {
     --brand: #6cd4ff;
     --brand-hover: #42acff;
     --brand-text: #005fce;
     --grad-from: #005fce;
     --grad-to: #0067c9;
   }
-  [data-palette="mono-fixed"] [data-brand="amber"] {
+  [data-palette="corrected"] [data-brand="amber"] {
     --brand: #f5a524;
     --brand-hover: #c4841d;
     --brand-text: #8a5a00;
     --grad-from: #a46808;
     --grad-to: #c42b2e;
   }
-  [data-palette="mono-fixed"] [data-brand="clay"] {
+  [data-palette="corrected"] [data-brand="clay"] {
     --brand: #db3b3e;
     --brand-hover: #c2292c;
     --brand-text: #c42b2e;
@@ -536,11 +251,11 @@
     --grad-to: #a46808;
   }
 
-  [data-palette="mono-fixed"] [data-brand] {
+  [data-palette="corrected"] [data-brand] {
     --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
   }
 
-  /* --- E3. Mono grey ground, distinct product hues ------------------------
+  /* --- B. Same palette, six distinct product hues ------------------------
      The middle ground between the two above, and the one that was briefly
      lost when `mono` was overwritten with the exact duplication.
 
@@ -553,7 +268,7 @@
      Every value clears WCAG. The blue is #005bc4 rather than their #0485f7
      because here it is used as text; if you want their exact blue in the
      places it is seen, `mono-fixed` is the palette that keeps it as a fill. */
-  [data-palette="mono-hues"] {
+  [data-palette="hues"] {
     --bg: #f4f4f5;
     --surface: #ffffff;
     --bg-sunken: #ffffff; /* .section-subtle inverts to a white band */
@@ -578,7 +293,7 @@
     --grad-on: #ffffff;
   }
 
-  [data-palette="mono-hues"] [data-brand="violet"] {
+  [data-palette="hues"] [data-brand="violet"] {
     --brand: #2563eb;
     --brand-hover: #1d4ed8;
     --brand-soft: #eff6ff;
@@ -586,7 +301,7 @@
     --grad-from: #2563eb;
     --grad-to: #1d4ed8;
   }
-  [data-palette="mono-hues"] [data-brand="cyan"] {
+  [data-palette="hues"] [data-brand="cyan"] {
     --brand: #0891b2;
     --brand-hover: #0e7490;
     --brand-soft: #ecfeff;
@@ -594,7 +309,7 @@
     --grad-from: #0891b2;
     --grad-to: #0e7490;
   }
-  [data-palette="mono-hues"] [data-brand="blue"] {
+  [data-palette="hues"] [data-brand="blue"] {
     --brand: #7c3aed;
     --brand-hover: #6d28d9;
     --brand-soft: #f5f3ff;
@@ -602,7 +317,7 @@
     --grad-from: #7c3aed;
     --grad-to: #6d28d9;
   }
-  [data-palette="mono-hues"] [data-brand="emerald"] {
+  [data-palette="hues"] [data-brand="emerald"] {
     --brand: #059669;
     --brand-hover: #047857;
     --brand-soft: #ecfdf5;
@@ -610,7 +325,7 @@
     --grad-from: #059669;
     --grad-to: #047857;
   }
-  [data-palette="mono-hues"] [data-brand="amber"] {
+  [data-palette="hues"] [data-brand="amber"] {
     --brand: #d97706;
     --brand-hover: #b45309;
     --brand-soft: #fffbeb;
@@ -618,7 +333,7 @@
     --grad-from: #d97706;
     --grad-to: #b45309;
   }
-  [data-palette="mono-hues"] [data-brand="clay"] {
+  [data-palette="hues"] [data-brand="clay"] {
     --brand: #e11d48;
     --brand-hover: #be123c;
     --brand-soft: #fff1f2;
@@ -700,7 +415,7 @@
 
   h1 {
     font-weight: 700;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.045em; /* tighter than the rest — display tracking */
     line-height: 1.05;
   }
 
@@ -752,14 +467,18 @@
     font-family: "Space Grotesk", var(--font-sans), sans-serif;
   }
 
-  /* --- DESIGN LAB: mono-palette component overrides — temporary -----------
-     This palette is mostly structure, so most of it lives here rather than in
-     the token block above. */
+  /* --- The mono treatment ------------------------------------------------
+     Not lab variants — this is the design. These rules restate a handful of
+     the component definitions above, because the palette is mostly structure:
+     a grey ground with white cards changes what a card, a chip and a heading
+     need to do. They sit here rather than being edited inline above so the
+     treatment reads as one decision.
+     ---------------------------------------------------------------------- */
 
   /* The headline tail stops being a gradient and becomes the second tone.
      Flat grey, no clip, no background — emphasis and de-emphasis rather than
      decoration. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .gradient-text {
+  .display-tone {
     background: none;
     -webkit-background-clip: border-box;
     background-clip: border-box;
@@ -770,18 +489,12 @@
 
   /* The second tone takes its own line, as in the reference — the break is
      deliberate there rather than wherever the measure happens to wrap. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) h1 .gradient-text {
+  h1 .display-tone {
     display: block;
   }
 
-  /* Display type is tighter and heavier than the other palettes carry. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) h1 {
-    font-weight: 700;
-    letter-spacing: -0.045em;
-  }
-
   /* The announcement is a plain blue line, not a bordered chip. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .pill {
+  .pill {
     height: auto;
     padding: 0;
     border: 0;
@@ -793,61 +506,158 @@
     font-weight: 500;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) a.pill:hover {
+  a.pill:hover {
     transform: none;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .pill-tag {
-    display: none;
-  }
-
-  /* The ground is already grey, so the dot field and the blurred colour
-     fields would only muddy it. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .grid-field,
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .blob {
+  .pill-tag {
     display: none;
   }
 
   /* Cards are white on grey and lift on their own; the shadow is redundant. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .card {
+  .card {
     box-shadow: none;
   }
 
   /* Chrome is monochrome — blue stays reserved for the one accent line. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .btn-gradient {
+  .btn-gradient {
     background: var(--text);
     color: #ffffff;
     box-shadow: none;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .btn-gradient:hover {
+  .btn-gradient:hover {
     background: #000000;
     opacity: 1;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .brand-mark {
+  .brand-mark {
     background: var(--text);
     color: #ffffff;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .gradient-panel {
+  .gradient-panel {
     background: linear-gradient(140deg, #18181b, #27272a);
     color: #ffffff;
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .gradient-panel h2 {
+  .gradient-panel h2 {
     color: #ffffff;
   }
 
   /* The eyebrow keeps its product hue but loses the gradient rule, which
      would be the only gradient left on the page. */
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .eyebrow::before {
+  .eyebrow::before {
     background: var(--brand);
   }
 
-  :is([data-palette="mono"], [data-palette="mono-fixed"], [data-palette="mono-hues"]) .icon-tile {
+  .icon-tile {
+    background: var(--brand);
+    box-shadow: none;
+  }
+
+  /* --- DESIGN LAB: typeface — temporary, see the variants block above ---- */
+  /* The alternates are named directly rather than through a --font-* variable,
+     because they are not loaded by next/font — DesignLab injects a stylesheet
+     for them at runtime, in development only, so a production build carries no
+     trace of them. */
+  [data-type="instrument"] body {
+    font-family: "Instrument Sans", var(--font-sans), sans-serif;
+  }
+
+  [data-type="grotesk"] body {
+    font-family: "Space Grotesk", var(--font-sans), sans-serif;
+  }
+
+  /* --- The mono treatment ------------------------------------------------
+     Not lab variants — this is the design. These rules restate a handful of
+     the component definitions above, because the palette is mostly structure:
+     a grey ground with white cards changes what a card, a chip and a heading
+     need to do. They sit here rather than being edited inline above so the
+     treatment reads as one decision.
+     ---------------------------------------------------------------------- */
+
+  /* The headline tail stops being a gradient and becomes the second tone.
+     Flat grey, no clip, no background — emphasis and de-emphasis rather than
+     decoration. */
+  .display-tone {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--display-muted);
+    padding-inline: 0;
+    margin-inline: 0;
+  }
+
+  /* The second tone takes its own line, as in the reference — the break is
+     deliberate there rather than wherever the measure happens to wrap. */
+  h1 .display-tone {
+    display: block;
+  }
+
+  /* The announcement is a plain blue line, not a bordered chip. */
+  .pill {
+    height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--accent-text);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  a.pill:hover {
+    transform: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .pill-tag {
+    display: none;
+  }
+
+  /* Cards are white on grey and lift on their own; the shadow is redundant. */
+  .card {
+    box-shadow: none;
+  }
+
+  /* Chrome is monochrome — blue stays reserved for the one accent line. */
+  .btn-gradient {
+    background: var(--text);
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  .btn-gradient:hover {
+    background: #000000;
+    opacity: 1;
+  }
+
+  .brand-mark {
+    background: var(--text);
+    color: #ffffff;
+  }
+
+  .gradient-panel {
+    background: linear-gradient(140deg, #18181b, #27272a);
+    color: #ffffff;
+  }
+
+  .gradient-panel h2 {
+    color: #ffffff;
+  }
+
+  /* The eyebrow keeps its product hue but loses the gradient rule, which
+     would be the only gradient left on the page. */
+  .eyebrow::before {
+    background: var(--brand);
+  }
+
+  .icon-tile {
     background: var(--brand);
     box-shadow: none;
   }
@@ -971,22 +781,6 @@
   .lead-center {
     margin-inline: auto;
     text-align: center;
-  }
-
-  /* --- Gradient type ------------------------------------------------------ */
-  .gradient-text {
-    background: linear-gradient(
-      120deg,
-      var(--grad-from),
-      var(--grad-to)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    /* The clip leaves descenders on the edge of the box; a hair of padding
-       and a matching negative margin keeps them from being shaved. */
-    padding-inline: 0.06em;
-    margin-inline: -0.06em;
   }
 
   /* --- Buttons ------------------------------------------------------------
@@ -1227,50 +1021,6 @@
     width: 3.25rem;
     height: 3.25rem;
     border-radius: var(--radius-lg);
-  }
-
-  /* --- Decorative colour fields ------------------------------------------
-     A blob is a blurred ellipse of the gradient pair sitting behind a hero;
-     the grid is a faint dot matrix. Both are decoration and both are hidden
-     from assistive tech by being empty elements. */
-  .blob {
-    position: absolute;
-    z-index: -1;
-    border-radius: var(--radius-full);
-    filter: blur(80px);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  .blob-from {
-    background: var(--grad-from);
-  }
-
-  .blob-to {
-    background: var(--grad-to);
-  }
-
-  .grid-field {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      var(--border-strong) 1px,
-      transparent 0
-    );
-    background-size: 28px 28px;
-    -webkit-mask-image: radial-gradient(
-      ellipse 70% 60% at 50% 40%,
-      #000 10%,
-      transparent 70%
-    );
-    mask-image: radial-gradient(
-      ellipse 70% 60% at 50% 40%,
-      #000 10%,
-      transparent 70%
-    );
   }
 
   /* --- Header -------------------------------------------------------------

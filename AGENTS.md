@@ -9,96 +9,51 @@
   and numerals).
 
 ## The design system
-The site runs on **HeroUI's design language**. The values are not an impression
-of it — they are lifted from `@heroui/theme@2.4.26` itself
-(`dist/colors/semantic.js` for the palette, `dist/default-layout.js` for radius,
-elevation and the type scale) and written into `:root` in `app/globals.css`.
-Nothing from HeroUI is installed or bundled: this is a plain Tailwind site that
-adopts their tokens and builds its own components on top.
+The palette is **heroui.pro's, duplicated** — values read out of their live
+stylesheet (`/_next/static/immutable/chunks/29qranzd3vz4s.css`), not estimated.
+It is baked into `:root` in `app/globals.css`; it is not a variant any more.
 
-The neurasense brand handoff it replaced is gone — weights capped at 400, one
-violet per screen, the audited 4.5:1 floor, mono as a marker of machine output,
-and the rule that two thirds of a layout stay empty. None of them apply.
+**It is not the `@heroui/theme` library palette.** The library primary is
+`#006fee`; their marketing site runs `#0485f7` and keeps the library's `success`
+and `warning`. "HeroUI's colours" is ambiguous — this is the site's.
 
-What replaces them:
+The language, in four rules:
 
-1. **Weight carries hierarchy.** 700 display, 600 headings, 500 controls, 400
-   body. Inter, which is what HeroUI itself sets. Tailwind's full weight scale
-   is available; the config no longer truncates it.
-2. **The palette is meant to be seen.** One saturated primary (`#006fee`) spent
-   freely — buttons, links, icon tiles, gradients, tinted chips, blurred colour
-   fields behind a hero. There is no per-screen accent budget.
-3. **Everything is rounded and elevated.** A card is a raised object: large
-   radius, soft wide shadow, a lift on hover. Radii come from the `--radius-*`
-   ladder and nothing is square.
-4. **The house gradient is one gradient.** `--grad-from` → `--grad-to`, blue
-   into cyan by default and re-pointed per product by `data-brand`. It appears
-   as `.gradient-text`, `.btn-gradient`, `.icon-tile`, `.brand-mark`,
-   `.gradient-panel` and the hero blobs — always the same pair, never a second
-   one invented locally.
+1. **The ground is grey (`#f5f5f5`) and cards are white.** That inversion is
+   why surfaces lift without a shadow, and why `.card` carries none. A section
+   that wants more weight uses `.section-subtle`, which inverts to a white band.
+2. **The display heading is two-tone.** `.display-tone` is flat
+   `--display-muted` grey on its own line — not a gradient, despite the ramp
+   tokens still existing for fills. It reads as emphasis and de-emphasis.
+3. **Colour appears once above the fold**, as a plain blue line of text.
+   `.pill` has no border, background or chip behind it.
+4. **Weight carries hierarchy.** 700 display at `-0.045em`, 600 headings, 500
+   controls, 400 body. Inter.
 
-**Fixed copy.** The hero headline and lead in `hero` (`app/data/site.js`) are
-the two lines the studio is named by and are **not to be rewritten**:
-"We think about what breaks — before it breaks" and "A studio for software,
-cryptography, and applied AI. Nothing here is assumed to work." The headline is
-split into head/tail only so the tail can carry the gradient; `headlinePlain`
-holds it whole for metadata and OG images. Product names and the `legalDocs`
-registry are likewise fixed.
+**Product hues are steps of the accent's own OKLab lightness ramp**
+(`oklch(from var(--accent) calc(l ± .12) c h)`), which is how their charts are
+built, with static hex declared first as a fallback. **This makes four of the
+six products the same blue**, so colour no longer tells them apart. That is
+faithful to a site selling one product; watch it on `/products`. Six distinct
+hues are a fifteen-line change — `[data-palette="hues"]` already holds them.
 
-**The design lab is temporary.** `app/components/DesignLab.js` plus the
-"DESIGN LAB VARIANTS" block in `globals.css` exist only to choose a direction:
-a dev-only panel writes `data-palette`, `data-type`, `data-radius`,
-`data-elevation` and `data-density` onto `<html>` and the variant rules
-re-point the tokens under the whole site. It never renders in production (the
-`isDev` guard in `layout.js`), and the alternate typefaces are fetched at
-runtime rather than through `next/font` so a production build carries no trace
-of them. The component itself is still bundled into the layout chunk, so it is
-dead weight until it goes. **Once a direction is chosen, the winning values
-move up into `:root` and the component, the variant block and the axis list all
-get deleted together.**
+**CONTRAST: this palette fails WCAG in seven places, deliberately.** It is
+their design, duplicated at explicit direction after every failure was measured
+and reported. `--text-muted` on the ground is 4.43:1; the accent as text is
+3.68:1 on a card and 3.38:1 on the ground; white on an accent fill is 3.68:1;
+`--display-muted` is 2.33:1 against a 3.0 floor; danger/success/warning as text
+are 4.09/2.01/1.87. **Do not silently "fix" these** — the corrected values live
+in `[data-palette="corrected"]`, which keeps `#0485f7` as a *fill* (a fill needs
+only 3:1) and darkens it to `#0067c9` only where it becomes small type. Moving
+to it is one attribute on `<html>`.
 
-**The `mono` palette is heroui.pro duplicated exactly**, tokens read out of
-their live stylesheet (`/_next/static/immutable/chunks/29qranzd3vz4s.css`), not
-approximated. Two things to know about it:
-
-- **Their marketing palette is not the `@heroui/theme` palette.** The library
-  primary is `#006fee`; theirs is `#0485f7`. They kept the library's `success`
-  and `warning` and changed the blue. So "use HeroUI's colours" is ambiguous —
-  ask which.
-- **Their product/chart hues are derived from the accent by OKLab lightness**
-  (`oklch(from var(--accent) calc(l ± .12) c h)`) rather than being separate
-  hues. Duplicating that makes all six products blue. If product identity is
-  wanted back, the `neutral` palette is the version with six distinct hues.
-
-**It fails WCAG in seven places and that is deliberate** — it is their design,
-kept faithfully at the user's explicit direction after the failures were
-reported. `--muted` on the ground is 4.43:1, the accent as text is 3.68:1 on a
-card and 3.38:1 on the ground, white on an accent fill is 3.68:1, and danger /
-success / warning as text are 4.09 / 2.01 / 1.87. **`mono-fixed` is the same
-palette with the smallest corrections that pass** — critically, it keeps
-`#0485f7` as a *fill* (a fill only needs 3:1) and darkens it to `#0067c9` only
-where it becomes small type. That split is what lets it stay recognisably their
-blue. Do not "simplify" the two into one.
-
-**Gradients must clear 4.5:1 along their whole length.** Every ramp here is
-darkened until white type clears 4.6:1 at both ends. This is not fussiness:
-HeroUI's bright scales carry white at 2.0–2.4:1, and the first cut of this
-rebuild shipped a house gradient ending in `#06b7db` — 2.39:1 under the white
-type on every gradient button, icon tile and panel. The same ramp is also used
-as `.gradient-text` on white, so a light endpoint is unreadable there too, which
-is why "keep it vivid and put ink on it" is not an escape. `--grad-on` is the
-token for the type colour on a gradient fill; it is white everywhere today, and
-it exists so that the constraint has somewhere to live rather than being
-rediscovered.
-
-Contrast is no longer machine-audited. `scripts/contrast.py` is stale — it
-encodes the old violet palette and is not a gate. The text tokens here
-(`--text`, `--text-muted`, `--text-faint`, `--brand-text`, `--accent-text`) were
-chosen to read on both white and their own soft tint, but nothing checks it on
-every change.
-
-Layout: `.shell` is 80rem and sections are dense — separation comes from card
-edges and tinted bands rather than from empty space.
+**The design lab is still up for the undecided axes.**
+`app/components/DesignLab.js` is dev-only (the `isDev` guard in `layout.js`) and
+never renders in production, though it is still bundled into the layout chunk
+and the `corrected`/`hues` variant CSS ships. Typeface, radius, elevation and
+density are not settled. **Once they are, the winning values move into `:root`
+and the component, the variant blocks and the axis list all get deleted
+together.**
 
 ## Key paths
 - `app/data/site.js`: **single source of truth** for the hero copy, products,

@@ -24,14 +24,9 @@ const AXES = [
     key: "palette",
     label: "Palette",
     options: [
-      { value: "", label: "HeroUI blue", hint: "current" },
-      { value: "indigo", label: "Indigo → violet" },
-      { value: "teal", label: "Teal → emerald" },
-      { value: "ink", label: "Ink + amber" },
-      { value: "neutral", label: "Neutral + spectrum" },
-      { value: "mono", label: "heroui.pro exact" },
-      { value: "mono-fixed", label: "heroui.pro corrected" },
-      { value: "mono-hues", label: "Mono grey + 6 hues" },
+      { value: "", label: "heroui.pro", hint: "chosen" },
+      { value: "corrected", label: "Contrast-corrected" },
+      { value: "hues", label: "Six product hues" },
     ],
   },
   {

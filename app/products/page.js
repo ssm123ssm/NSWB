@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ContactButton } from "../components/SiteChrome";
 import { ArrowIcon, CheckIcon } from "../components/Icons";
-import ProductMark from "../components/ProductMarks";
 import ProductName from "../components/ProductName";
 import { closing, products } from "../data/site";
 
@@ -86,9 +85,9 @@ function ProductCard({ product }) {
   return (
     <article className="card card-hover" data-brand={product.accent}>
       <div className="flex items-start justify-between gap-4">
-        <span className="icon-tile">
-          <ProductMark product={product} />
-        </span>
+        <h3 className="brand-tag">
+          <ProductName product={product} />
+        </h3>
         <span
           className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}
         >
@@ -96,10 +95,7 @@ function ProductCard({ product }) {
         </span>
       </div>
 
-      <h3 className="mt-5 text-xl">
-        <ProductName product={product} />
-      </h3>
-      <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">
+      <p className="mt-5 text-base leading-relaxed text-ink">
         {product.tagline}
       </p>
 

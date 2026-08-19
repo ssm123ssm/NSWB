@@ -103,60 +103,56 @@
   }
 
   /* --- Product accents ----------------------------------------------------
-     Six distinct hues, one per product. This is a deliberate departure from
-     heroui.pro, whose chart hues are steps of one accent ramp — that works for
-     a site selling one thing and made four of these six the same blue.
+     One hue per product, taken from each product's own trade-name lockup —
+     these are established marks, not colours chosen here. NSQR is violet and
+     coLab is blue, which is what the `accent` field in site.js has always
+     said; an earlier pass had those two swapped when the palette was mapped
+     onto HeroUI's scales.
 
-     NSQR keeps the house accent because it is the flagship; the rest are
-     spaced around the wheel. Every fill clears 3:1 against both grounds (the
-     white card and the #f5f5f5 page) and every --brand-text clears 4.5:1
-     against both.
+     Lipd Hub keeps the amber it already had, and AES is red, both by
+     direction.
 
-     Note that NSQR, Vault and Presence sit within 0.007 luminance of each
-     other. They are easy to tell apart in colour and nearly identical in
-     greyscale, so colour is not carrying product identity on its own — the
-     mark in the icon tile is. See app/components/ProductMarks.js. */
+     --brand-text is the tail of the lockup, so it is TEXT and has to clear
+     4.5:1 in three places: white cards, the #f5f5f5 page, and its own tinted
+     pill. The pill is the tightest of the three and is what set these values —
+     teal, green and amber all cleared white and the ground comfortably and
+     failed on their own chip. --brand is the fill and needs only 3:1. */
   [data-brand="violet"] {
-    --brand: #0485f7; /* NSQR — the house accent */
-    --brand-hover: #0072e2;
-    --brand-text: #0067c9; /* 5.55:1 card, 5.09:1 ground */
+    --brand: #7c3aed; /* NSQR */
+    --brand-hover: #6d28d9;
+    --brand-text: #6d28d9; /* 5.49:1 on its own pill */
   }
   [data-brand="cyan"] {
-    --brand: #0d9488; /* Vault — teal, pulled off the blue so the two
-                         cryptography-adjacent products do not merge */
+    --brand: #0d9488; /* Vault */
     --brand-hover: #0f766e;
-    --brand-text: #0f766e;
+    --brand-text: #0f736b; /* #0f766e measured 4.37:1 on the pill */
   }
   [data-brand="blue"] {
-    --brand: #7c3aed; /* coLab — violet */
-    --brand-hover: #6d28d9;
-    --brand-text: #6d28d9;
+    --brand: #2563eb; /* coLab */
+    --brand-hover: #1d4ed8;
+    --brand-text: #1d4ed8; /* 5.21:1 */
   }
   [data-brand="emerald"] {
-    --brand: #059669; /* Presence — green */
+    --brand: #059669; /* Presence */
     --brand-hover: #047857;
-    --brand-text: #047857;
+    --brand-text: #047555; /* #047857 measured 4.39:1 on the pill */
   }
   [data-brand="amber"] {
-    --brand: #d47406; /* Lipd Hub — amber, one step down from #d97706, which
-                         measures 2.92:1 as a fill on the grey ground */
+    --brand: #d47406; /* Lipd Hub — kept */
     --brand-hover: #b45309;
-    --brand-text: #b45309;
+    --brand-text: #a84d08; /* #b45309 measured 4.08:1 on the pill */
   }
   [data-brand="clay"] {
-    --brand: #e11d48; /* AES — rose */
-    --brand-hover: #be123c;
-    --brand-text: #be123c;
+    --brand: #dc2626; /* AES */
+    --brand-hover: #b91c1c;
+    --brand-text: #b91c1c; /* 4.94:1 */
   }
 
-  /* Each product's gradient is its own hue into its darker step, so a tile
-     reads as one colour with depth rather than as a two-hue blend. */
   [data-brand] {
     --brand-soft: color-mix(in oklab, var(--brand) 12%, transparent);
     --grad-from: var(--brand);
     --grad-to: var(--brand-hover);
   }
-
 
   /* ==========================================================================
      ALTERNATIVE PALETTE — contrast-corrected
@@ -709,6 +705,31 @@
 
   .link-muted:hover {
     color: var(--text);
+  }
+
+  /* --- Product lockups ----------------------------------------------------
+     A product's trade name is its logo. `.lockup-tail` is the coloured half;
+     `.brand-tag` is that lockup set in its own tinted pill, which is how a
+     product introduces itself on a card or at the head of its page. */
+  .lockup-tail {
+    color: var(--brand-text);
+  }
+
+  .brand-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-full);
+    background: var(--brand-soft);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .brand-tag-lg {
+    padding: 0.5rem 1.125rem;
+    font-size: 1.5rem;
   }
 
   /* --- Wordmark ----------------------------------------------------------- */

@@ -37,21 +37,24 @@ NSQR keeps the house accent as the flagship; the rest are spaced around the
 wheel. Every fill clears 3:1 on both grounds (the white card and the `#f5f5f5`
 page) and every `--brand-text` clears 4.5:1 on both.
 
-**Colour is not carrying product identity on its own.** NSQR, Vault and
-Presence sit within 0.007 luminance of each other — easy to separate in colour,
-near-identical in greyscale. The mark in the icon tile is what distinguishes
-them, which is why `app/components/ProductMarks.js` is not decoration.
+**NSQR is violet and coLab is blue**, which is what the `accent` field in
+`site.js` has always said. An earlier pass had the two swapped when the palette
+was mapped onto HeroUI's scales; the data was right and the mapping was wrong.
+Lipd Hub keeps its amber and AES is red, both by direction.
 
-**Every product mark encodes a claim, and each one is documented with the idea
-it carries.** NSQR is a QR finder square opening into a returning arrow (the
-frame is printed, the destination is not); Vault is a sealed box with the
-keyhole *outside* its wall (we hold the box, you hold the key); coLab is a
-milestone rail with the settled decision filled in; Presence is NSQR's square
-closed on a check; Lipd Hub is a lipid bilayer with one head picked out; AES is
-a page of prose resolving to a single verdict. A mark nobody can explain is
-decoration — redraw it rather than keep it. `ProductMark` falls back to
-**nothing** rather than to a generic icon, so a missing mark is a visible bug
-instead of a plausible placeholder.
+**A product's trade name is its logo.** Each one is an established two-tone
+lockup — head in ink, tail in the product's own colour — rendered by
+`ProductName` and set in its tinted pill by `.brand-tag`. Cards and product
+heroes lead with it. Do not draw product icons: a set of bespoke marks was
+tried and removed, because these lockups already are the marks and an icon
+beside one only repeats it.
+
+**The tail is text.** `.lockup-tail` resolves `--brand-text`, which clears
+4.5:1 on a white card, on the `#f5f5f5` page **and on the lockup's own tinted
+pill**. The pill is the tightest of the three and is what set the values — the
+teal, green and amber tails all cleared white and the ground comfortably and
+failed on their own chip. Never set a tail to `--brand`, which is a fill and is
+only held to 3:1.
 
 **AES is "Automated AI-based Essay Scoring", not Advanced Encryption
 Standard.** The initials and the studio's cryptography work both point the

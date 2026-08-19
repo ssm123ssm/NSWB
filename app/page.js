@@ -9,7 +9,6 @@ import {
   NeuralIcon,
   ShieldIcon,
 } from "./components/Icons";
-import ProductMark from "./components/ProductMarks";
 import ProductName from "./components/ProductName";
 import {
   capabilities,
@@ -176,9 +175,11 @@ function Products() {
               key={product.slug}
             >
               <div className="flex items-start justify-between gap-4">
-                <span className="icon-tile">
-                  <ProductMark product={product} />
-                </span>
+                {/* The lockup is the product's logo, so it leads the card
+                    rather than sitting under an icon that repeats it. */}
+                <h3 className="brand-tag">
+                  <ProductName product={product} />
+                </h3>
                 <span
                   className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}
                 >
@@ -186,10 +187,7 @@ function Products() {
                 </span>
               </div>
 
-              <h3 className="mt-5 text-xl">
-                <ProductName product={product} />
-              </h3>
-              <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">
+              <p className="mt-5 text-base leading-relaxed text-ink">
                 {product.tagline}
               </p>
 

@@ -32,8 +32,8 @@ export const site = {
 export const hero = {
   pill: { text: "Visit our product studio" },
   headlineHead: "We build interesting software —",
-  headlineTail: "carefully engineered.",
-  headlinePlain: "We build interesting software — carefully engineered.",
+  headlineTail: "carefully engineered",
+  headlinePlain: "We build interesting software — carefully engineered",
   lead: "A studio for software, cryptography, and applied AI. Nothing here is assumed to work.",
   actions: {
     primary: { label: "See what we build", href: "/#products" },

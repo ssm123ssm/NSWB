@@ -30,7 +30,7 @@ export default function ComingSoon() {
 
       <div
         aria-hidden="true"
-        className="shell relative mt-14 h-[340px] sm:h-[390px] md:h-[440px]"
+        className="shell shell-wide relative mt-14 h-[340px] sm:h-[390px] md:h-[440px]"
       >
         {/* Background pair, out of focus for depth, anchored to the bottom
             corners so they sit well clear of the composer below it. Hidden
@@ -44,7 +44,7 @@ export default function ComingSoon() {
         </div>
 
         {/* Foreground pair, sharp, tucked into the top corners. */}
-        <div className="absolute left-[9%] top-0 w-[170px] -rotate-3 sm:w-[190px] md:left-[13%] md:w-[210px]">
+        <div className="absolute left-[7%] top-0 w-[200px] -rotate-3 sm:w-[230px] md:left-[10%] md:w-[260px]">
           <CommunityCard />
         </div>
         <div className="absolute right-[9%] top-0 w-[180px] rotate-2 sm:w-[200px] md:right-[13%] md:w-[220px]">
@@ -53,7 +53,7 @@ export default function ComingSoon() {
 
         {/* The composer, centred and level — the one thing here at rest,
             with clear air between it and every card around it. */}
-        <div className="absolute left-1/2 top-[36%] w-[210px] -translate-x-1/2 sm:w-[235px] sm:top-[38%] md:w-[260px]">
+        <div className="absolute left-1/2 top-[36%] w-[240px] -translate-x-1/2 sm:w-[280px] sm:top-[38%] md:w-[320px]">
           <span className="chip absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap sm:-top-9">
             Invited by Ann
           </span>
@@ -61,7 +61,7 @@ export default function ComingSoon() {
         </div>
       </div>
 
-      <div className="shell mt-8 flex flex-col items-center text-center sm:mt-4">
+      <div className="shell mt-4 flex flex-col items-center text-center sm:-mt-2">
         <p className="text-3xl font-medium tracking-[-0.01em] sm:text-4xl">
           Join. Share. <span className="text-[color:var(--display-muted)]">Vibe.</span>
         </p>
@@ -81,12 +81,12 @@ export default function ComingSoon() {
 function CommunityCard() {
   return (
     <div
-      className="rounded-[18px] border p-3.5"
+      className="rounded-[18px] border p-3"
       style={{ borderColor: "var(--border)", background: "var(--surface)", boxShadow: "var(--shadow-md)" }}
     >
       <div className="flex items-center gap-2.5">
         <span
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-[0.7rem] font-semibold"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] text-[0.7rem] font-semibold"
           style={{ background: "var(--brand)", color: "#ffffff" }}
         >
           RC
@@ -101,7 +101,7 @@ function CommunityCard() {
           <DotsIcon className="h-4 w-4" />
         </span>
       </div>
-      <div className="mt-3 flex items-center gap-1.5 border-t pt-2.5" style={{ borderColor: "var(--border)" }}>
+      <div className="mt-2 flex items-center gap-1.5 border-t pt-2" style={{ borderColor: "var(--border)" }}>
         <span
           className="rounded-full px-2 py-0.5 text-[0.62rem] font-medium"
           style={{ background: "var(--brand-soft)", color: "var(--brand-text)" }}
@@ -156,13 +156,13 @@ function InviteCard() {
 function ComposerCard() {
   return (
     <div
-      className="rounded-[20px] border p-4"
+      className="rounded-[20px] border p-5"
       style={{ borderColor: "var(--border)", background: "var(--surface)", boxShadow: "var(--shadow-md)" }}
     >
-      <p className="text-left text-[0.8rem] leading-[1.4]" style={{ color: "var(--text-faint)" }}>
+      <p className="text-left text-[0.85rem] leading-[1.5]" style={{ color: "var(--text-faint)" }}>
         Share an update with your circle…
       </p>
-      <div className="mt-3.5 flex items-center justify-between border-t pt-2.5" style={{ borderColor: "var(--border)" }}>
+      <div className="mt-4 flex items-center justify-between border-t pt-3" style={{ borderColor: "var(--border)" }}>
         <span className="text-[0.68rem] font-medium" style={{ color: "var(--brand-text)" }}>
           Research Circle
         </span>
@@ -204,10 +204,10 @@ function EventCard() {
       style={{ borderColor: "var(--border)", background: "var(--surface)", boxShadow: "var(--shadow-sm)" }}
     >
       <div
-        className="h-16 w-full"
+        className="h-24 w-full"
         style={{ background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 60%, #0f1419 100%)" }}
       />
-      <div className="p-2.5">
+      <div className="p-3">
         <p className="text-[0.72rem] font-semibold">Study session</p>
         <p className="text-[0.64rem]" style={{ color: "var(--text-faint)" }}>
           This week · 8 going

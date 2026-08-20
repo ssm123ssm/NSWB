@@ -11,6 +11,7 @@ import {
   ShieldIcon,
 } from "./components/Icons";
 import ProductBento from "./components/ProductBento";
+import ComingSoon from "./components/ComingSoon";
 import {
   closing,
   designPrinciples,
@@ -39,6 +40,7 @@ export default function HomePage() {
       <FoundersNote />
       <DesignPrinciples />
       <ProductBento />
+      <ComingSoon />
       <Principles />
       <Closing />
     </main>

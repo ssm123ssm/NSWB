@@ -153,6 +153,11 @@
     --brand-hover: #b91c1c;
     --brand-text: #b91c1c; /* 4.94:1 */
   }
+  [data-brand="indigo"] {
+    --brand: #4f46e5; /* the unnamed community product */
+    --brand-hover: #4338ca;
+    --brand-text: #3730a3; /* well past 4.5:1 on the ground and its own pill */
+  }
 
   /* --- The signal trio ----------------------------------------------------
      The three design-principle hues, taken from the swatch given at direction.

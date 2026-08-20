@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ContactButton } from "./components/SiteChrome";
 import {
+  ActivityIcon,
   ArrowIcon,
   DocIcon,
   LayersIcon,
@@ -8,7 +9,6 @@ import {
   LockIcon,
   NeuralIcon,
   ShieldIcon,
-  WavesIcon,
 } from "./components/Icons";
 import ProductBento from "./components/ProductBento";
 import {
@@ -57,8 +57,8 @@ function Hero() {
     <section className="relative isolate overflow-hidden">
       <div className="shell flex flex-col items-center pb-16 pt-20 text-center md:pb-24 md:pt-28">
         <Link className="pill rise" href="/products">
-          <span className="pill-tag">
-            <WavesIcon className="h-3 w-3" />
+          <span className="pill-icon-ecg">
+            <ActivityIcon className="h-4 w-4" />
           </span>
           {hero.pill.text}
           <ArrowIcon className="h-3.5 w-3.5" />

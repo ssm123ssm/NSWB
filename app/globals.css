@@ -591,6 +591,40 @@
     letter-spacing: 0;
   }
 
+  /* The bare icon, no chip — coloured with the section's own brand tone
+     and drawn like an ECG trace, sweeping left to right on a loop. */
+  .pill-icon-ecg {
+    display: inline-flex;
+    align-items: center;
+    color: var(--brand);
+  }
+
+  .pill-icon-ecg path {
+    stroke-dasharray: 100;
+    animation: ecg-draw 2.4s ease-in-out infinite;
+  }
+
+  @keyframes ecg-draw {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    45% {
+      stroke-dashoffset: 0;
+    }
+    75% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill-icon-ecg path {
+      animation: none;
+    }
+  }
+
   .chip {
     display: inline-flex;
     align-items: center;

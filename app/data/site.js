@@ -25,17 +25,15 @@ export const site = {
 /**
  * The hero.
  *
- * `headline` and `lead` are fixed copy and are not to be rewritten — they are
- * the two lines the studio is named by. `headline` is split only so the tail
- * can carry the house gradient; joined back together it is the sentence
- * verbatim, which is what `headlinePlain` is for (metadata, OG images, and
- * anywhere the gradient cannot follow).
+ * `headline` is split only so the tail can carry the house gradient; joined
+ * back together it is the sentence verbatim, which is what `headlinePlain`
+ * is for (metadata, OG images, and anywhere the gradient cannot follow).
  */
 export const hero = {
   pill: { text: "Visit our product studio" },
-  headlineHead: "We think about what breaks —",
-  headlineTail: "before it breaks",
-  headlinePlain: "We think about what breaks — before it breaks",
+  headlineHead: "We build interesting software —",
+  headlineTail: "carefully engineered.",
+  headlinePlain: "We build interesting software — carefully engineered.",
   lead: "A studio for software, cryptography, and applied AI. Nothing here is assumed to work.",
   actions: {
     primary: { label: "See what we build", href: "/#products" },

@@ -44,6 +44,14 @@ export function WavesIcon({ className = "h-3 w-3" }) {
   );
 }
 
+export function ActivityIcon({ className = "h-3 w-3" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...stroke} strokeWidth={1.8} aria-hidden="true">
+      <path d="M2 12H6L9 3L15 21L18 12H22" pathLength="100" />
+    </svg>
+  );
+}
+
 export function LockIcon({ className = "h-5 w-5" }) {
   return (
     <svg viewBox="0 0 24 24" className={className} {...stroke} aria-hidden="true">

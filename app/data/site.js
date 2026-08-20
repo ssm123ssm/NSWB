@@ -351,6 +351,59 @@ export const overview = {
  * is named as display type, on every page; `name` stays the canonical
  * spoken/written form, and is what prose and metadata use.
  */
+/**
+ * "What we thought would break", one note per product, keyed by slug.
+ *
+ * The company line — we think about what breaks, before it breaks — was a
+ * headline on the home page and nothing else. This turns it into a format:
+ * every product names the failure it was built against, in the same slot, in
+ * the same three parts.
+ *
+ * `tradeoff` is the part that makes it worth doing. Naming what the design
+ * costs you is the thing a marketing team is not allowed to do and a studio
+ * is, and it is the reason this section reads as evidence rather than copy.
+ * Vault already proved the appetite for it with "Where Vault stops", which is
+ * the most credible block on the site. Do not soften these.
+ */
+export const breakNotes = {
+  nsqr: {
+    failure: "The link dies, and four thousand printed flyers become litter.",
+    answer:
+      "So the printed code points at us, not at your destination. You move the destination whenever you like, and the ink stays correct for the life of the campaign — through a rebrand, a menu change, or a landing page nobody told you was being retired.",
+    tradeoff: "Your codes depend on our redirect staying up. A static code depends on nothing.",
+  },
+  vault: {
+    failure: "The provider is breached, and your files are in the dump.",
+    answer:
+      "So we took ourselves out of the trust equation. Encryption happens on your device, and what we hold is ciphertext we have no key for. A breach of us costs you nothing, because there is nothing readable in it.",
+    tradeoff: "Lose the only copy of a passphrase and the files are gone — from you, and from us.",
+  },
+  colab: {
+    failure: "The person who knew why leaves in month nine.",
+    answer:
+      "So the reasoning is a first-class object rather than a message someone remembers seeing. Decisions are signed, timestamped and immutable, sitting on the timeline beside the work they explain. The project keeps its reasons after the people move on.",
+    tradeoff: "You cannot tidy up an old decision. Superseding one is the only way to change it.",
+  },
+  presence: {
+    failure: "Someone signs the register for a colleague who is not there.",
+    answer:
+      "So the check-in is a scan against a code that rotates, taken at the door and timestamped on arrival rather than reconstructed on Friday from a paper sheet. The register is the record, not a transcription of one.",
+    tradeoff: "It needs a phone in the room. A device left at home is a manual entry and an exception to explain.",
+  },
+  "lipd-hub": {
+    failure: "An abnormal result is filed, and nobody owns the follow-up.",
+    answer:
+      "So the pattern and the referral live in the same system. A result that meets the criteria raises the referral with it, and the loop stays open and visible until somebody closes it rather than until somebody forgets it.",
+    tradeoff: "It only sees the results you put in it. A test run elsewhere is a gap it cannot know about.",
+  },
+  aes: {
+    failure: "Two markers grade the same essay differently, and neither can say why.",
+    answer:
+      "So the score arrives with the reasoning attached, applied the same way at essay one and essay nine hundred. Consistency is the point; a marker who disagrees can see exactly what the score was based on and overrule it.",
+    tradeoff: "It scores against a rubric. Work that is good in a way the rubric never anticipated will be marked down.",
+  },
+};
+
 export const products = [
   {
     slug: "nsqr",
@@ -1271,10 +1324,80 @@ export const colabLinks = {
  * a claim about real customers.
  */
 export const colabSceneMilestones = [
-  { label: "Beta", at: 12 },
-  { label: "Launch", at: 54 },
-  { label: "Review", at: 90 },
+  { label: "Beta", at: 12, date: "19 Jun" },
+  { label: "Launch", at: 54, date: "07 Aug" },
+  { label: "Review", at: 90, date: "26 Sep" },
 ];
+
+/**
+ * One decision per milestone, for the log the hero scene lets a reader open.
+ *
+ * These are the argument the page makes, in the form the product stores them:
+ * the question as it was actually asked, the reasoning in the words of whoever
+ * settled it, and the attribution that makes it checkable later. Written long
+ * enough to be worth reading — a decision log full of one-line entries is the
+ * failure mode the product exists to prevent.
+ *
+ * `supersede` is what the reader sees after asking to edit one. The refusal is
+ * the point: it teaches immutability faster than the paragraph beside it can.
+ */
+export const colabSceneDecisions = [
+  {
+    milestone: "Beta",
+    question: "Who is in the beta cohort?",
+    answer:
+      "Twelve teams, all of them already unhappy with a tool they are paying for. Greenfield teams were left out on purpose — they cannot tell us what we are better than.",
+    author: "Priya",
+    recorded: "2026-06-19 09:15 UTC",
+    signature: "e2f5…60cc",
+    supersede: {
+      question: "Who is in the beta cohort?",
+      answer:
+        "Widened to sixteen. The first twelve all ran fewer than thirty projects, so nothing we learned said anything about scale. Four larger teams added for that reason alone.",
+      author: "Priya",
+      recorded: "2026-07-02 14:20 UTC",
+      signature: "b431…07de",
+    },
+  },
+  {
+    milestone: "Launch",
+    question: "Launch in August, or hold for September?",
+    answer:
+      "August. September collides with two conferences our buyers attend, and the feature set has not moved in six weeks. Holding buys polish nobody has asked for.",
+    author: "Ann",
+    recorded: "2026-08-07 08:30 UTC",
+    signature: "a18d…4b09",
+    supersede: {
+      question: "Launch in August, or hold for September?",
+      answer:
+        "Held to the 21st. Not for polish — the migration path from the tool most of the cohort is leaving needed a week we had not costed.",
+      author: "Ann",
+      recorded: "2026-08-11 16:05 UTC",
+      signature: "c9a2…1f66",
+    },
+  },
+  {
+    milestone: "Review",
+    question: "Do we keep the public link sharing option?",
+    answer:
+      "Yes, and we keep saying in the interface that it is the weakest of the four. Removing it would push people to email attachments, which is worse and invisible to us.",
+    author: "Sam",
+    recorded: "2026-09-26 11:48 UTC",
+    signature: "7f31…c5b8",
+    supersede: {
+      question: "Do we keep the public link sharing option?",
+      answer:
+        "Kept, now with an expiry required at creation. Three cohort teams had links still live four months after the handoff they were made for.",
+      author: "Sam",
+      recorded: "2026-10-14 10:02 UTC",
+      signature: "5e08…9b47",
+    },
+  },
+];
+
+/** What coLab says when someone asks to edit a decision. The refusal is a feature. */
+export const colabEditRefusal =
+  "Decisions are not editable. What the team believed on the day is the record, and rewriting it is the thing this log exists to prevent. Add a superseding entry instead — both stay on the timeline, in order.";
 
 export const colabSceneTasks = [
   { title: "Draft the launch note", owner: "Ann", priority: "high", state: "Done" },

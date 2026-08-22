@@ -227,6 +227,10 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: calc(var(--header-h) + 1.5rem);
+    /* Without this, mobile Safari's rubber-band bounce past the footer
+       reveals blank canvas before snapping back — reads as "the page keeps
+       scrolling into nothing." This stops the bounce at the real edges. */
+    overscroll-behavior-y: none;
   }
 
   body {
@@ -239,6 +243,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
   }
 
   /* Read off heroui.pro's headings, which are all `font-medium` — there is no

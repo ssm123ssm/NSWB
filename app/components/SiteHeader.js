@@ -23,7 +23,6 @@ export default function SiteHeader() {
   const { open: openContact } = useContact();
   const [stuck, setStuck] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [nearClosing, setNearClosing] = useState(false);
   const pathname = usePathname();
   const override = pageHeaders[pathname];
   const bare = Boolean(override);
@@ -33,7 +32,6 @@ export default function SiteHeader() {
   // Legal pages carry no nav and no CTA — just the mark, centered, so the
   // reader isn't pulled back toward the marketing site while reading a policy.
   const legal = pathname === "/legal" || pathname.startsWith("/legal/");
-  const ctaStateClass = nearClosing ? " btn-muted" : stuck ? " btn-scrolled" : "";
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 8);
@@ -41,24 +39,6 @@ export default function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // The home page's own closing CTA restates "Start a conversation" — mute
-  // the header's copy while that section is on screen so the two don't read
-  // as two separate asks.
-  useEffect(() => {
-    if (pathname !== "/") {
-      setNearClosing(false);
-      return;
-    }
-    const target = document.getElementById("closing");
-    if (!target) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setNearClosing(entry.isIntersecting),
-      { rootMargin: "-64px 0px 0px 0px" }
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [pathname]);
 
   // Close the mobile menu whenever the route changes.
   useEffect(() => setMenuOpen(false), [pathname]);
@@ -132,7 +112,7 @@ export default function SiteHeader() {
           ) : (
             !hideCta && (
               <button
-                className={`btn btn-gradient btn-sm hidden md:inline-flex${ctaStateClass}`}
+                className="btn btn-outline btn-sm hidden md:inline-flex"
                 type="button"
                 onClick={() => openContact()}
               >
@@ -173,7 +153,7 @@ export default function SiteHeader() {
             ))}
             {!hideCta && (
               <button
-                className={`btn btn-gradient mt-2 w-full${ctaStateClass}`}
+                className="btn btn-outline mt-2 w-full"
                 type="button"
                 onClick={() => {
                   setMenuOpen(false);

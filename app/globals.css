@@ -561,6 +561,20 @@
     color: var(--text);
   }
 
+  /* A plain outline pill with no colour at any state — border and text stay
+     grayscale even on hover, unlike .btn-bordered which picks up the page's
+     brand colour. */
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--text);
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-strong);
+  }
+
   /* --- Chips --------------------------------------------------------------
      The announcement pill above a hero headline, and the small status chip. */
   .pill {

@@ -126,7 +126,7 @@ export default function ProductSequence() {
                 {Graphic && (
                   <div
                     aria-hidden="true"
-                    className="relative mt-5 h-[160px] overflow-hidden border-y"
+                    className="relative mt-4 h-24 overflow-hidden border-y min-[761px]:mt-5 min-[761px]:h-[160px]"
                     style={{ borderColor: "var(--border)", background: "var(--bg-subtle)" }}
                   >
                     <div className="absolute inset-x-0 bottom-0">

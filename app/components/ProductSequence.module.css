@@ -140,23 +140,34 @@
 
 @media (max-width: 760px) {
   .kicker {
-    top: 76px;
+    top: 64px;
   }
   .copy {
-    top: 108px;
+    top: 92px;
     width: min(300px, calc(100vw - 3rem));
   }
   .copy h2 {
-    font-size: 1.85rem;
+    font-size: 1.6rem;
   }
   .copy p {
-    display: none;
+    max-width: none;
+    /* Capped rather than left free — a phone-width card is already tight
+       for height, and this is the one block whose length varies per
+       product (NSQR's is short, others run to three-plus lines). */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .link {
-    margin-top: 16px;
+    margin-top: 10px;
   }
+  /* Below the copy block instead of a percentage of the full pinned stage —
+     a % of `100svh` put the carousel a near-empty screen's worth of space
+     below the text on a tall phone, and the description being visible here
+     (unlike desktop) makes that block taller and harder to predict besides. */
   .carousel {
-    top: 66%;
+    top: 260px;
     left: 50%;
     width: min(80vw, 320px);
     transform: translateX(-50%);

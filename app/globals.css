@@ -991,19 +991,6 @@
     transform: translateX(3px);
   }
 
-  /* The "How we work" word line: flat muted grey at rest, same tone as the
-     product marks row (`--display-muted`), lighting up to a green/yellow/red
-     signal colour under the pointer — `--word-hover` is set per word inline
-     in page.js, cycling the site's existing signal-* accents. */
-  .principle-word {
-    color: var(--display-muted);
-    transition: color 0.2s ease;
-  }
-
-  .principle-word:hover {
-    color: var(--word-hover, var(--text));
-  }
-
   .link-muted {
     color: var(--text-muted);
     transition: color 0.15s ease;
@@ -1105,17 +1092,6 @@
   }
 
   .wordmark-tone {
-    color: var(--display-muted);
-    transition: color 0.15s ease;
-  }
-
-  .wordmark:hover .wordmark-tone {
-    color: var(--accent-text);
-  }
-
-  /* Legal/Privacy header: the mark stays at full colour at rest, with no
-     extra hover state to color up into. */
-  .wordmark-vivid .wordmark-tone {
     color: var(--accent-text);
   }
 

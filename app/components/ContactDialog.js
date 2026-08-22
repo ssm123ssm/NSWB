@@ -11,7 +11,7 @@ import ProductName from "./ProductName";
  * name and wording — all resolved from the product entry, so call sites only
  * ever have to name the product.
  */
-export default function ContactDialog({ subject, intent = null, onClose }) {
+export default function ContactDialog({ subject, intent = null, accent = null, onClose }) {
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState("");
   const cardRef = useRef(null);
@@ -117,7 +117,7 @@ export default function ContactDialog({ subject, intent = null, onClose }) {
       <div
         ref={cardRef}
         className="dialog-card my-auto w-full max-w-md p-6 sm:p-7"
-        data-brand={product?.accent}
+        data-brand={product?.accent ?? accent}
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-dialog-title"

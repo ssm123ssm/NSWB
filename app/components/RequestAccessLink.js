@@ -12,11 +12,16 @@ export default function RequestAccessLink({
   label = "Request access",
   className = "link-arrow",
   withArrow = true,
+  accent,
 }) {
   const { open } = useContact();
 
   return (
-    <button className={className} type="button" onClick={() => open(product)}>
+    <button
+      className={className}
+      type="button"
+      onClick={() => open(product, { accent })}
+    >
       {label}
       {withArrow && <ArrowIcon />}
     </button>

@@ -28,6 +28,7 @@ export default function ComingSoon() {
           {comingSoon.lead}
         </p>
         <RequestAccessLink
+          accent="indigo"
           className="btn btn-gradient btn-lg mt-7"
           label={comingSoon.action.label}
           product={comingSoon.action.subject}

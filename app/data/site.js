@@ -175,8 +175,8 @@ export const comingSoon = {
 };
 
 export const navLinks = [
-  { label: "Capabilities", href: "/#capabilities" },
-  { label: "Products", href: "/#products" },
+  { label: "Featuring", href: "/#colab" },
+  { label: "Product Studio", href: "/products" },
   { label: "Research", href: "/research" },
 ];
 
@@ -896,25 +896,6 @@ export const principles = [
       href: "/research",
     },
   },
-];
-
-/* The home page's "How we work" section used to show the four principles
-   above as cards, then a word cloud. Neither fit the section, so it's now
-   this flat list — one centred line, words separated by "·", colour cycling
-   through the site's brand accents in PrincipleLine. */
-export const principleWords = [
-  "Security",
-  "Privacy",
-  "Reliability",
-  "Transparency",
-  "Integrity",
-  "Trust",
-  "Resilience",
-  "Performance",
-  "Simplicity",
-  "Scalability",
-  "Accountability",
-  "Precision",
 ];
 
 /* ----------------------------------------------------------------- NSQR --

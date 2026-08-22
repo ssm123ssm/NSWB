@@ -10,15 +10,10 @@ import {
   NeuralIcon,
   ShieldIcon,
 } from "./components/Icons";
-import ProductBento from "./components/ProductBento";
+import ProductSequence from "./components/ProductSequence";
+import ColabFeature from "./components/ColabFeature";
 import ComingSoon from "./components/ComingSoon";
-import {
-  closing,
-  designPrinciples,
-  founders,
-  hero,
-  principleWords,
-} from "./data/site";
+import { closing, designPrinciples, founders, hero } from "./data/site";
 
 export const metadata = {
   alternates: { canonical: "/" },
@@ -38,10 +33,20 @@ export default function HomePage() {
     <main id="main">
       <Hero />
       <FoundersNote />
-      <DesignPrinciples />
-      <ProductBento />
+      <ProductsIntro />
+      <ColabFeature />
+      <ProductSequence />
+      <div className="shell flex justify-center py-10 md:hidden">
+        <Link className="pill rise" href="/products">
+          <span className="pill-icon-ecg">
+            <ActivityIcon className="h-4 w-4" />
+          </span>
+          {hero.pill.text}
+          <ArrowIcon className="h-3.5 w-3.5" />
+        </Link>
+      </div>
       <ComingSoon />
-      <Principles />
+      <DesignPrinciples />
       <Closing />
     </main>
   );
@@ -58,13 +63,9 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
       <div className="shell flex flex-col items-center pb-16 pt-20 text-center md:pb-24 md:pt-28">
-        <Link className="pill rise" href="/products">
-          <span className="pill-icon-ecg">
-            <ActivityIcon className="h-4 w-4" />
-          </span>
-          {hero.pill.text}
-          <ArrowIcon className="h-3.5 w-3.5" />
-        </Link>
+        <span className="pill-icon-ecg rise">
+          <ActivityIcon className="h-5 w-5" />
+        </span>
 
         <h1 className="rise mt-7 max-w-4xl text-[clamp(3rem,6.4vw,4.5rem)]">
           {hero.headlineHead}{" "}
@@ -120,6 +121,28 @@ function FoundersNote() {
 }
 
 /* -------------------------------------------------------------------------
+   The products section's own header — coLab's featured scene and the
+   five-product sequence that follows it share no title of their own, so
+   this is the one line that names the whole area, the way the bento's
+   "What we build" eyebrow used to before both replaced it.
+   ------------------------------------------------------------------------- */
+function ProductsIntro() {
+  return (
+    <section className="pt-20" id="products">
+      <div className="shell text-center">
+        <p className="text-base font-medium text-[color:var(--accent-text)] max-md:text-sm">
+          Products
+        </p>
+        <div className="text-5xl font-medium tracking-[-0.015em] max-md:text-4xl">
+          <p className="mb-0">One standard.</p>
+          <p className="text-[color:var(--display-muted)]">Many expressions</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
    Capabilities, as a bento
    ------------------------------------------------------------------------- */
 function DesignPrinciples() {
@@ -163,56 +186,6 @@ function DesignPrinciples() {
 }
 
 /* -------------------------------------------------------------------------
-   Principles
-
-   A cloud and a card grid were both tried here and both dropped — the cloud
-   read as decorative noise and the cards were four fixed slots for a list
-   that is really just words. This is one centred line instead: the words
-   themselves, "·" between them, flat muted grey like the product marks row
-   in the hero, lighting up green/yellow/red under the pointer (see
-   `.principle-word` in globals.css). */
-/* The site's signal-green / signal-amber / signal-red `--brand-text` values
-   (globals.css), copied here since they're set per word via inline style
-   rather than the `data-brand` attribute those tokens normally key off. */
-const principleHoverColors = ["#2a7020", "#7d5a00", "#b3352b"];
-
-function Principles() {
-  return (
-    <section className="section section-subtle">
-      <div className="shell text-center">
-        <p className="eyebrow">How we work</p>
-        <h2 className="section-title mx-auto max-w-2xl">
-          Things we do not
-          <br />
-          negotiate
-        </h2>
-
-        <p className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-3 text-[1.375rem] font-semibold md:text-2xl">
-          {principleWords.map((word, index) => (
-            <span className="contents" key={word}>
-              {index > 0 && (
-                <span aria-hidden="true" className="text-faint">
-                  ·
-                </span>
-              )}
-              <span
-                className="principle-word"
-                style={{
-                  "--word-hover":
-                    principleHoverColors[index % principleHoverColors.length],
-                }}
-              >
-                {word}
-              </span>
-            </span>
-          ))}
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
    The closing call, on a full gradient plate
    ------------------------------------------------------------------------- */
 function Closing() {
@@ -242,6 +215,10 @@ function Closing() {
               Contact us
             </ContactButton>
           </div>
+
+          <p className="mt-10 text-sm font-medium tracking-[0.02em] text-muted">
+            Nothing here is assumed to work.
+          </p>
         </div>
       </div>
     </section>

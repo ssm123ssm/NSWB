@@ -172,7 +172,7 @@ function ColabHeroCard({ product }) {
                 className="text-[0.7rem] font-semibold uppercase tracking-[0.08em]"
                 style={{ color: "var(--brand-text)" }}
               >
-                Key points
+                Key Features
               </p>
               <ul className="check-list">
                 {product.highlights.map((highlight) => (
@@ -276,7 +276,7 @@ function PresenceHeroCard({ product }) {
                 className="text-[0.7rem] font-semibold uppercase tracking-[0.08em]"
                 style={{ color: "var(--brand-text)" }}
               >
-                Key points
+                Key Features
               </p>
               <ul className="check-list">
                 {product.highlights.map((highlight) => (
@@ -381,7 +381,7 @@ function ProductCard({ product, span = "md:col-span-2", height = "h-[176px]" }) 
             className="text-[0.7rem] font-semibold uppercase tracking-[0.08em]"
             style={{ color: "var(--brand-text)" }}
           >
-            Key points
+            Key Features
           </p>
           <ul className="check-list">
             {product.highlights.map((highlight) => (

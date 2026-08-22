@@ -109,7 +109,7 @@ export function CookieSettingsButton() {
   const { reopen } = useConsent();
 
   return (
-    <button className="link-muted cursor-pointer" type="button" onClick={reopen}>
+    <button className="link-muted cursor-pointer text-sm" type="button" onClick={reopen}>
       Cookies
     </button>
   );

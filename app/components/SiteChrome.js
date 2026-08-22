@@ -24,8 +24,13 @@ export default function SiteChrome({ children }) {
 
   // intent: "access" forces the request-access form for a product that is
   // otherwise public, for entry points that stand in for opening the app.
+  // accent: only needed when `subject` isn't a cataloged product (so
+  // ContactDialog has no `product.accent` to fall back to) but the dialog
+  // should still pick up the calling section's own brand colour — the
+  // Coming Soon teaser's "indigo" being the one case today.
   const open = useCallback(
-    (subject = null, { intent = null } = {}) => setRequest({ subject, intent }),
+    (subject = null, { intent = null, accent = null } = {}) =>
+      setRequest({ subject, intent, accent }),
     []
   );
   const close = useCallback(() => setRequest(null), []);
@@ -42,6 +47,7 @@ export default function SiteChrome({ children }) {
           <ContactDialog
             subject={request.subject}
             intent={request.intent}
+            accent={request.accent}
             onClose={close}
           />
         )}

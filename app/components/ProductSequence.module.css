@@ -1,0 +1,177 @@
+/* The other five products, sequenced through one sticky stage. Scrolling
+   advances a single active card through the five; the two neighbours peek
+   in from behind it, carousel-style. Each card is the site's actual
+   `.card`/`.brand-tag`/`.chip`/`.check-list` product-card treatment (see
+   `/products`) — this file only positions and animates it, it doesn't
+   restyle it. */
+
+.scroll {
+  --screen: 1172px;
+  --side: max(1.5rem, calc((100vw - var(--screen)) / 2));
+  --quiet: color-mix(in oklab, var(--text-muted) 60%, var(--bg));
+  position: relative;
+  height: 240svh;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.kicker {
+  position: absolute;
+  top: 76px;
+  left: var(--side);
+  color: var(--text-muted);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.copy {
+  position: absolute;
+  top: 110px;
+  left: var(--side);
+  z-index: 2;
+  width: min(360px, calc(100vw - 3rem));
+}
+
+.copy h2 {
+  margin: 0;
+  font-size: clamp(2.25rem, 4.6vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.copy h2 span {
+  color: var(--quiet);
+}
+
+.copy p {
+  max-width: 300px;
+  margin: 24px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 24px;
+  border-bottom: 1px solid var(--text);
+  padding-bottom: 5px;
+  color: var(--text);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.link span {
+  margin-left: 10px;
+}
+
+.carousel {
+  position: absolute;
+  /* Pinned to the same top offset as `.copy`, not a viewport percentage —
+     the two blocks read as one paired row this way at any screen height,
+     rather than drifting apart the way center-percentage positioning did. */
+  top: 110px;
+  /* Centred in the space actually left over after the 360px copy column,
+     not anchored to the page's right margin — `.copy`'s own left offset
+     cancels out of the midpoint, which is what makes this work at any
+     `--side` value: midpoint = copyRight + (viewportRight − copyRight) / 2
+     = ((--side + 360) + (100vw − --side)) / 2 = 50vw + 180px. */
+  left: calc(50vw + 180px);
+  z-index: 1;
+  width: min(30vw, 340px);
+  transform: translateX(-50%);
+}
+
+.board {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%) translateX(calc(var(--offset, 0) * 92%))
+    scale(calc(1 - var(--dist, 0) * 0.12));
+  transform-origin: top center;
+  opacity: max(0, calc(1 - var(--dist, 0) * 0.45));
+  z-index: calc(10 - var(--dist, 0));
+  pointer-events: none;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease,
+    border-color 0.2s ease;
+}
+
+.board.isActive {
+  pointer-events: auto;
+  box-shadow: var(--shadow-md, 0 20px 40px -24px rgba(0, 0, 0, 0.2));
+}
+
+/* The presenting card's "Explore"/"Request access" link keeps the
+   product's real brand colour; every other card in the carousel washes it
+   to plain grey, so the one CTA that's actually clickable is the only one
+   that reads as coloured. */
+.board:not(.isActive) :global(.link-arrow) {
+  color: var(--text-faint);
+}
+
+/* The "Visit our product studio" link that follows the sequence, sitting
+   in the space already left below the cards within the pinned stage —
+   `.stage` has to stay `100svh` (matching `window.innerHeight` in the
+   scroll-progress calc in ProductSequence.js) or the CSS unstick point and
+   the JS's progress===1 point drift apart, so the link is placed inside
+   the stage instead of shrinking it. */
+.more {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(32px, 6svh, 64px);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+@media (max-width: 760px) {
+  .kicker {
+    top: 76px;
+  }
+  .copy {
+    top: 108px;
+    width: min(300px, calc(100vw - 3rem));
+  }
+  .copy h2 {
+    font-size: 1.85rem;
+  }
+  .copy p {
+    display: none;
+  }
+  .link {
+    margin-top: 16px;
+  }
+  .carousel {
+    top: 66%;
+    left: 50%;
+    width: min(80vw, 320px);
+    transform: translateX(-50%);
+  }
+  .board {
+    transform: translateX(-50%) translateX(calc(var(--offset, 0) * 100%))
+      scale(calc(1 - var(--dist, 0) * 0.12));
+  }
+  .more {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board {
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -14,7 +14,7 @@ const socials = [
 export default function SiteFooter() {
   return (
     <footer className="border-t border-[color:var(--border)]">
-      <div className="shell flex flex-wrap items-center justify-center gap-x-6 gap-y-4 pb-5 pt-8">
+      <div className="shell flex flex-wrap items-center justify-center gap-x-6 gap-y-4 pb-3 pt-6">
         <div className="flex items-center gap-2">
           {socials.map(({ label, href, Icon }) => (
             <a
@@ -30,18 +30,14 @@ export default function SiteFooter() {
           ))}
         </div>
         {footerLinks.map((link) => (
-          <a className="link-faint" href={link.href} key={link.href}>
+          <a className="link-faint text-sm" href={link.href} key={link.href}>
             {link.label}
           </a>
         ))}
         <CookieSettingsButton />
       </div>
 
-      <p className="shell pb-2 text-center text-sm text-faint">
-        Nothing here is assumed to work.
-      </p>
-
-      <p className="shell pb-8 text-center font-mono text-xs tracking-[0.2em] text-faint">
+      <p className="shell pb-6 text-center font-mono text-xs tracking-[0.2em] text-faint">
         © {new Date().getFullYear()} n3ur45ens3
       </p>
     </footer>

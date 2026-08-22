@@ -27,6 +27,7 @@ export function useContact() {
 export function ContactButton({
   subject = null,
   intent = null,
+  accent = null,
   className = "btn btn-gradient",
   children,
 }) {
@@ -35,7 +36,7 @@ export function ContactButton({
     <button
       className={className}
       type="button"
-      onClick={() => open(subject, { intent })}
+      onClick={() => open(subject, { intent, accent })}
     >
       {children}
     </button>

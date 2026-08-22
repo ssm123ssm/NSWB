@@ -128,6 +128,52 @@ export const closing = {
   body: "Tell us what you are working on. We will tell you what we would build first, and whether we are the right studio for it.",
 };
 
+/**
+ * The unnamed community platform, introduced on the home page only while it
+ * is in development. It deliberately describes the work without inventing a
+ * product name: a circle is the unit people join, not the product's brand.
+ */
+export const comingSoon = {
+  eyebrow: "Coming soon",
+  headline: {
+    head: "A home for the people",
+    tail: "behind the work.",
+  },
+  lead:
+    "Circles for your university, lab or research group — a feed, a way in, and a profile you can just show up with.",
+  action: {
+    label: "Request early access",
+    subject: "Community platform",
+  },
+  closing: {
+    lead: "Join. Share.",
+    tail: "Vibe.",
+    body: "A private place for your circle, coming soon.",
+  },
+  scene: {
+    invitationLabel: "Invited by Maya",
+    circle: {
+      initials: "NL",
+      name: "Neuroimaging Lab",
+      members: "32 members",
+      activity: "4 new posts this week",
+    },
+    invitation: {
+      initials: "MC",
+      name: "Maya Chen",
+      message: "invited you to join the lab circle",
+    },
+    composer: {
+      prompt: "Share an update with your circle…",
+    },
+    menu: ["Invite members", "View members", "Shared notes", "Leave circle"],
+    event: {
+      title: "Journal club",
+      detail: "Thursday · 12 going",
+    },
+  },
+};
+
 export const navLinks = [
   { label: "Capabilities", href: "/#capabilities" },
   { label: "Products", href: "/#products" },

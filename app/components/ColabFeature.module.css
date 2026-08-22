@@ -375,8 +375,18 @@
   .copy {
     top: 125px;
   }
+  /* Matches `.copy p`'s mobile treatment elsewhere on the page (see
+     ProductSequence) — on a short phone viewport the board (positioned by
+     a percentage of the pinned stage's height) can end up starting before
+     this text block finishes, so it drops out here too. */
+  .copy p {
+    display: none;
+  }
+  .copy h2 {
+    font-size: clamp(2.25rem, 8vw, 3.5rem);
+  }
   .board {
-    top: 59%;
+    top: 68%;
     right: 50%;
     width: min(88vw, 430px);
     transform: translate(50%, -50%)

@@ -105,16 +105,10 @@
   opacity: max(0, calc(1 - var(--dist, 0) * 0.45));
   z-index: calc(10 - var(--dist, 0));
   pointer-events: none;
-  /* Transform and opacity are written every frame by the component's rAF
-     loop, which does its own easing — a transition on either would queue a
-     second, slower interpolation behind the first and smear the sweep.
-     Only border-color, which still changes in discrete jumps with the
-     active card, keeps one. */
-  transition: border-color 0.2s ease;
-  /* Promoted up front rather than per-sweep: the browser otherwise
-     re-rasterises these cards (full product graphic, list, CTA) on the
-     first frame of every sweep, which is exactly when the stutter shows. */
-  will-change: transform, opacity;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease,
+    border-color 0.2s ease;
 }
 
 .board.isActive {
@@ -190,6 +184,5 @@
 @media (prefers-reduced-motion: reduce) {
   .board {
     transition-duration: 0.001ms !important;
-    will-change: auto;
   }
 }

@@ -217,7 +217,7 @@ function Closing() {
           </div>
 
           <p className="mt-10 text-sm font-medium tracking-[0.02em] text-muted">
-            Nothing here is assumed to work.
+            Nothing here is assumed to work. Everything here is built to make new things possible.
           </p>
         </div>
       </div>

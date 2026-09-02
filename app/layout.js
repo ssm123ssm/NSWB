@@ -83,6 +83,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <script defer src="https://colab.neurasense.io/embed.js" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

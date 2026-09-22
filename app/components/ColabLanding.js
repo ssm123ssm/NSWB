@@ -3,8 +3,6 @@ import {
   CheckIcon,
   LockIcon,
 } from "./Icons";
-import ProductName from "./ProductName";
-import { getProduct } from "../data/site";
 import {
   colabMainFeatures,
   colabComparison,
@@ -17,8 +15,6 @@ import ColabPlanFinder from "./ColabPlanFinder";
 import ColabFeatureCards from "./ColabFeatureCards";
 import ColabAgentExecutionDemo from "./ColabAgentExecutionDemo";
 import HostedPreviewDemo from "./HostedPreviewDemo";
-
-const colab = getProduct("colab");
 
 function ColabCommunicationVisual() {
   return (
@@ -55,8 +51,6 @@ export function ColabHero() {
     <section className={styles.hero}>
       <div className="shell">
         <div className={styles.heroCopy}>
-          <span className="brand-tag brand-tag-lg"><ProductName product={colab} /></span>
-          <p className={styles.heroEyebrow}>Project management, collaboration, knowledge, and AI</p>
           <h1>An integrated digital workspace for project work.</h1>
           <p className={styles.heroLead}>coLab is an advanced digital workspace where individuals and teams can organize projects, coordinate work, communicate with collaborators, store project knowledge, and use AI to assist with project tasks.</p>
           <div className={styles.heroActions}>

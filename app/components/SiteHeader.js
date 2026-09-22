@@ -28,6 +28,7 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const override = pageHeaders[pathname];
   const bare = Boolean(override);
+  const colabPage = pathname === "/colab";
   // /products makes its own case for getting in touch at the foot of the
   // page, so the header does not also carry the CTA there.
   const hideCta = pathname === "/products";
@@ -89,13 +90,16 @@ export default function SiteHeader() {
   return (
     <header className="site-header" data-hidden={headerHidden && !menuOpen} data-stuck={stuck || menuOpen}>
       <div className="shell flex h-16 items-center justify-between gap-6">
-        <Link
-          className="flex items-center"
-          href="/"
-          aria-label={`${site.name} home`}
-        >
-          <Wordmark />
-        </Link>
+        {colabPage ? (
+          <Link className="colab-header-home" href="/" aria-label="Back to Neurasense home">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+            <strong>co<span>Lab</span></strong>
+          </Link>
+        ) : (
+          <Link className="flex items-center" href="/" aria-label={`${site.name} home`}>
+            <Wordmark />
+          </Link>
+        )}
 
         {!bare && (
           <nav

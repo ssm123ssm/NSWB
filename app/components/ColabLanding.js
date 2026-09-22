@@ -1,37 +1,49 @@
-import Image from "next/image";
 import {
   ArrowIcon,
   CheckIcon,
-  DocIcon,
-  LayersIcon,
   LockIcon,
-  NeuralIcon,
-  SearchIcon,
 } from "./Icons";
 import ProductName from "./ProductName";
 import { getProduct } from "../data/site";
 import {
-  colabFeatureGroups,
+  colabMainFeatures,
   colabComparison,
   colabFaqs,
   colabPlans,
-  colabProofs,
-  colabPromises,
-  colabReasons,
   colabTrust,
-  colabWorkflow,
 } from "../data/colab-page";
 import styles from "./ColabLanding.module.css";
 import ColabPlanFinder from "./ColabPlanFinder";
 import ColabFeatureCards from "./ColabFeatureCards";
 import ColabAgentExecutionDemo from "./ColabAgentExecutionDemo";
+import HostedPreviewDemo from "./HostedPreviewDemo";
 
 const colab = getProduct("colab");
+
+function ColabCommunicationVisual() {
+  return (
+    <div className={styles.chatEditorialLayout}>
+      <div className={styles.macbookScene} aria-label="Animated coLab chat displayed on a MacBook">
+        <div className={styles.macbookDisplay}>
+          <span className={styles.macbookCamera} aria-hidden="true" />
+          <div className={styles.macbookScreen}>
+            <ColabAgentExecutionDemo editorial />
+          </div>
+        </div>
+        <div className={styles.macbookBase} aria-hidden="true"><span /></div>
+      </div>
+      <div className={styles.chatEditorialCopy}>
+        <h3>Project communication</h3>
+        <p>Use coLab chat to communicate with project members and instruct AI bots or project-specific agents.</p>
+      </div>
+    </div>
+  );
+}
 
 function SectionHead({ eyebrow, title, lead }) {
   return (
     <div className={styles.sectionHead}>
-      <p className="eyebrow">{eyebrow}</p>
+      {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
       <h2 className="section-title max-w-3xl">{title}</h2>
       {lead ? <p className="lead max-w-2xl">{lead}</p> : null}
     </div>
@@ -49,11 +61,7 @@ export function ColabHero() {
           <p className={styles.heroLead}>coLab is an advanced digital workspace where individuals and teams can organize projects, coordinate work, communicate with collaborators, store project knowledge, and use AI to assist with project tasks.</p>
           <div className={styles.heroActions}>
             <a className="btn btn-gradient btn-lg" href="#pricing">View plans <ArrowIcon /></a>
-            <a className="btn btn-bordered btn-lg" href="#how-it-works">View workflow</a>
           </div>
-        </div>
-        <div className={styles.heroShowcase}>
-          <ColabAgentExecutionDemo />
         </div>
       </div>
     </section>
@@ -72,87 +80,127 @@ export function WhoForSection() {
   ];
 
   return (
-    <section className="section section-subtle">
+    <section className={`section section-subtle ${styles.whoForSection}`}>
       <div className="shell">
-        <SectionHead eyebrow="Intended users" title="Who coLab is made for" lead="coLab supports individuals and teams that manage projects, knowledge, collaborators, and AI-assisted tasks." />
-        <ol className={styles.whoForList}>
-          {audiences.map((audience, index) => (
-            <li key={audience}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{audience}</strong>
-            </li>
-          ))}
-        </ol>
+        <div className={styles.whoForLayout}>
+          <SectionHead title="Who coLab is made for" lead="coLab supports individuals and teams that manage projects, knowledge, collaborators, and AI-assisted tasks." />
+          <ol className={styles.whoForList}>
+            {audiences.map((audience, index) => (
+              <li key={audience}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{audience}</strong>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );
 }
 
-export function PromiseSection() {
+export function MainFeaturesSection() {
   return (
-    <section className="section"><div className="shell">
-      <SectionHead eyebrow="Core outcomes" title="Three functions provided by coLab" lead="coLab centralizes project records, presents project context, and supports project execution with AI." />
-      <div className={styles.promiseGrid}>{colabPromises.map((item) => <article className="card card-hover" key={item.number}><span className={styles.cardNumber}>{item.number}</span><h3>{item.title}</h3><p>{item.description}</p><small>{item.proof}</small></article>)}</div>
+    <section className={`section section-subtle ${styles.mainFeaturesSection}`}><div className="shell shell-wide">
+      <SectionHead eyebrow="Main features" title="What you can do in coLab" lead="Manage project work, communication, knowledge, specialist tools, and AI execution from one workspace." />
+      <ColabFeatureCards features={colabMainFeatures} />
     </div></section>
   );
 }
 
-export function AudienceSection() {
+export function ColabChatSection() {
   return (
-    <section className="section section-subtle"><div className="shell shell-wide">
-      <SectionHead eyebrow="Main features" title="Features grouped by workflow" lead="Each group lists capabilities that are relevant to a specific type of work. All groups can receive access to any available capability." />
-      <ColabFeatureCards groups={colabFeatureGroups} />
-    </div></section>
-  );
-}
-
-export function WorkflowSection() {
-  return (
-    <section className="section" id="how-it-works"><div className="shell">
-      <SectionHead eyebrow="Workflow example" title="Preview feedback, task creation, and decision recording" lead="The workflow connects feedback to its source, related discussion, assigned task, completion status, and final decision." />
-      <div className={styles.workflow}>
-        <div className={styles.workflowMedia}>
-          <div className={styles.previewChrome}><span /><span /><span /><small>preview.neurasense.io/onboarding</small></div>
-          <div className={styles.previewPage}><span className={styles.previewLabel}>PRODUCT PREVIEW</span><h3>Research project workspace</h3><p>One comment is attached to this heading.</p><button type="button">Create project</button><span className={styles.previewPin}>1</span></div>
-          <div className={styles.previewThread}><small>PRIYA · REVIEWER</small><strong>Replace the heading with a description of the research scope.</strong><p>Suggested text: “Manage research tasks, documents, and decisions.”</p><span>Convert to task →</span></div>
-        </div>
-        <ol>{colabWorkflow.map((step, index) => <li key={step.title}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{step.title}</h3><p>{step.description}</p></div></li>)}</ol>
+    <section className={styles.chatEditorialSection}>
+      <div className="shell shell-wide">
+        <ColabCommunicationVisual />
       </div>
-    </div></section>
+    </section>
   );
 }
 
-export function WhySection() {
-  const icons = [DocIcon, NeuralIcon, SearchIcon, CheckIcon, LayersIcon, LockIcon];
+export function AcademicResearchSection() {
   return (
-    <section className="section section-subtle"><div className="shell">
-      <SectionHead eyebrow="Why choose coLab" title="Reasons to choose coLab" lead="coLab combines project management, communication, knowledge storage, specialist tools, access control, and project-scoped AI." />
-      <div className={styles.whyGrid}>{colabReasons.map((reason, index) => { const Icon = icons[index]; return <article className="card card-hover" key={reason.title}><span><Icon className="h-7 w-7" /></span><h3>{reason.title}</h3><p>{reason.description}</p></article>; })}</div>
-    </div></section>
+    <section className={styles.academicEditorialSection}>
+      <div className="shell shell-wide">
+        <div className={styles.academicEditorialLayout}>
+          <div className={styles.chatEditorialCopy}>
+            <h3>Academic writing, reproducible and open research</h3>
+            <p>Use Overleaf and LaTeX for scientific writing, keep source files and references together, and prepare research that others can review and reproduce.</p>
+          </div>
+
+          <div className={`${styles.macbookScene} ${styles.academicDevice}`} aria-label="coLab academic writing and reproducible open research workspace displayed on a MacBook">
+            <div className={styles.macbookDisplay}>
+              <span className={styles.macbookCamera} aria-hidden="true" />
+              <div className={`${styles.macbookScreen} ${styles.academicScreen}`}>
+                <aside className={styles.academicSidebar}>
+                  <strong>Research paper</strong>
+                  <small>FILES</small>
+                  <span className={styles.academicFileActive}>main.tex</span>
+                  <span>references.bib</span>
+                  <span>methods.tex</span>
+                  <span>figures</span>
+                </aside>
+                <div className={styles.academicWorkspace}>
+                  <header><span className={styles.latexMark}>L<span>A</span>T<span>E</span>X</span><small>main.tex · saved</small><button type="button" tabIndex="-1">Compile</button></header>
+                  <div className={styles.academicEditor}>
+                    <pre><code><i>01</i> \documentclass&#123;article&#125;{"\n"}<i>02</i> \usepackage&#123;graphicx&#125;{"\n"}<i>03</i> \title&#123;Reproducible AI Research&#125;{"\n"}<i>04</i> \begin&#123;document&#125;{"\n"}<i>05</i> \maketitle{"\n"}<i>06</i> \section&#123;Method&#125;{"\n"}<i>07</i> Results are linked to the project.{"\n"}<i>08</i> \end&#123;document&#125;</code></pre>
+                  </div>
+                  <div className={styles.academicPreview}>
+                    <small>PDF PREVIEW</small>
+                    <h4>Reproducible AI Research</h4>
+                    <p>Method</p>
+                    <span />
+                    <span />
+                    <span className={styles.shortLine} />
+                    <div className={styles.researchStatus}><i /><div><small>OPEN RESEARCH</small><strong>Source and references ready to share</strong></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.macbookBase} aria-hidden="true"><span /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HostedPreviewsSection() {
+  return (
+    <section className={styles.previewEditorialSection}>
+      <div className="shell shell-wide">
+        <div className={styles.chatEditorialLayout}>
+          <div className={`${styles.macbookScene} ${styles.hostedPreviewDevice}`} aria-label="Hosted product preview with reviewer annotations displayed on a MacBook">
+            <div className={styles.macbookDisplay}>
+              <span className={styles.macbookCamera} aria-hidden="true" />
+              <div className={styles.macbookScreen}>
+                <HostedPreviewDemo />
+              </div>
+            </div>
+            <div className={styles.macbookBase} aria-hidden="true"><span /></div>
+          </div>
+
+          <div className={styles.chatEditorialCopy}>
+            <h3>Hosted previews and annotations</h3>
+            <p>Host HTML previews, invite viewers with controlled access, and attach comments to the exact interface areas that require changes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
 export function ComparisonSection() {
   return (
-    <section className="section"><div className="shell">
-      <SectionHead eyebrow="Capability comparison" title="coLab, basic task managers, and separate tools" />
-      <div className={styles.tableWrap}><table className={styles.comparison}><thead><tr><th>Capability</th><th>Basic task manager</th><th>Separate tools</th><th>coLab</th></tr></thead><tbody>{colabComparison.map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table></div>
-    </div></section>
-  );
-}
-
-export function ProductProofSection() {
-  return (
-    <section className="section section-subtle"><div className="shell shell-wide">
-      <SectionHead eyebrow="Product interfaces" title="coLab product views" lead="These images show the dashboard, milestones, Notes, previews, agent chat, and decision log in the current coLab interface." />
-      <div className={styles.proofGrid}>{colabProofs.map((proof) => <article className={`${styles.proofCard} ${styles[proof.size]}`} key={proof.key}><div><small>COLAB INTERFACE</small><h3>{proof.title}</h3><p>{proof.description}</p></div><div className={styles.captureSlot} data-capture={proof.key}><Image src={proof.image} alt={`${proof.title} in coLab`} width={1440} height={900} /></div></article>)}</div>
+    <section className={`section ${styles.comparisonSection}`}><div className="shell">
+      <SectionHead eyebrow="Capability comparison" title="Compare project workspaces" lead="See how project information, specialist tools, access, and AI are handled in each setup." />
+      <div className={styles.tableWrap}><table className={styles.comparison}><thead><tr><th>Capability</th><th>Basic task manager</th><th>Multiple separate tools</th><th>coLab</th></tr></thead><tbody>{colabComparison.map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table></div>
     </div></section>
   );
 }
 
 export function TrustSection() {
   return (
-    <section className="section"><div className="shell"><div className={styles.trustLayout}>
+    <section className={`section ${styles.trustSection}`}><div className="shell"><div className={styles.trustLayout}>
       <div><p className="eyebrow">Access control</p><h2 className="section-title">Access is defined by role and project</h2><p className="lead">Workspace members, project guests, preview reviewers, and AI agents receive separate access scopes.</p></div>
       <div className={styles.trustList}>{colabTrust.map(([name, detail]) => <article key={name}><LockIcon /><div><h3>{name}</h3><p>{detail}</p></div></article>)}</div>
     </div></div></section>
@@ -161,18 +209,27 @@ export function TrustSection() {
 
 export function FaqSection() {
   return (
-    <section className="section section-subtle"><div className="shell"><SectionHead eyebrow="FAQ" title="Product, access, and plan information" /><div className={styles.faqGrid}>{colabFaqs.map((faq) => <details key={faq.question}><summary>{faq.question}<span>+</span></summary><p>{faq.answer}</p></details>)}</div></div></section>
+    <section className={`section section-subtle ${styles.faqSection}`}><div className="shell">
+      <details className={styles.faqSectionDisclosure}>
+        <summary><div><h2 className="section-title">FAQ</h2></div><span>+</span></summary>
+        <div className={styles.faqGrid}>{colabFaqs.map((faq) => <details key={faq.question}><summary>{faq.question}<span>+</span></summary><p>{faq.answer}</p></details>)}</div>
+      </details>
+    </div></section>
   );
 }
 
 export function PricingSection() {
   return (
-    <section className="section" id="pricing"><div className="shell">
-      <SectionHead eyebrow="Example prices in USD" title="Plans and custom configurations" lead="Registration collects information about the user, projects, collaborators, required capabilities, and expected AI use. coLab then recommends a package or prepares a custom configuration. These prices are provisional examples." />
-      <div className={styles.planSteps}><span><b>1</b> Provide requirements</span><ArrowIcon /><span><b>2</b> Review the recommendation</span><ArrowIcon /><span><b>3</b> Activate selected capabilities</span></div>
-      <ColabPlanFinder />
+    <section className={`section ${styles.pricingSection}`} id="pricing"><div className="shell">
+      <details className={styles.pricingGuideDisclosure}>
+        <summary><h2 className="section-title">Plans and custom configurations</h2><span>+</span></summary>
+        <div className={styles.pricingGuideContent}>
+          <p className="lead max-w-2xl">Registration collects information about the user, projects, collaborators, required capabilities, and expected AI use. coLab then recommends a package or prepares a custom configuration. These prices are provisional examples.</p>
+          <div className={styles.planSteps}><span><b>1</b> Provide requirements</span><ArrowIcon /><span><b>2</b> Review the recommendation</span><ArrowIcon /><span><b>3</b> Activate selected capabilities</span></div>
+          <ColabPlanFinder />
+        </div>
+      </details>
       <div className={styles.pricingGrid}>{colabPlans.map((plan) => <article className={`card ${plan.featured ? "card-featured" : ""}`} key={plan.name}><div className={styles.planHead}><h3>{plan.name}</h3>{plan.featured ? <span className="chip">Custom configuration</span> : null}</div><p className={styles.price}>{plan.price}</p><small>{plan.period}</small><p>{plan.description}</p><ul>{plan.features.map((feature) => <li key={feature}><CheckIcon />{feature}</li>)}</ul><a className={plan.featured ? "btn btn-gradient" : "btn btn-bordered"} href="https://colab.neurasense.io/signup" target="_blank" rel="noreferrer">{plan.action}<ArrowIcon /></a></article>)}</div>
-      <div className={styles.pricingClose}><h2>Configure coLab for your project requirements.</h2><p>Provide your project, team, integration, storage, compute, and AI requirements to receive a plan recommendation.</p><a className="btn btn-lg bg-white text-[color:var(--text)] hover:opacity-90" href="https://colab.neurasense.io/signup" target="_blank" rel="noreferrer">Start plan selection <ArrowIcon /></a></div>
     </div></section>
   );
 }

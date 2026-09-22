@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { navLinks, pageHeaders, site } from "../data/site";
 import { CloseIcon, MenuIcon } from "./Icons";
 import { useContact } from "./ContactContext";
@@ -22,7 +22,9 @@ import Wordmark from "./Wordmark";
 export default function SiteHeader() {
   const { open: openContact } = useContact();
   const [stuck, setStuck] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lastScrollY = useRef(0);
   const pathname = usePathname();
   const override = pageHeaders[pathname];
   const bare = Boolean(override);
@@ -34,11 +36,27 @@ export default function SiteHeader() {
   const legal = pathname === "/legal" || pathname.startsWith("/legal/");
 
   useEffect(() => {
-    const onScroll = () => setStuck(window.scrollY > 8);
+    lastScrollY.current = window.scrollY;
+    setHeaderHidden(false);
+
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+      setStuck(currentScrollY > 8);
+
+      if (pathname === "/colab" && !menuOpen) {
+        if (currentScrollY <= 8) setHeaderHidden(false);
+        else if (currentScrollY > lastScrollY.current + 6 && currentScrollY > 80) setHeaderHidden(true);
+        else if (currentScrollY < lastScrollY.current - 6) setHeaderHidden(false);
+      } else {
+        setHeaderHidden(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [menuOpen, pathname]);
 
   // Close the mobile menu whenever the route changes.
   useEffect(() => setMenuOpen(false), [pathname]);
@@ -54,7 +72,7 @@ export default function SiteHeader() {
 
   if (legal) {
     return (
-      <header className="site-header" data-stuck={stuck}>
+      <header className="site-header" data-hidden={headerHidden} data-stuck={stuck}>
         <div className="shell flex h-16 items-center justify-center">
           <Link
             className="flex items-center"
@@ -69,7 +87,7 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="site-header" data-stuck={stuck || menuOpen}>
+    <header className="site-header" data-hidden={headerHidden && !menuOpen} data-stuck={stuck || menuOpen}>
       <div className="shell flex h-16 items-center justify-between gap-6">
         <Link
           className="flex items-center"

@@ -948,12 +948,22 @@
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
     border-bottom: 1px solid transparent;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
+    transition: transform 0.25s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .site-header[data-hidden="true"] {
+    transform: translateY(-100%);
   }
 
   .site-header[data-stuck="true"] {
     border-bottom-color: var(--border);
     background: color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+    }
   }
 
   .nav-link {

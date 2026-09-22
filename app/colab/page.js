@@ -1,14 +1,13 @@
 import {
-  AudienceSection,
   ColabHero,
+  ColabChatSection,
+  AcademicResearchSection,
+  HostedPreviewsSection,
   ComparisonSection,
   FaqSection,
+  MainFeaturesSection,
   PricingSection,
-  ProductProofSection,
-  PromiseSection,
   TrustSection,
-  WhySection,
-  WorkflowSection,
   WhoForSection,
 } from "../components/ColabLanding";
 import { getProduct } from "../data/site";
@@ -26,14 +25,13 @@ export default function ColabPage() {
   return (
     <main id="main" data-brand={colab.accent}>
       <ColabHero />
+      <ColabChatSection />
       <WhoForSection />
-      <AudienceSection />
-      <WorkflowSection />
-      <WhySection />
-      <PromiseSection />
-      <ComparisonSection />
-      <ProductProofSection />
+      <AcademicResearchSection />
       <TrustSection />
+      <HostedPreviewsSection />
+      <MainFeaturesSection />
+      <ComparisonSection />
       <FaqSection />
       <PricingSection />
     </main>

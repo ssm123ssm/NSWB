@@ -4,55 +4,54 @@ export const colabPromises = [
   { number: "03", title: "AI-assisted project execution", description: "Use project-scoped AI agents for approved tasks within defined permissions.", proof: "AI agents · previews · task execution" },
 ];
 
-export const colabFeatureGroups = [
+export const colabMainFeatures = [
   {
-    id: "general",
-    label: "General",
-    title: "Project management and collaboration",
-    description: "Core capabilities used across coLab projects.",
-    tone: "blue",
-    wide: true,
-    features: [
-      { title: "Tasks and milestones", description: "Plan tasks against milestones and deploy tasks to AI." },
-      { title: "Communication", description: "Use chat, channels, AI bots, mentions, comments, meetings, and huddles." },
-      { title: "Document store", description: "Keep project files and media in one place." },
-      { title: "Notes and wikis", description: "Write Markdown-supported Notes, link them to other project context, and maintain project wikis." },
-    ],
+    id: "ai-execution",
+    number: "01",
+    title: "AI task execution",
+    description: "Assign approved tasks to project AI agents, run them in isolated Vercel Sandbox environments, and record the results with the project.",
   },
   {
     id: "research",
-    label: "Research groups and academic teams",
-    title: "Academic writing and reproducible research",
-    description: "Capabilities highlighted for scientific and academic projects.",
-    tone: "violet",
-    features: [
-      { title: "Overleaf and LaTeX", description: "Use LaTeX for scientific and academic writing through Overleaf." },
-      { title: "Reproducible and open research", description: "Keep research work and supporting project context together." },
-      { title: "Server compute", description: "Run AI workloads using project server compute." },
-    ],
+    number: "02",
+    title: "Academic writing, reproducible and open research",
+    description: "Write in LaTeX with Overleaf and keep reproducible research files together.",
   },
   {
-    id: "product",
-    label: "Product and software teams",
-    title: "Version control and AI runners",
-    description: "Capabilities highlighted for software delivery workflows.",
-    tone: "cyan",
-    features: [
-      { title: "Git integration", description: "Connect project work to Git-based version control." },
-      { title: "Vercel Sandboxes", description: "Run AI work in isolated Vercel Sandbox environments." },
-    ],
-  },
-  {
-    id: "creative",
-    label: "Design and creative teams",
+    id: "previews",
+    number: "03",
     title: "Hosted previews and annotations",
-    description: "Capabilities highlighted for reviewing visual and web work.",
-    tone: "amber",
-    features: [
-      { title: "Automatic HTML previews", description: "Generate an HTML web server with user access control." },
-      { title: "Uploaded previews", description: "Upload work manually and serve it through coLab." },
-      { title: "Annotations", description: "Attach review comments to the relevant part of a preview." },
-    ],
+    description: "Host previews and attach reviewer comments to specific interface elements.",
+  },
+  {
+    id: "tasks",
+    number: "04",
+    title: "Tasks and milestones",
+    description: "Create tasks, assign owners, set priorities and due dates, and connect each task to a project milestone.",
+  },
+  {
+    id: "communication",
+    number: "05",
+    title: "Project communication",
+    description: "Use chat, channels, comments, meetings, huddles, and project AI bots.",
+  },
+  {
+    id: "files",
+    number: "06",
+    title: "Files and media",
+    description: "Store and access project documents, images, videos, and other media from one project library.",
+  },
+  {
+    id: "writing",
+    number: "07",
+    title: "Notes and wikis",
+    description: "Write Markdown-supported notes, connect them to related project context, and maintain shared project wikis.",
+  },
+  {
+    id: "git",
+    number: "08",
+    title: "Git version control",
+    description: "Connect project tasks and related work to Git repositories.",
   },
 ];
 
@@ -65,32 +64,14 @@ export const colabWorkflow = [
   { title: "Record the decision", description: "Store the final decision with its author, date, and related project context." },
 ];
 
-export const colabReasons = [
-  { title: "Connected project records", description: "Tasks, conversations, notes, files, feedback, and decisions remain associated with their project." },
-  { title: "Project-scoped AI", description: "AI agents use the information and permissions assigned to one project." },
-  { title: "Contextual feedback", description: "Reviewers comment on an interface or document and convert selected feedback into a task." },
-  { title: "Recorded decisions", description: "Decisions include the selected outcome, author, date, and related project context." },
-  { title: "Specialist tools", description: "Available capabilities include Overleaf, hosted previews, API access, project agents, documents, and isolated compute." },
-  { title: "Role-based access", description: "Workspace members, project guests, preview reviewers, and AI agents receive defined access scopes." },
-];
-
 export const colabComparison = [
-  ["Tasks and deadlines", "Included", "Included", "Included"],
-  ["Project knowledge", "Limited", "Stored separately", "Stored with the project"],
-  ["Decision history", "Usually manual", "Stored separately", "Included"],
-  ["Contextual visual feedback", "Not included", "Requires another tool", "Included"],
-  ["Feedback-to-task conversion", "Manual", "Manual transfer", "Direct conversion"],
-  ["AI project context", "Limited", "Entered separately", "Limited to the assigned project"],
-  ["Complete project record", "Not included", "Distributed across tools", "Searchable in coLab"],
-];
-
-export const colabProofs = [
-  { key: "dashboard", title: "Project dashboard", description: "View projects, priorities, due tasks, and meetings.", size: "wide", image: "/colab/dashboard.png" },
-  { key: "timeline", title: "Milestone planning", description: "View milestone dates and the tasks assigned to each milestone.", size: "tall", image: "/colab/timeline.png" },
-  { key: "notes", title: "Collaborative notes", description: "Create notes with comments, metadata, links, and connected tasks.", size: "tall", image: "/colab/notes.png" },
-  { key: "preview", title: "Preview annotations", description: "Attach feedback and text suggestions to a preview and create related tasks.", size: "wide", image: "/colab/preview.png" },
-  { key: "agent", title: "Project AI agent", description: "Use an AI agent with access to the assigned project context and tools.", size: "tall", image: "/colab/agent.png" },
-  { key: "decisions", title: "Decision log", description: "Record decisions with the selected outcome, author, and date.", size: "tall", image: "/colab/decisions.png" },
+  ["Tasks and milestones", "Included", "Distributed", "Connected to project context"],
+  ["Conversations and decisions", "Limited", "Stored separately", "Stored with the project"],
+  ["Files, notes, and wikis", "Limited", "Distributed", "Available in one project"],
+  ["Hosted previews and annotations", "Not included", "Additional tool required", "Included"],
+  ["Academic writing with LaTeX", "Not included", "Additional tool required", "Available through Overleaf"],
+  ["Project-specific AI agents", "Limited", "Separate configuration", "Work within project access"],
+  ["Guest and reviewer access", "Basic sharing", "Managed separately", "Scoped by role and project"],
 ];
 
 export const colabTrust = [

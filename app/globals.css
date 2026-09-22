@@ -960,6 +960,38 @@
     background: color-mix(in srgb, var(--bg) 88%, transparent);
   }
 
+  .colab-header-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--text);
+  }
+
+  .colab-header-home svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+    transition: transform 0.15s ease;
+  }
+
+  .colab-header-home strong {
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.035em;
+  }
+
+  .colab-header-home strong span {
+    color: var(--brand);
+  }
+
+  .colab-header-home:hover svg {
+    transform: translateX(-2px);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .site-header {
       transition: none;

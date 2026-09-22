@@ -1,7 +1,6 @@
 .hero { overflow: hidden; padding: clamp(4.5rem, 9vw, 7.5rem) 0 3.75rem; }
 .hero :global(.shell) { display: grid; align-items: center; gap: 4rem; }
 .heroCopy { max-width: 760px; }
-.heroEyebrow { margin-top: 1.5rem; color: var(--brand-text); font-size: 1rem; font-weight: 500; }
 .hero h1 { max-width: 850px; margin-top: 1rem; font-size: clamp(3rem, 7vw, 5rem); line-height: .94; }
 .heroLead { max-width: 760px; margin-top: 1.75rem; color: var(--text-muted); font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.6; }
 .heroActions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }

@@ -19,8 +19,6 @@ const PHASES = [
     project: "Protocol release",
     status: "planning",
     active: 0,
-    description:
-      "A project should not lose its thinking the moment the meeting ends.",
     milestones: [
       "Define the real question",
       "Set the API boundary",
@@ -47,8 +45,6 @@ const PHASES = [
     project: "Reviewer workflow",
     status: "in review",
     active: 1,
-    description:
-      "Discussion belongs beside the task it changes, where the next person can see how the work became the work.",
     milestones: [
       "Frame the reviewer flow",
       "Set the API boundary",
@@ -75,8 +71,6 @@ const PHASES = [
     project: "Release boundary",
     status: "decided",
     active: 2,
-    description:
-      "A decision log makes the trade-off visible: what changed, who settled it, and why the team chose that path.",
     milestones: [
       "Review the evidence",
       "Sign the release boundary",
@@ -103,8 +97,6 @@ const PHASES = [
     project: "Project hand-off",
     status: "shared",
     active: 3,
-    description:
-      "Share one project, not a folder of fragments. The milestones, the task threads, and the decisions travel together.",
     milestones: [
       "Invite the project team",
       "Open the shared workspace",
@@ -194,11 +186,18 @@ export default function ColabFeature() {
 
         <div className={styles.copy}>
           <h2 id="colab-feature-title">
-            The work moves.
+            Projects move forward.
             <br />
-            <span>The reason stays.</span>
+            <span>Context stays connected.</span>
           </h2>
-          <p>{phase.description}</p>
+          <p>
+            coLab keeps tasks, conversations, files, decisions, and AI work together in one
+            project workspace.
+          </p>
+        </div>
+
+        <div className={styles.featureActions}>
+          <a href="/colab">Explore coLab <span aria-hidden="true">→</span></a>
         </div>
 
         <div aria-label="coLab project workspace" className={styles.board}>

@@ -34,7 +34,7 @@ export const hero = {
   headlineHead: "We build interesting software —",
   headlineTail: "carefully engineered",
   headlinePlain: "We build interesting software — carefully engineered",
-  lead: "A studio for software, cryptography, and applied AI. Nothing here is assumed to work.",
+  lead: "Neurasense develops project, security, research, and AI systems for teams that need reliable software.",
   actions: {
     primary: { label: "See what we build", href: "/#products" },
     secondary: { label: "Read the research", href: "/research" },
@@ -281,6 +281,7 @@ export const publications = [
       "Udaya Dangahadeniya",
     ],
     venue: "PLOS One",
+    publicationType: "Peer-reviewed article",
     detail: "20(12), e0336154",
     date: "4 December 2025",
     year: "2025",
@@ -289,6 +290,7 @@ export const publications = [
     affiliation: "University of Peradeniya",
     summary:
       "A feedback system for medical undergraduates, built on retrieval augmented generation over a custom knowledge base to reduce inaccurate answers from the underlying model. It gives each student feedback on their MCQ and SAQ performance, along with guidance on stress management and study strategy. It was evaluated both by expert student mentors and by the students who used it.",
+    related: { label: "Related capability", text: "Retrieval-augmented generation" },
   },
   {
     id: "saq-scoring",
@@ -296,6 +298,7 @@ export const publications = [
       "Artificial intelligence assisted automated short answer question scoring tool shows high correlation with human examiner markings",
     authors: ["HMTW Seneviratne", "SS Manathunga"],
     venue: "BMC Medical Education",
+    publicationType: "Peer-reviewed article",
     detail: "25(1), 1146",
     date: "5 August 2025",
     year: "2025",
@@ -304,12 +307,14 @@ export const publications = [
     affiliation: "University of Peradeniya",
     summary:
       "A scoring tool that uses a large language model to mark short answer questions. It extracts the key components of a student's answer, applies the scoring rubric supplied by the instructor, and writes individual feedback. It was tested on a systematic pharmacology course, where its marks correlated closely with those of human examiners.",
+    related: { label: "Related product", text: "AES", href: "/products" },
   },
   {
     id: "clinical-alignment",
     title: "Aligning large language models for clinical tasks",
     authors: ["Supun Manathunga", "Isuru Hettigoda"],
     venue: "arXiv",
+    publicationType: "Preprint",
     detail: "arXiv:2309.02884",
     date: "September 2023",
     year: "2023",
@@ -317,6 +322,7 @@ export const publications = [
     href: "https://arxiv.org/abs/2309.02884",
     summary:
       "An alignment method for medical question answering, called expand-guess-refine, which combines instruction tuning with in-prompt techniques. It reached 70.63% accuracy on a subset of the USMLE dataset without additional parameters or training data.",
+    related: { label: "Related capability", text: "Clinical AI alignment" },
   },
   {
     id: "rag-summarization",
@@ -324,6 +330,7 @@ export const publications = [
       "Retrieval augmented generation and representative vector summarization for large unstructured textual data in medical education",
     authors: ["Supun S Manathunga", "YA Illangasekara"],
     venue: "arXiv",
+    publicationType: "Preprint",
     detail: "arXiv:2308.00479",
     date: "August 2023",
     year: "2023",
@@ -331,6 +338,7 @@ export const publications = [
     href: "https://arxiv.org/abs/2308.00479",
     summary:
       "Sets out retrieval augmented generation as a way to attach a customisable knowledge base to a language model, so that answers in a medical context can be grounded in a known source rather than in the model's own memory. It also presents a combined extractive and abstractive summarisation method for large unstructured text, using representative vectors.",
+    related: { label: "Related capability", text: "Retrieval-augmented generation" },
   },
 ];
 
@@ -490,6 +498,7 @@ export const products = [
       "End-to-end encrypted file storage where plaintext never touches the server. Encrypted manifests and policy-based access by design.",
     discipline: "Cryptographic R&D",
     status: "live",
+    access: "request",
     lead: true,
     accent: "cyan",
     detail: "/vault",
@@ -510,7 +519,7 @@ export const products = [
     wordmark: ["co", "lab"],
     tagline: "Project tracking that keeps the reasons.",
     description:
-      "A milestone timeline with the work planned against each date, tasks that carry their own thread, and a decision log signed by whoever settled it — shared per project, so a guest sees one and nothing else.",
+      "An integrated workspace for managing tasks, communication, project knowledge, files, and AI-assisted work.",
     discipline: "Software Platforms",
     status: "live",
     lead: true,
@@ -533,6 +542,7 @@ export const products = [
       "Fast, reliable check-ins for teams and institutions with secure access, clean exports, and operational clarity.",
     discipline: "Software Platforms",
     status: "live",
+    access: "request",
     accent: "emerald",
     app: "https://presence.neurasense.io/owner/login",
     highlights: ["Real-time check-ins", "Secure access", "Clean exports"],

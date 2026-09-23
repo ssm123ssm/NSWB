@@ -3,6 +3,7 @@ import { ContactButton } from "./components/SiteChrome";
 import {
   ActivityIcon,
   ArrowIcon,
+  NeurasensePulseIcon,
 } from "./components/Icons";
 import ProductSequence from "./components/ProductSequence";
 import ColabFeature from "./components/ColabFeature";
@@ -48,7 +49,7 @@ function Hero() {
     <section className="relative isolate overflow-hidden">
       <div className="shell flex flex-col items-center pb-16 pt-20 text-center md:pb-24 md:pt-28">
         <span className="pill-icon-ecg rise">
-          <ActivityIcon className="h-5 w-5" />
+          <NeurasensePulseIcon />
         </span>
 
         <h1 className="rise mt-7 max-w-4xl text-[clamp(3rem,6.4vw,4.5rem)]">

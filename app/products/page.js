@@ -38,6 +38,22 @@ const BOTTOM_ROW = [
   { slug: "aes", span: "md:col-span-3", height: "h-[232px]" },
 ];
 
+function availabilityLabel(product) {
+  if (product.status !== "live") return "In development";
+  if (product.access === "request") return "Access by request";
+  return "Available";
+}
+
+function AvailabilityChip({ product }) {
+  return (
+    <span
+      className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}
+    >
+      {availabilityLabel(product)}
+    </span>
+  );
+}
+
 export const metadata = {
   title: "Products",
   description:
@@ -52,24 +68,26 @@ export default function ProductsPage() {
     <main id="main">
       <h1 className="sr-only">Products</h1>
 
-      <section className="section-tight pt-20 md:pt-24">
+      <section className="section-tight !pt-10 md:!pt-14">
         <div className="shell">
-          <Link className="icon-button -ml-2 mb-6" href="/" aria-label="Back to home">
+          <Link className="icon-button -ml-2 mb-4" href="/" aria-label="Back to home">
             <ArrowIcon className="h-5 w-5 rotate-180" />
           </Link>
 
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-6" style={{ borderColor: "var(--border)" }}>
+          <div
+            className="grid gap-4 border-b pb-5 md:grid-cols-[minmax(0,1.45fr)_minmax(17rem,0.75fr)] md:items-end md:gap-8"
+            style={{ borderColor: "var(--border)" }}
+          >
             <div>
-              <p className="eyebrow">In the studio now</p>
-              <h2 className="section-title max-w-2xl">Live and shipping</h2>
+              <p className="eyebrow">Available products</p>
+              <h2 className="section-title max-w-2xl">Products you can use now</h2>
             </div>
             <p className="max-w-sm text-sm leading-[1.5] text-muted">
-              Each product below carries its own discipline, its own accent,
-              and the two or three things it actually promises — read as a
-              catalogue, not a set of taglines.
+              Explore Neurasense products for project collaboration, secure
+              storage, attendance, research, and AI-assisted work.
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-6 mt-10">
+          <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-6">
             <ColabHeroCard product={getProduct("colab")} />
             {TOP_ROW.map(({ slug, span, height }) => (
               <ProductCard
@@ -110,25 +128,6 @@ export default function ProductsPage() {
         </section>
       )}
 
-      <section className="section-tight pb-20">
-        <div className="shell">
-          <div className="gradient-panel">
-            <div className="relative z-10 mx-auto max-w-2xl">
-              <h2 className="text-[clamp(2.25rem,3.6vw,3rem)]">
-                Tell us your design idea
-              </h2>
-              <p className="mt-4 text-base leading-[1.5] text-white/85">
-                Bring the product you are picturing, however rough. We will
-                tell you what we would build first, and whether we are the
-                right studio for it.
-              </p>
-              <ContactButton className="btn btn-lg mt-8 bg-white text-[color:var(--text)] hover:opacity-90">
-                Connect with us
-              </ContactButton>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
@@ -152,9 +151,9 @@ function ColabHeroCard({ product }) {
           <h3 className="brand-tag-lg">
             <ProductName product={product} />
           </h3>
-          <p className="eyebrow mt-4">Our iconic collaboration platform</p>
+          <p className="eyebrow mt-4">Project workspace</p>
           <p className="mt-2 text-lg font-medium" style={{ color: "var(--brand-text)" }}>
-            with intelligent capabilities
+            Plan, communicate, document, and use AI in one place
           </p>
           <p className="mt-5 text-base leading-[1.5] text-ink">
             {product.description}
@@ -186,7 +185,7 @@ function ColabHeroCard({ product }) {
           )}
 
           <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <span className="chip chip-dot">Live</span>
+            <AvailabilityChip product={product} />
             {product.detail && (
               <Link className="link-arrow" href={product.detail}>
                 Explore {product.name}
@@ -256,9 +255,9 @@ function PresenceHeroCard({ product }) {
           <h3 className="brand-tag-lg">
             <ProductName product={product} />
           </h3>
-          <p className="eyebrow mt-4">Attendance built for real rooms</p>
+          <p className="eyebrow mt-4">Attendance management</p>
           <p className="mt-2 text-lg font-medium" style={{ color: "var(--brand-text)" }}>
-            with real-time visibility
+            Real-time check-ins, controlled access, and exportable records
           </p>
           <p className="mt-5 text-base leading-[1.5] text-ink">
             {product.description}
@@ -290,7 +289,7 @@ function PresenceHeroCard({ product }) {
           )}
 
           <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <span className="chip chip-dot">Live</span>
+            <AvailabilityChip product={product} />
             <ContactButton className="link-arrow" subject={product.name} intent="access">
               Request access
               <ArrowIcon />
@@ -351,11 +350,7 @@ function ProductCard({ product, span = "md:col-span-2", height = "h-[176px]" }) 
         <h3 className="brand-tag">
           <ProductName product={product} />
         </h3>
-        <span
-          className={`chip ${product.status === "live" ? "chip-dot" : "chip-neutral"}`}
-        >
-          {product.status === "live" ? "Live" : "In development"}
-        </span>
+        <AvailabilityChip product={product} />
       </div>
 
       <p className="mt-4 px-6 text-base leading-[1.5] text-ink">

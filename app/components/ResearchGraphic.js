@@ -24,12 +24,38 @@ const graphics = {
   "rag-summarization": PipelineFlow,
 };
 
+const contexts = {
+  "sisu-athwala": {
+    title: "Reported study results",
+    note: "15 expert student counsellors evaluated the feedback; 25 students reported on its usefulness.",
+  },
+  "saq-scoring": {
+    title: "Reported study result",
+    note: "Correlation reported between AI scores and scores from two human examiners.",
+  },
+  "clinical-alignment": {
+    title: "Reported benchmark result",
+    note: "Accuracy reported on the study's selected USMLE dataset subset.",
+  },
+  "rag-summarization": {
+    title: "Method overview",
+    note: "The paper's indexing and retrieval workflow, shown in sequence.",
+  },
+};
+
 export default function ResearchGraphic({ paperId }) {
   const Graphic = graphics[paperId];
   if (!Graphic) return null;
+  const context = contexts[paperId];
   return (
-    <div aria-hidden="true" className="pub-graphic">
-      <Graphic />
+    <div className="pub-results">
+      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-muted">
+        {context.title}
+      </p>
+      <div aria-hidden="true" className="pub-graphic">
+        <Graphic />
+      </div>
+      <p className="text-xs leading-[1.45] text-faint">{context.note}</p>
     </div>
   );
 }

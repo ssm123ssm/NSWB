@@ -52,6 +52,14 @@ export function ActivityIcon({ className = "h-3 w-3" }) {
   );
 }
 
+export function NeurasensePulseIcon({ className = "h-7 w-10" }) {
+  return (
+    <svg viewBox="0 0 32 24" className={className} {...stroke} strokeWidth={1.8} aria-hidden="true">
+      <path d="M1 21C7 22 11 17 15 8l3 8C21 9 25 4 31 5" pathLength="100" />
+    </svg>
+  );
+}
+
 export function DotsIcon({ className = "h-4 w-4" }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">

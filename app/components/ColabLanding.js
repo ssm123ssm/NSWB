@@ -125,27 +125,29 @@ export function AcademicResearchSection() {
             <div className={styles.macbookDisplay}>
               <span className={styles.macbookCamera} aria-hidden="true" />
               <div className={`${styles.macbookScreen} ${styles.academicScreen}`}>
-                <aside className={styles.academicSidebar}>
-                  <strong>Research paper</strong>
-                  <small>FILES</small>
-                  <span className={styles.academicFileActive}>main.tex</span>
-                  <span>references.bib</span>
-                  <span>methods.tex</span>
-                  <span>figures</span>
-                </aside>
-                <div className={styles.academicWorkspace}>
-                  <header><span className={styles.latexMark}>L<span>A</span>T<span>E</span>X</span><small>main.tex · saved</small><button type="button" tabIndex="-1">Compile</button></header>
-                  <div className={styles.academicEditor}>
-                    <pre><code><i>01</i> \documentclass&#123;article&#125;{"\n"}<i>02</i> \usepackage&#123;graphicx&#125;{"\n"}<i>03</i> \title&#123;Reproducible AI Research&#125;{"\n"}<i>04</i> \begin&#123;document&#125;{"\n"}<i>05</i> \maketitle{"\n"}<i>06</i> \section&#123;Method&#125;{"\n"}<i>07</i> Results are linked to the project.{"\n"}<i>08</i> \end&#123;document&#125;</code></pre>
-                  </div>
-                  <div className={styles.academicPreview}>
-                    <small>PDF PREVIEW</small>
-                    <h4>Reproducible AI Research</h4>
-                    <p>Method</p>
-                    <span />
-                    <span />
-                    <span className={styles.shortLine} />
-                    <div className={styles.researchStatus}><i /><div><small>OPEN RESEARCH</small><strong>Source and references ready to share</strong></div></div>
+                <div className={styles.academicScreenCanvas}>
+                  <aside className={styles.academicSidebar}>
+                    <strong>Research paper</strong>
+                    <small>FILES</small>
+                    <span className={styles.academicFileActive}>main.tex</span>
+                    <span>references.bib</span>
+                    <span>methods.tex</span>
+                    <span>figures</span>
+                  </aside>
+                  <div className={styles.academicWorkspace}>
+                    <header><span className={styles.latexMark}>L<span>A</span>T<span>E</span>X</span><small>main.tex · saved</small><button type="button" tabIndex="-1">Compile</button></header>
+                    <div className={styles.academicEditor}>
+                      <pre><code><i>01</i> \documentclass&#123;article&#125;{"\n"}<i>02</i> \usepackage&#123;graphicx&#125;{"\n"}<i>03</i> \title&#123;Reproducible AI Research&#125;{"\n"}<i>04</i> \begin&#123;document&#125;{"\n"}<i>05</i> \maketitle{"\n"}<i>06</i> \section&#123;Method&#125;{"\n"}<i>07</i> Results are linked to the project.{"\n"}<i>08</i> \end&#123;document&#125;</code></pre>
+                    </div>
+                    <div className={styles.academicPreview}>
+                      <small>PDF PREVIEW</small>
+                      <h4>Reproducible AI Research</h4>
+                      <p>Method</p>
+                      <span />
+                      <span />
+                      <span className={styles.shortLine} />
+                      <div className={styles.researchStatus}><i /><div><small>OPEN RESEARCH</small><strong>Source and references ready to share</strong></div></div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,6 +1,6 @@
-/* The other five products, sequenced through one sticky stage. Scrolling
-   advances a single active card through the five; the two neighbours peek
-   in from behind it, carousel-style. Each card is the site's actual
+/* The other five products, sequenced through one carousel. Arrow controls
+   advance the active card; the two neighbours peek in from behind it. Each
+   card is the site's actual
    `.card`/`.brand-tag`/`.chip`/`.check-list` product-card treatment (see
    `/products`) — this file only positions and animates it, it doesn't
    restyle it. */
@@ -10,15 +10,68 @@
   --side: max(1.5rem, calc((100vw - var(--screen)) / 2));
   --quiet: color-mix(in oklab, var(--text-muted) 60%, var(--bg));
   position: relative;
-  height: 240svh;
+  min-height: 760px;
 }
 
 .stage {
-  position: sticky;
-  top: 0;
-  min-height: 100svh;
+  position: relative;
+  min-height: 760px;
   overflow: hidden;
   background: var(--bg);
+}
+
+.controls {
+  position: absolute;
+  right: var(--side);
+  bottom: clamp(32px, 6svh, 64px);
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+}
+
+.controls button {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: #e8e8ed;
+  color: #68686d;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.controls button:first-child svg {
+  transform: rotate(180deg);
+}
+
+.controls button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.controls button:focus-visible {
+  outline: 2px solid var(--brand, #2563eb);
+  outline-offset: 3px;
+}
+
+.controls button:disabled {
+  background: #f5f5f7;
+  color: #b7b7bc;
+  cursor: default;
+}
+
+.controls svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3.2;
 }
 
 .kicker {
@@ -124,21 +177,11 @@
   color: var(--text-faint);
 }
 
-/* The "Visit our product studio" link that follows the sequence, sitting
-   in the space already left below the cards within the pinned stage —
-   `.stage` has to stay `100svh` (matching `window.innerHeight` in the
-   scroll-progress calc in ProductSequence.js) or the CSS unstick point and
-   the JS's progress===1 point drift apart, so the link is placed inside
-   the stage instead of shrinking it. */
-.more {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(32px, 6svh, 64px);
-  transform: translateX(-50%);
-  z-index: 2;
-}
-
 @media (max-width: 760px) {
+  .scroll,
+  .stage {
+    min-height: 720px;
+  }
   .kicker {
     top: 64px;
   }
@@ -176,8 +219,13 @@
     transform: translateX(-50%) translateX(calc(var(--offset, 0) * 100%))
       scale(calc(1 - var(--dist, 0) * 0.12));
   }
-  .more {
-    display: none;
+  .controls {
+    right: var(--side);
+    bottom: 24px;
+  }
+  .controls button {
+    width: 48px;
+    height: 48px;
   }
 }
 

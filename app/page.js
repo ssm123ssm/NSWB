@@ -3,29 +3,14 @@ import { ContactButton } from "./components/SiteChrome";
 import {
   ActivityIcon,
   ArrowIcon,
-  DocIcon,
-  LayersIcon,
-  UsersIcon,
-  LockIcon,
-  NeuralIcon,
-  ShieldIcon,
 } from "./components/Icons";
 import ProductSequence from "./components/ProductSequence";
 import ColabFeature from "./components/ColabFeature";
 import ComingSoon from "./components/ComingSoon";
-import { closing, designPrinciples, founders, hero } from "./data/site";
+import { closing, founders, hero } from "./data/site";
 
 export const metadata = {
   alternates: { canonical: "/" },
-};
-
-const icons = {
-  layers: LayersIcon,
-  users: UsersIcon,
-  lock: LockIcon,
-  neural: NeuralIcon,
-  shield: ShieldIcon,
-  doc: DocIcon,
 };
 
 export default function HomePage() {
@@ -46,7 +31,6 @@ export default function HomePage() {
         </Link>
       </div>
       <ComingSoon />
-      <DesignPrinciples />
       <Closing />
     </main>
   );
@@ -145,46 +129,6 @@ function ProductsIntro() {
 /* -------------------------------------------------------------------------
    Capabilities, as a bento
    ------------------------------------------------------------------------- */
-function DesignPrinciples() {
-  return (
-    <section className="section section-subtle" id="capabilities">
-      <div className="shell">
-        <h2 className="section-title max-w-3xl">{designPrinciples.title}</h2>
-
-        <div className="bento mt-12">
-          {designPrinciples.items.map((item) => {
-            const Icon = icons[item.icon];
-            return (
-              <article
-                className="card card-hover cloud"
-                data-brand={item.accent}
-                key={item.segments.map((seg) => seg.text).join("")}
-              >
-                <span className="icon-tile">
-                  <Icon className="h-8 w-8" />
-                </span>
-                <p className="mt-5 text-base leading-[1.5] text-muted">
-                  {item.segments.map((seg, i) =>
-                    seg.mark ? (
-                      <span className="mark" key={i}>
-                        {seg.text}
-                      </span>
-                    ) : (
-                      <span key={i}>{seg.text}</span>
-                    )
-                  )}
-                </p>
-              </article>
-            );
-          })}
-        </div>
-
-        <p className="principle-closing">{designPrinciples.closing}</p>
-      </div>
-    </section>
-  );
-}
-
 /* -------------------------------------------------------------------------
    The closing call, on a full gradient plate
    ------------------------------------------------------------------------- */
@@ -216,9 +160,6 @@ function Closing() {
             </ContactButton>
           </div>
 
-          <p className="mt-10 text-sm font-medium tracking-[0.02em] text-muted">
-            Nothing here is assumed to work.
-          </p>
         </div>
       </div>
     </section>

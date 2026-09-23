@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ContactButton } from "./SiteChrome";
-import { ActivityIcon, ArrowIcon, CheckIcon } from "./Icons";
+import { ArrowIcon, CheckIcon } from "./Icons";
 import ProductName from "./ProductName";
 import {
   AesGraphic,
@@ -12,11 +12,19 @@ import {
   PresenceGraphic,
   VaultGraphic,
 } from "./ProductBento";
-import { getProduct, hero } from "../data/site";
+import { getProduct } from "../data/site";
 import styles from "./ProductSequence.module.css";
 
 const SLUGS = ["nsqr", "vault", "presence", "lipd-hub", "aes"];
 const PRODUCTS = SLUGS.map((slug) => getProduct(slug));
+
+function CarouselChevron() {
+  return (
+    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+      <path d="m9 5 7 7-7 7" />
+    </svg>
+  );
+}
 
 /** The same per-product graphics the `/products` catalogue cards use — kept
  *  as one source rather than redrawn, so a card reads identically wherever
@@ -29,54 +37,20 @@ const GRAPHICS = {
   aes: AesGraphic,
 };
 
-/** Which board a scroll progress (0–1) lands on. */
-const activeAt = (progress) => Math.min(PRODUCTS.length - 1, Math.floor(progress * (PRODUCTS.length + 0.2)));
-
 /**
- * The five products beside coLab, carried through one sticky stage instead
- * of five separate ones. Scrolling advances a discrete `activeIndex`
- * through React state — each card slides in a CSS transition, not a
- * per-pixel scroll-synced transform, since there's nothing continuous to
- * track between one product and the next. Each card is the exact
+ * The five products beside coLab, carried through one carousel instead of
+ * five separate sections. Previous and next controls advance a discrete
+ * `activeIndex`; each card slides with a CSS transition. Each card is the exact
  * `/products` catalogue card — same brand tag, status chip, graphic and
  * key-points list — so a product looks identical whichever page shows it.
  */
 export default function ProductSequence() {
-  const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeIndexRef = useRef(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const section = scrollRef.current;
-      if (!section) return;
-
-      const rect = section.getBoundingClientRect();
-      const progress = Math.max(
-        0,
-        Math.min(1, -rect.top / (section.offsetHeight - window.innerHeight))
-      );
-
-      const next = activeAt(progress);
-      if (next !== activeIndexRef.current) {
-        activeIndexRef.current = next;
-        setActiveIndex(next);
-      }
-    };
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
 
   const active = PRODUCTS[activeIndex];
 
   return (
-    <section aria-labelledby="sequence-title" className={styles.scroll} ref={scrollRef}>
+    <section aria-labelledby="sequence-title" className={styles.scroll}>
       <div className={styles.stage}>
         <span className={styles.kicker}>Also in the system</span>
 
@@ -87,17 +61,10 @@ export default function ProductSequence() {
             <span>One shared standard.</span>
           </h2>
           <p>{active.description}</p>
-          {active.detail ? (
-            <Link className={styles.link} href={active.detail}>
-              Explore {active.name}
-              <span aria-hidden="true">→</span>
-            </Link>
-          ) : (
-            <ContactButton className={styles.link} intent="access" subject={active.name}>
-              Request access
-              <span aria-hidden="true">→</span>
-            </ContactButton>
-          )}
+          <Link className={styles.link} href="/products">
+            Visit our Product Studio
+            <span aria-hidden="true">→</span>
+          </Link>
         </div>
 
         <div aria-live="polite" className={styles.carousel}>
@@ -173,13 +140,25 @@ export default function ProductSequence() {
           })}
         </div>
 
-        <Link className={`pill ${styles.more}`} href="/products">
-          <span className="pill-icon-ecg">
-            <ActivityIcon className="h-4 w-4" />
-          </span>
-          {hero.pill.text}
-          <ArrowIcon className="h-3.5 w-3.5" />
-        </Link>
+        <div aria-label="Product navigation" className={styles.controls} role="group">
+          <button
+            aria-label="Previous product"
+            disabled={activeIndex === 0}
+            onClick={() => setActiveIndex((index) => Math.max(0, index - 1))}
+            type="button"
+          >
+            <CarouselChevron />
+          </button>
+          <button
+            aria-label="Next product"
+            disabled={activeIndex === PRODUCTS.length - 1}
+            onClick={() => setActiveIndex((index) => Math.min(PRODUCTS.length - 1, index + 1))}
+            type="button"
+          >
+            <CarouselChevron />
+          </button>
+        </div>
+
       </div>
     </section>
   );

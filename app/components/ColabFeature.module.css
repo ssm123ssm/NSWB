@@ -79,6 +79,40 @@
   font-size: 0.875rem;
 }
 
+.featureActions {
+  position: absolute;
+  bottom: 64px;
+  left: var(--side);
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.featureActions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.featureActions a:first-child {
+  color: var(--brand-text);
+}
+
+.featureActions a span {
+  transition: transform 160ms ease;
+}
+
+.featureActions a:hover span,
+.featureActions a:focus-visible span {
+  transform: translateX(3px);
+}
+
 .board {
   position: absolute;
   top: 50%;
@@ -384,6 +418,10 @@
   }
   .copy h2 {
     font-size: clamp(2.25rem, 8vw, 3.5rem);
+  }
+  .featureActions {
+    bottom: 28px;
+    gap: 0.55rem;
   }
   .board {
     top: 68%;

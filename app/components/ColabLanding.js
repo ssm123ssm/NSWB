@@ -120,7 +120,7 @@ export function AcademicResearchSection() {
         <div className={styles.academicEditorialLayout}>
           <div className={styles.chatEditorialCopy}>
             <h3>Academic writing, reproducible and open research</h3>
-            <p>Use Overleaf and LaTeX for scientific writing, keep source files and references together, and prepare research that others can review and reproduce.</p>
+            <p>Use LaTeX for scientific writing, keep source files and references together, and prepare research that others can review and reproduce.</p>
           </div>
 
           <div className={`${styles.macbookScene} ${styles.academicDevice}`} aria-label="coLab academic writing and reproducible open research workspace displayed on a MacBook">

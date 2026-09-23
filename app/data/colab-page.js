@@ -15,7 +15,7 @@ export const colabMainFeatures = [
     id: "research",
     number: "02",
     title: "Academic writing, reproducible and open research",
-    description: "Write in LaTeX with Overleaf and keep reproducible research files together.",
+    description: "Use LaTeX for scientific writing, keep source files and references together, and prepare research that others can review and reproduce.",
   },
   {
     id: "previews",

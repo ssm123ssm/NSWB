@@ -1651,6 +1651,6 @@ export const pageHeaders = {
   },
   "/colab": {
     brand: "blue",
-    cta: { label: "Create an account", href: colabLinks.signup, external: true },
+    cta: { label: "Request Access", href: colabLinks.signup, external: true },
   },
 };

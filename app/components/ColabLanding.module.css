@@ -112,6 +112,7 @@
 .macbookDisplay { position: relative; overflow: hidden; border: 8px solid #1d1d1f; border-bottom-width: 10px; border-radius: 18px 18px 8px 8px; background: #1d1d1f; box-shadow: 0 28px 70px rgb(24 24 27 / 16%); transform: rotateY(4deg) rotateX(1deg); transform-origin: center right; }
 .macbookCamera { position: absolute; top: 3px; left: 50%; z-index: 2; width: 5px; height: 5px; border-radius: 50%; background: #050505; transform: translateX(-50%); }
 .macbookScreen { position: relative; aspect-ratio: 2178 / 1354; overflow: hidden; border-radius: 9px 9px 2px 2px; background: #f5f5f6; }
+.screenCanvas { position: absolute; inset: 0; overflow: hidden; }
 .editorialChatDemo { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; grid-template-columns: 25% 75%; border: 0; border-radius: 0; transform: none; }
 .editorialChatDemo .agentChatSidebar { padding: .65rem .55rem .45rem; }
 .editorialChatDemo .agentChatBrand { padding-bottom: .7rem; }
@@ -372,4 +373,19 @@
   .planSteps > svg { transform: rotate(90deg); }
   .planFinder { grid-template-columns: 1fr; }
   .previewPage { padding: 60px 24px; }
+}
+
+@media (max-width: 480px) {
+  .screenCanvas {
+    width: 160%;
+    height: 160%;
+    transform: scale(.625);
+    transform-origin: top left;
+  }
+  .screenCanvas .editorialChatDemo {
+    min-height: 0;
+    grid-template-columns: 25% 75%;
+  }
+  .screenCanvas .agentChatSidebar { display: flex; }
+  .screenCanvas .agentChatHeaderActions { display: flex; }
 }

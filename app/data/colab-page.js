@@ -99,6 +99,13 @@ export const colabPlans = [
   { name: "Custom coLab", price: "Configured", period: "according to your requirements", description: "For specialized workflows, infrastructure, integrations, capacity, or support requirements.", features: ["Choose the capabilities you need", "Match users, storage, AI, and compute", "Specialized integrations", "Guided configuration"], action: "Request custom plan", featured: true },
 ];
 
+export const colabAccess = {
+  eyebrow: "Limited access",
+  title: "coLab is currently available by request or invitation only.",
+  lead: "Tell us about your work and the kind of workspace you need. We’ll review your request and get in touch about access.",
+  action: "Request access",
+};
+
 export const colabAudienceDetails = {
   research: {
     eyebrow: "coLab for research",

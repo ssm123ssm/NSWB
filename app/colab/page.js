@@ -6,7 +6,7 @@ import {
   ComparisonSection,
   FaqSection,
   MainFeaturesSection,
-  PricingSection,
+  AccessSection,
   TrustSection,
   WhoForSection,
 } from "../components/ColabLanding";
@@ -33,7 +33,7 @@ export default function ColabPage() {
       <MainFeaturesSection />
       <ComparisonSection />
       <FaqSection />
-      <PricingSection />
+      <AccessSection />
     </main>
   );
 }

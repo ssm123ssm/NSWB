@@ -1,20 +1,16 @@
+import { ArrowIcon, LockIcon } from "./Icons";
 import {
-  ArrowIcon,
-  CheckIcon,
-  LockIcon,
-} from "./Icons";
-import {
+  colabAccess,
   colabMainFeatures,
   colabComparison,
   colabFaqs,
-  colabPlans,
   colabTrust,
 } from "../data/colab-page";
 import styles from "./ColabLanding.module.css";
-import ColabPlanFinder from "./ColabPlanFinder";
 import ColabFeatureCards from "./ColabFeatureCards";
 import ColabAgentExecutionDemo from "./ColabAgentExecutionDemo";
 import HostedPreviewDemo from "./HostedPreviewDemo";
+import { colabLinks } from "../data/site";
 
 function ColabCommunicationVisual() {
   return (
@@ -56,7 +52,7 @@ export function ColabHero() {
           <h1>An integrated digital workspace for project work.</h1>
           <p className={styles.heroLead}>coLab is an advanced digital workspace where individuals and teams can organize projects, coordinate work, communicate with collaborators, store project knowledge, and use AI to assist with project tasks.</p>
           <div className={styles.heroActions}>
-            <a className="btn btn-gradient btn-lg" href="#pricing">View plans <ArrowIcon /></a>
+            <a className="btn btn-gradient btn-lg" href={colabLinks.signup} target="_blank" rel="noreferrer">Request access <ArrowIcon /></a>
           </div>
         </div>
       </div>
@@ -218,18 +214,15 @@ export function FaqSection() {
   );
 }
 
-export function PricingSection() {
+export function AccessSection() {
   return (
-    <section className={`section ${styles.pricingSection}`} id="pricing"><div className="shell">
-      <details className={styles.pricingGuideDisclosure}>
-        <summary><h2 className="section-title">Plans and custom configurations</h2><span>+</span></summary>
-        <div className={styles.pricingGuideContent}>
-          <p className="lead max-w-2xl">Registration collects information about the user, projects, collaborators, required capabilities, and expected AI use. coLab then recommends a package or prepares a custom configuration. These prices are provisional examples.</p>
-          <div className={styles.planSteps}><span><b>1</b> Provide requirements</span><ArrowIcon /><span><b>2</b> Review the recommendation</span><ArrowIcon /><span><b>3</b> Activate selected capabilities</span></div>
-          <ColabPlanFinder />
-        </div>
-      </details>
-      <div className={styles.pricingGrid}>{colabPlans.map((plan) => <article className={`card ${plan.featured ? "card-featured" : ""}`} key={plan.name}><div className={styles.planHead}><h3>{plan.name}</h3>{plan.featured ? <span className="chip">Custom configuration</span> : null}</div><p className={styles.price}>{plan.price}</p><small>{plan.period}</small><p>{plan.description}</p><ul>{plan.features.map((feature) => <li key={feature}><CheckIcon />{feature}</li>)}</ul><a className={plan.featured ? "btn btn-gradient" : "btn btn-bordered"} href="https://colab.neurasense.io/signup" target="_blank" rel="noreferrer">{plan.action}<ArrowIcon /></a></article>)}</div>
-    </div></section>
+    <section className="section" id="access">
+      <div className="shell flex flex-col items-center text-center">
+        <p className="eyebrow">{colabAccess.eyebrow}</p>
+        <h2 className="section-title max-w-3xl">{colabAccess.title}</h2>
+        <p className="lead lead-center mt-3 max-w-2xl">{colabAccess.lead}</p>
+        <a className="btn btn-gradient btn-lg mt-7" href={colabLinks.signup} target="_blank" rel="noreferrer">{colabAccess.action}<ArrowIcon /></a>
+      </div>
+    </section>
   );
 }

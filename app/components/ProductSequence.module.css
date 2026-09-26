@@ -1,9 +1,6 @@
-/* The other five products, sequenced through one carousel. Arrow controls
-   advance the active card; the two neighbours peek in from behind it. Each
-   card is the site's actual
-   `.card`/`.brand-tag`/`.chip`/`.check-list` product-card treatment (see
-   `/products`) — this file only positions and animates it, it doesn't
-   restyle it. */
+/* The other five products, sequenced through one carousel. The tall cards use
+   the same measured shell as the rest of the site, but tell a larger product
+   story through a purpose-built interface scene rather than a feature list. */
 
 .scroll {
   --screen: 1172px;
@@ -136,14 +133,13 @@
      the two blocks read as one paired row this way at any screen height,
      rather than drifting apart the way center-percentage positioning did. */
   top: 110px;
-  /* Centred in the space actually left over after the 360px copy column,
-     not anchored to the page's right margin — `.copy`'s own left offset
-     cancels out of the midpoint, which is what makes this work at any
-     `--side` value: midpoint = copyRight + (viewportRight − copyRight) / 2
-     = ((--side + 360) + (100vw − --side)) / 2 = 50vw + 180px. */
-  left: calc(50vw + 180px);
+  /* Start the active card 48px after the copy column. Its centre is the copy
+     edge (`--side + 360px`) plus the gap and half of the responsive card
+     width. This keeps the two pieces reading as one composition instead of
+     centring the carousel in all the unused space to the right. */
+  left: calc(var(--side) + 360px + 48px + min(17.5vw, 205px));
   z-index: 1;
-  width: min(30vw, 340px);
+  width: min(35vw, 410px);
   transform: translateX(-50%);
 }
 
@@ -158,6 +154,7 @@
   opacity: max(0, calc(1 - var(--dist, 0) * 0.45));
   z-index: calc(10 - var(--dist, 0));
   pointer-events: none;
+  overflow: hidden;
   transition:
     transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.4s ease,
@@ -167,6 +164,536 @@
 .board.isActive {
   pointer-events: auto;
   box-shadow: var(--shadow-md, 0 20px 40px -24px rgba(0, 0, 0, 0.2));
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 0;
+}
+
+.cardHead h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-soft);
+}
+
+.cardTagline {
+  min-height: 2.4em;
+  margin: 13px 24px 0;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.storyFrame {
+  height: 270px;
+  margin-top: 20px;
+  overflow: hidden;
+  border-block: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.cardFoot {
+  display: grid;
+  min-height: 112px;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 18px;
+  padding: 18px 20px 20px 24px;
+}
+
+.cardFoot p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.48;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.cardAction {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand);
+  color: var(--surface);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.cardAction:hover {
+  transform: scale(1.06);
+  background: color-mix(in oklab, var(--brand) 90%, var(--surface));
+}
+
+.cardAction:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.cardAction svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Shared miniature application chrome. */
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--text);
+}
+
+.sceneToolbar {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 13px;
+  background: var(--surface);
+}
+
+.sceneToolbar > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.sceneToolbar b {
+  margin-left: 6px;
+  color: var(--text-faint);
+  font-size: 0.58rem;
+  font-weight: 500;
+}
+
+.microLabel {
+  color: var(--text-faint);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* NSQR — one editable code and the live signal it creates. */
+.nsqrGrid {
+  display: grid;
+  height: calc(100% - 34px);
+  grid-template-columns: 36% 64%;
+}
+
+.qrPanel {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  padding: 22px 12px;
+  background: var(--surface);
+}
+
+.qr {
+  display: grid;
+  width: 96px;
+  aspect-ratio: 1;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 2px;
+  margin-top: 12px;
+  border: 8px solid var(--surface);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.qr i { background: transparent; }
+.qr .qrCell { background: var(--brand-text); }
+
+.liveLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 13px;
+  color: var(--brand-text);
+  font-size: 0.62rem;
+  font-weight: 500;
+}
+
+.liveLine i,
+.attendanceHead b i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.analyticsPanel { padding: 18px 16px 12px; }
+
+.destinationRow,
+.chartHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.destinationRow {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: var(--surface);
+  font-size: 0.62rem;
+}
+
+.destinationRow span,
+.chartHead span {
+  display: grid;
+  gap: 2px;
+  font-weight: 500;
+}
+
+.destinationRow small,
+.chartHead small {
+  color: var(--text-faint);
+  font-size: 0.5rem;
+  font-weight: 400;
+}
+
+.destinationRow b {
+  border-radius: 999px;
+  padding: 4px 7px;
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 0.5rem;
+  font-weight: 500;
+}
+
+.chartHead { margin-top: 18px; font-size: 0.72rem; }
+.chartHead i { color: var(--brand-text); font-size: 0.52rem; font-style: normal; }
+
+.barChart {
+  display: flex;
+  height: 75px;
+  align-items: end;
+  gap: 5px;
+  margin-top: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.barChart i {
+  width: 100%;
+  height: var(--bar);
+  border-radius: 3px 3px 0 0;
+  background: var(--brand-soft);
+}
+
+.barChart i:nth-last-child(-n + 2) { background: var(--brand); }
+.chartAxis { display: flex; justify-content: space-between; margin-top: 5px; color: var(--text-faint); font-size: 0.48rem; }
+
+.scanPulse {
+  position: absolute;
+  top: 34px;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--brand);
+  opacity: 0;
+  animation: scan-across 4.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Vault — the file becomes ciphertext before it crosses the boundary. */
+.vaultFlow {
+  display: grid;
+  height: 174px;
+  grid-template-columns: 30% 1fr 27%;
+  align-items: center;
+  padding: 12px;
+}
+
+.fileCard,
+.vaultCard {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 7px;
+  text-align: center;
+}
+
+.fileCard > i {
+  display: grid;
+  width: 46px;
+  height: 58px;
+  place-items: end center;
+  border: 1px solid var(--border-strong);
+  border-radius: 5px 12px 5px 5px;
+  padding-bottom: 8px;
+  background: var(--surface);
+  color: var(--brand-text);
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.fileCard span { display: grid; gap: 2px; }
+.fileCard b, .vaultCard b { font-size: 0.58rem; font-weight: 500; }
+.fileCard small, .vaultCard small { color: var(--text-faint); font-size: 0.48rem; }
+
+.encryptLane {
+  position: relative;
+  height: 2px;
+  background: var(--border-strong);
+}
+
+.encryptLane::after {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 50%;
+  height: 4px;
+  background: var(--brand);
+  content: "";
+}
+
+.packet {
+  position: absolute;
+  top: -12px;
+  z-index: 2;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 4px;
+  background: var(--surface);
+  color: var(--brand-text);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.46rem;
+  animation: packet-flow 4.2s linear infinite;
+}
+
+.packet:nth-child(2) { animation-delay: -1.4s; }
+.packet:nth-child(3) { animation-delay: -2.8s; }
+
+.keyBadge {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  display: grid;
+  width: 116px;
+  justify-items: center;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.keyBadge i {
+  width: 22px;
+  height: 18px;
+  border: 2px solid var(--brand);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 4px var(--brand-soft);
+}
+
+.keyBadge b { margin-top: 5px; color: var(--brand-text); font-size: 0.52rem; }
+.keyBadge small { margin-top: 2px; color: var(--text-faint); font-size: 0.43rem; }
+
+.vaultDoor {
+  position: relative;
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border: 3px solid var(--brand);
+  border-radius: 13px;
+  background: var(--brand-soft);
+}
+
+.vaultDoor i { width: 24px; height: 24px; border: 2px solid var(--brand-text); border-radius: 50%; }
+.vaultDoor span { position: absolute; width: 4px; height: 12px; border-radius: 2px; background: var(--brand-text); }
+
+.policyStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  border-top: 1px solid var(--border);
+  background: var(--border);
+}
+
+.policyStrip span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px 4px;
+  background: var(--surface);
+  font-size: 0.48rem;
+  text-align: center;
+}
+
+.policyStrip i { width: 5px; height: 5px; border-radius: 50%; background: var(--brand); }
+
+/* Presence — a scan on one device updates the shared register. */
+.attendancePanel {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  left: 16px;
+  height: 205px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--surface);
+}
+
+.attendanceHead { display: flex; align-items: center; justify-content: space-between; }
+.attendanceHead span { display: grid; gap: 3px; font-size: 0.68rem; font-weight: 500; }
+.attendanceHead small { color: var(--text-faint); font-size: 0.48rem; font-weight: 400; }
+.attendanceHead b { display: flex; align-items: center; gap: 5px; color: var(--brand-text); font-size: 0.5rem; font-weight: 500; }
+.roster { margin-top: 10px; }
+.roster > div { display: grid; grid-template-columns: 22px 1fr 34px 55px; align-items: center; gap: 6px; border-top: 1px solid var(--border); padding: 6px 0; font-size: 0.52rem; }
+.roster > div > i { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand-text); font-size: 0.45rem; font-style: normal; font-weight: 600; }
+.roster time { color: var(--text-faint); font-family: var(--font-mono), monospace; }
+.roster > div > b { color: var(--brand-text); font-size: 0.46rem; font-weight: 500; }
+.rosterFoot { display: flex; align-items: center; gap: 7px; margin-top: 5px; color: var(--text-faint); font-size: 0.46rem; }
+.rosterFoot > i { position: relative; height: 4px; flex: 1; overflow: hidden; border-radius: 4px; background: var(--border); }
+.rosterFoot > i b { position: absolute; inset: 0 11% 0 0; background: var(--brand); }
+
+.phone {
+  position: absolute;
+  right: 28px;
+  bottom: -36px;
+  display: flex;
+  width: 104px;
+  height: 185px;
+  align-items: center;
+  flex-direction: column;
+  border: 3px solid var(--text);
+  border-radius: 19px;
+  padding: 16px 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 32px color-mix(in oklab, var(--text) 13%, transparent);
+}
+
+.phoneSpeaker { position: absolute; top: 6px; width: 28px; height: 3px; border-radius: 4px; background: var(--border-strong); }
+.phone small { color: var(--text-faint); font-size: 0.46rem; }
+.phone .qr { width: 64px; gap: 1px; margin-top: 9px; border-width: 5px; }
+.phone > b { display: flex; align-items: center; gap: 5px; margin-top: 10px; color: var(--brand-text); font-size: 0.5rem; font-weight: 500; }
+.phone > b i { width: 5px; height: 5px; border-radius: 50%; background: var(--brand); }
+.scanLine { position: absolute; top: 52px; right: 16px; left: 16px; height: 2px; background: var(--brand); animation: phone-scan 2.6s ease-in-out infinite; }
+
+.checkinToast {
+  position: absolute;
+  bottom: 18px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 9px 12px;
+  background: var(--surface);
+  box-shadow: 0 10px 24px color-mix(in oklab, var(--text) 10%, transparent);
+}
+
+.checkinToast > i { display: grid; width: 23px; height: 23px; place-items: center; border-radius: 50%; background: var(--brand); color: var(--surface); font-size: 0.65rem; font-style: normal; }
+.checkinToast span { display: grid; gap: 2px; }
+.checkinToast b { font-size: 0.54rem; font-weight: 500; }
+.checkinToast small { color: var(--text-faint); font-size: 0.44rem; }
+
+/* Lipd Hub — measured values become a detected pattern and referral. */
+.lipidHead { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 8px; }
+.lipidHead span { display: grid; gap: 2px; font-size: 0.7rem; font-weight: 500; }
+.lipidHead small { color: var(--text-faint); font-size: 0.48rem; font-weight: 400; }
+.lipidHead > b { border-radius: 999px; padding: 5px 8px; background: var(--brand-soft); color: var(--brand-text); font-size: 0.48rem; font-weight: 500; }
+.lipidChart { position: relative; display: grid; grid-template-columns: 94px 1fr; gap: 12px; padding: 8px 18px 16px; }
+.metricStack { display: grid; gap: 7px; }
+.metricStack span { display: grid; grid-template-columns: 1fr auto; align-items: end; border: 1px solid var(--border); border-radius: 9px; padding: 8px; background: var(--surface); }
+.metricStack small { grid-column: 1 / -1; color: var(--text-faint); font-size: 0.45rem; }
+.metricStack b { color: var(--brand-text); font-size: 0.86rem; font-weight: 500; }
+.metricStack i { color: var(--text-faint); font-size: 0.4rem; font-style: normal; }
+.lipidChart svg { width: 100%; overflow: visible; }
+.lipidChart svg path { fill: none; stroke: var(--border); stroke-width: 1; }
+.lipidChart svg polyline { fill: none; stroke: var(--brand); stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+.lipidChart svg circle { fill: var(--surface); stroke: var(--brand); stroke-width: 3; }
+.patternFlag { position: absolute; top: 12px; right: 12px; border-radius: 6px; padding: 4px 6px; background: var(--brand); color: var(--surface); font-size: 0.42rem; }
+.referralFlow { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr; align-items: center; border-top: 1px solid var(--border); padding: 15px 16px; background: var(--surface); }
+.referralFlow > span { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.referralFlow > span i { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand-text); font-size: 0.48rem; font-style: normal; }
+.referralFlow > span b { font-size: 0.48rem; font-weight: 500; }
+.referralFlow > span small { color: var(--text-faint); font-size: 0.4rem; }
+.referralFlow > em { height: 1px; background: var(--border-strong); }
+.referralFlow .currentStep i { background: var(--brand); color: var(--surface); }
+
+/* AES — an essay, its rubric signal, and one useful next action. */
+.aesScene { display: grid; grid-template-columns: 53% 47%; padding: 16px; }
+.essayPage { position: relative; border: 1px solid var(--border); border-radius: 12px 0 0 12px; padding: 16px; background: var(--surface); }
+.essayTitle { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 11px; }
+.essayTitle > i { width: 22px; height: 27px; border: 1px solid var(--border-strong); border-radius: 3px; background: var(--bg-subtle); }
+.essayTitle span { display: grid; gap: 2px; }
+.essayTitle b { font-size: 0.56rem; font-weight: 500; }
+.essayTitle small { color: var(--text-faint); font-size: 0.44rem; }
+.essayPage p { margin: 13px 0 0; color: var(--text-muted); font-family: var(--font-mono), monospace; font-size: 0.47rem; line-height: 1.65; }
+.essayPage mark { border-radius: 2px; background: var(--brand-soft); color: var(--text); }
+.essayPage u { text-decoration-color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 2px; }
+.commentPin { position: absolute; right: -9px; bottom: 55px; z-index: 2; display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: var(--brand); color: var(--surface); font-size: 0.48rem; }
+.scorePanel { border: 1px solid var(--border); border-left: 0; border-radius: 0 12px 12px 0; padding: 14px 12px; background: var(--bg); }
+.totalScore { display: flex; align-items: end; justify-content: space-between; gap: 6px; }
+.totalScore span { display: grid; grid-template-columns: auto auto; align-items: end; }
+.totalScore small { grid-column: 1 / -1; color: var(--text-faint); font-size: 0.44rem; }
+.totalScore b { color: var(--brand-text); font-size: 1.4rem; font-weight: 500; line-height: 1; }
+.totalScore i { color: var(--text-faint); font-size: 0.5rem; font-style: normal; }
+.totalScore > em { border-radius: 999px; padding: 4px 6px; background: var(--brand-soft); color: var(--brand-text); font-size: 0.44rem; font-style: normal; }
+.rubricRows { display: grid; gap: 8px; margin-top: 18px; }
+.rubricRows > div > span { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.46rem; }
+.rubricRows > div > span b { color: var(--text); font-weight: 500; }
+.rubricRows > div > i { display: block; height: 4px; margin-top: 4px; overflow: hidden; border-radius: 3px; background: var(--border); }
+.rubricRows > div > i em { display: block; width: var(--score); height: 100%; background: var(--brand); }
+.feedback { display: flex; align-items: center; gap: 7px; margin-top: 17px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--surface); }
+.feedback > i { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand-text); font-size: 0.55rem; font-style: normal; }
+.feedback span { display: grid; gap: 2px; }
+.feedback b { font-size: 0.46rem; font-weight: 500; }
+.feedback small { color: var(--text-faint); font-size: 0.4rem; line-height: 1.3; }
+
+@keyframes scan-across {
+  0%, 15% { transform: translateX(0); opacity: 0; }
+  20% { opacity: 0.65; }
+  65% { transform: translateX(405px); opacity: 0.65; }
+  70%, 100% { transform: translateX(405px); opacity: 0; }
+}
+
+@keyframes packet-flow {
+  from { left: 0; opacity: 0; }
+  12%, 88% { opacity: 1; }
+  to { left: calc(100% - 25px); opacity: 0; }
+}
+
+@keyframes phone-scan {
+  0%, 100% { transform: translateY(0); opacity: 0.35; }
+  50% { transform: translateY(58px); opacity: 1; }
 }
 
 /* The presenting card's "Explore"/"Request access" link keeps the
@@ -212,7 +739,7 @@
   .carousel {
     top: 260px;
     left: 50%;
-    width: min(80vw, 320px);
+    width: min(86vw, 380px);
     transform: translateX(-50%);
   }
   .board {
@@ -227,10 +754,19 @@
     width: 48px;
     height: 48px;
   }
+  .storyFrame { height: 225px; }
+  .cardTagline { min-height: 0; font-size: 1.05rem; }
+  .cardFoot { min-height: 94px; }
+  .vaultFlow { height: 138px; }
+  .policyStrip span { padding-block: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .board {
+  .board,
+  .scanPulse,
+  .packet,
+  .scanLine {
     transition-duration: 0.001ms !important;
+    animation: none !important;
   }
 }

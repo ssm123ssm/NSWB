@@ -15,16 +15,15 @@ import { colabLinks } from "../data/site";
 function ColabCommunicationVisual() {
   return (
     <div className={styles.chatEditorialLayout}>
-      <div className={styles.macbookScene} aria-label="Animated coLab chat displayed on a MacBook">
-        <div className={styles.macbookDisplay}>
-          <span className={styles.macbookCamera} aria-hidden="true" />
-          <div className={styles.macbookScreen}>
+      <div className={styles.appScene} aria-label="Animated coLab chat app window">
+        <div className={styles.appWindow}>
+          <div className={styles.windowTitleBar}>coLab <span>Project communication</span></div>
+          <div className={styles.appViewport}>
             <div className={styles.screenCanvas}>
               <ColabAgentExecutionDemo editorial />
             </div>
           </div>
         </div>
-        <div className={styles.macbookBase} aria-hidden="true"><span /></div>
       </div>
       <div className={styles.chatEditorialCopy}>
         <h3>Project communication</h3>
@@ -119,10 +118,10 @@ export function AcademicResearchSection() {
             <p>Use LaTeX for scientific writing, keep source files and references together, and prepare research that others can review and reproduce.</p>
           </div>
 
-          <div className={`${styles.macbookScene} ${styles.academicDevice}`} aria-label="coLab academic writing and reproducible open research workspace displayed on a MacBook">
-            <div className={styles.macbookDisplay}>
-              <span className={styles.macbookCamera} aria-hidden="true" />
-              <div className={styles.macbookScreen}>
+          <div className={`${styles.appScene} ${styles.academicDevice}`} aria-label="coLab academic writing and reproducible open research app window">
+            <div className={styles.appWindow}>
+              <div className={styles.windowTitleBar}>coLab <span>Research workspace</span></div>
+              <div className={styles.appViewport}>
                 <div className={`${styles.screenCanvas} ${styles.academicScreen}`}>
                   <aside className={styles.academicSidebar}>
                     <strong>Research paper</strong>
@@ -133,7 +132,7 @@ export function AcademicResearchSection() {
                     <span>figures</span>
                   </aside>
                   <div className={styles.academicWorkspace}>
-                    <header><span className={styles.latexMark}>L<span>A</span>T<span>E</span>X</span><small>main.tex · saved</small><button type="button" tabIndex="-1">Compile</button></header>
+                    <header><span className={styles.latexMark}>L<span>A</span>T<span>E</span>X</span><small>main.tex · saved</small><button type="button" disabled tabIndex="-1">Compile</button></header>
                     <div className={styles.academicEditor}>
                       <pre><code><i>01</i> \documentclass&#123;article&#125;{"\n"}<i>02</i> \usepackage&#123;graphicx&#125;{"\n"}<i>03</i> \title&#123;Reproducible AI Research&#125;{"\n"}<i>04</i> \begin&#123;document&#125;{"\n"}<i>05</i> \maketitle{"\n"}<i>06</i> \section&#123;Method&#125;{"\n"}<i>07</i> Results are linked to the project.{"\n"}<i>08</i> \end&#123;document&#125;</code></pre>
                     </div>
@@ -150,7 +149,6 @@ export function AcademicResearchSection() {
                 </div>
               </div>
             </div>
-            <div className={styles.macbookBase} aria-hidden="true"><span /></div>
           </div>
         </div>
       </div>
@@ -163,16 +161,15 @@ export function HostedPreviewsSection() {
     <section className={styles.previewEditorialSection}>
       <div className="shell shell-wide">
         <div className={styles.chatEditorialLayout}>
-          <div className={`${styles.macbookScene} ${styles.hostedPreviewDevice}`} aria-label="Hosted product preview with reviewer annotations displayed on a MacBook">
-            <div className={styles.macbookDisplay}>
-              <span className={styles.macbookCamera} aria-hidden="true" />
-              <div className={styles.macbookScreen}>
+          <div className={`${styles.appScene} ${styles.hostedPreviewDevice}`} aria-label="Hosted product preview app window with reviewer annotations">
+            <div className={styles.appWindow}>
+              <div className={styles.windowTitleBar}>coLab <span>Hosted preview</span></div>
+              <div className={styles.appViewport}>
                 <div className={styles.screenCanvas}>
                   <HostedPreviewDemo />
                 </div>
               </div>
             </div>
-            <div className={styles.macbookBase} aria-hidden="true"><span /></div>
           </div>
 
           <div className={styles.chatEditorialCopy}>

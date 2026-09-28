@@ -14,15 +14,17 @@ function TypingDots() {
 export default function ColabAgentExecutionDemo({ editorial = false }) {
   const [phase, setPhase] = useState(0);
   const [typedText, setTypedText] = useState("");
+  const [inMeeting, setInMeeting] = useState(false);
 
   useEffect(() => {
+    if (inMeeting || phase === 6) return undefined;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPhase(6);
       return undefined;
     }
     const timer = window.setTimeout(() => setPhase((current) => (current + 1) % phaseDurations.length), phaseDurations[phase]);
     return () => window.clearTimeout(timer);
-  }, [phase]);
+  }, [phase, inMeeting]);
 
   useEffect(() => {
     if (phase !== 3) {
@@ -45,12 +47,28 @@ export default function ColabAgentExecutionDemo({ editorial = false }) {
   const completed = phase >= 5;
   const huddleStarting = phase === 6;
 
+  if (inMeeting) {
+    return (
+      <div className={styles.meetingPanel} aria-label="Project huddle meeting panel">
+        <header className={styles.meetingHeader}><div><small>RESEARCH PLATFORM · DEMO</small><h4>Project huddle</h4></div><span>3 participants</span></header>
+        <div className={styles.meetingParticipants}>
+          {[ ["I", "Isuru"], ["S", "Supun"], ["H", "Shashika"] ].map(([initial, name]) => <div key={name}><span>{initial}</span><strong>{name}</strong><small>In the huddle</small></div>)}
+        </div>
+        <section className={styles.meetingDecisions} aria-label="Recorded meeting decisions">
+          <header><div><small>MEETING NOTES</small><h4>Recorded decisions</h4></div><span>Read-only</span></header>
+          <ol><li><CheckIcon /><div><strong>Clarify the results chart label</strong><p>Isuru will update the label to state the measured outcome.</p></div></li><li><CheckIcon /><div><strong>Complete the methods review</strong><p>Supun will check the revised section before the next review.</p></div></li><li><CheckIcon /><div><strong>Keep the research context together</strong><p>Shashika will link the review notes and references to the project.</p></div></li></ol>
+        </section>
+        <div className={styles.meetingFooter}><p className={styles.meetingNote}>Sample meeting · Decisions shown for illustration.</p><button type="button" className={styles.meetingReset} onClick={() => { setPhase(0); setTypedText(""); setInMeeting(false); }}>Reset</button></div>
+      </div>
+    );
+  }
+
   return (
     <div className={`${styles.agentChatWindow} ${editorial ? styles.editorialChatDemo : ""}`} aria-label="Project communication demonstration">
       <aside className={styles.agentChatSidebar}>
         <div className={styles.agentChatBrand}><span><NeuralIcon /></span><strong>coLab</strong></div>
         <small>CHAT</small>
-        <button type="button" tabIndex="-1">+ New</button>
+        <button type="button" disabled tabIndex="-1">+ New</button>
         <div className={styles.agentChatSearch}>⌕&nbsp;&nbsp;Find a conversation</div>
         <div className={styles.agentChatChannels}>
           <p><i data-color="blue" />Research Platform</p>
@@ -69,7 +87,7 @@ export default function ColabAgentExecutionDemo({ editorial = false }) {
         <div className={styles.agentChatHeader}>
           <div className={styles.channelMark}>#</div>
           <div><strong>General</strong><p>Research Platform · Project channel</p></div>
-          <div className={styles.agentChatHeaderActions}><span>Search messages</span><button type="button" tabIndex="-1">Start huddle</button></div>
+          <div className={styles.agentChatHeaderActions}><span>Search messages</span><button type="button" disabled tabIndex="-1">Start huddle</button></div>
         </div>
 
         <div className={styles.agentChatBody} aria-live="polite">
@@ -88,9 +106,9 @@ export default function ColabAgentExecutionDemo({ editorial = false }) {
           {completed ? <div className={styles.chatMessageRow}><span className={styles.chatAgentAvatar}><NeuralIcon /></span><div className={`${styles.chatMessage} ${styles.chatMessageComplete}`}><small>Atlas · project agent · 10:15 AM</small><p>I summarized the discussion and updated the review task.</p><div className={styles.chatActionReceipt}><strong><i />Completed</strong><ul><li><CheckIcon />Read channel discussion</li><li><CheckIcon />Linked reviewer comment</li><li><CheckIcon />Updated review task</li></ul></div></div></div> : null}
         </div>
 
-        <div className={styles.agentChatFooter}><div className={styles.agentChatComposer}><div className={styles.chatComposerField}><span>{phase === 3 ? typedText : "Message General — mention people or agents"}</span>{phase === 3 && typedText.length < instruction.length ? <i /> : null}</div><button type="button" aria-label="Send message" tabIndex="-1">Send</button></div></div>
+        <div className={styles.agentChatFooter}><div className={styles.agentChatComposer}><div className={styles.chatComposerField}><span>{phase === 3 ? typedText : "Message General — mention people or agents"}</span>{phase === 3 && typedText.length < instruction.length ? <i /> : null}</div><button type="button" disabled aria-label="Send message" tabIndex="-1">Send</button></div></div>
 
-        {huddleStarting ? <div className={styles.huddleStarting} role="status"><div className={styles.huddleAvatars} aria-hidden="true"><span>I</span><span>S</span><span>H</span></div><div><small>RESEARCH PLATFORM</small><strong>Project huddle is starting</strong><p>Isuru, Supun, and Shashika are joining.</p></div><div className={styles.huddleActions}><span className={styles.huddleSignal} aria-hidden="true"><i /><i /><i /></span><button type="button" tabIndex="-1">Join now</button></div></div> : null}
+        {huddleStarting ? <div className={styles.huddleStarting} role="status"><div className={styles.huddleAvatars} aria-hidden="true"><span>I</span><span>S</span><span>H</span></div><div><small>RESEARCH PLATFORM</small><strong>Project huddle is starting</strong><p>Isuru, Supun, and Shashika are joining.</p></div><div className={styles.huddleActions}><span className={styles.huddleSignal} aria-hidden="true"><i /><i /><i /></span><button type="button" onClick={() => setInMeeting(true)}>Join now</button></div></div> : null}
       </div>
     </div>
   );

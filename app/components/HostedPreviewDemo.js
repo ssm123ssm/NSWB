@@ -9,8 +9,22 @@ const durations = [1800, 700, 2600, 3200];
 export default function HostedPreviewDemo() {
   const [phase, setPhase] = useState(0);
   const [typedComment, setTypedComment] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [taskAdded, setTaskAdded] = useState(false);
 
   useEffect(() => {
+    if (!taskAdded) return undefined;
+    const timer = window.setTimeout(() => {
+      setMenuOpen(false);
+      setTaskAdded(false);
+      setTypedComment("");
+      setPhase(0);
+    }, 5000);
+    return () => window.clearTimeout(timer);
+  }, [taskAdded]);
+
+  useEffect(() => {
+    if (taskAdded) return undefined;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPhase(3);
       setTypedComment(comment);
@@ -18,11 +32,14 @@ export default function HostedPreviewDemo() {
     }
 
     const timer = window.setTimeout(
-      () => setPhase((current) => (current + 1) % durations.length),
+      () => {
+        setMenuOpen(false);
+        setPhase((current) => (current + 1) % durations.length);
+      },
       durations[phase],
     );
     return () => window.clearTimeout(timer);
-  }, [phase]);
+  }, [phase, taskAdded]);
 
   useEffect(() => {
     if (phase !== 2) {
@@ -60,7 +77,12 @@ export default function HostedPreviewDemo() {
             <div className={`${styles.annotationComposer} ${submitted ? styles.annotationSubmitted : ""}`}>
               <small>PRIYA · VIEWER</small>
               <div>{typedComment || "Add a comment"}{phase === 2 ? <i /> : null}</div>
-              {submitted ? <strong>Comment added</strong> : <button type="button" tabIndex="-1">Add comment</button>}
+              {submitted ? <>
+                <strong>Comment added</strong>
+                <button type="button" className={styles.commentMore} aria-label="Comment options" aria-expanded={menuOpen} aria-controls="preview-comment-actions" onClick={() => setMenuOpen(open => !open)} onKeyDown={event => { if (event.key === "Escape") setMenuOpen(false); }}>⋯</button>
+                {menuOpen && <aside id="preview-comment-actions" className={styles.commentActions} onKeyDown={event => { if (event.key === "Escape") { setMenuOpen(false); event.currentTarget.previousElementSibling.focus(); } }}><button type="button" disabled={taskAdded} onClick={() => { setTaskAdded(true); setMenuOpen(false); }}>{taskAdded ? "Added to task" : "Add this to task"}</button></aside>}
+                {taskAdded && <p className={styles.commentTaskStatus} role="status">Demo task added: update the research heading.</p>}
+              </> : <button type="button" tabIndex="-1">Add comment</button>}
             </div>
           ) : null}
 

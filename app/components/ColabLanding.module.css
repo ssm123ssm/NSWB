@@ -5,7 +5,7 @@
 .heroLead { max-width: 760px; margin-top: 1.75rem; color: var(--text-muted); font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.6; }
 .heroActions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
 .heroShowcase { width: min(1180px, 94vw); margin-inline: auto; padding: 2rem 0 1rem; perspective: 1600px; transform: translateX(-5vw); }
-.heroShowcase .macbookScene { width: 100%; margin-left: 0; }
+.heroShowcase .appScene { width: 100%; margin-left: 0; }
 .heroShowcase .chatEditorialCopy { padding-bottom: 0; }
 .previewPage button { border-radius: 999px; background: #2563eb; padding: 9px 14px; color: #fff; font-size: 10px; }
 .agentChatWindow { display: grid; min-height: 600px; grid-template-columns: 200px 1fr; overflow: hidden; border: 1px solid var(--border-strong); border-radius: var(--radius-xl); background: var(--bg); transform: rotateX(1.5deg) rotateY(-4deg) rotateZ(-1deg); transform-origin: center; }
@@ -106,13 +106,39 @@
 .mainFeatureItem > span { color: var(--brand-text); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .05em; }
 .mainFeatureItem h3 { font-size: 1.25rem; font-weight: 500; line-height: 1.2; }
 .mainFeatureItem p { max-width: 620px; color: var(--text-muted); font-size: .9rem; line-height: 1.55; }
-.chatEditorialSection, .academicEditorialSection, .previewEditorialSection { overflow: hidden; background: var(--bg); padding: clamp(5.5rem, 10vw, 9rem) 0; }
+.chatEditorialSection, .academicEditorialSection, .previewEditorialSection { overflow: hidden; background: var(--bg); padding: 5rem 0; }
 .chatEditorialLayout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); align-items: center; gap: clamp(2.5rem, 7vw, 7rem); }
-.macbookScene { width: 116%; margin-left: -16%; perspective: 1400px; }
-.macbookDisplay { position: relative; overflow: hidden; border: 8px solid #1d1d1f; border-bottom-width: 10px; border-radius: 18px 18px 8px 8px; background: #1d1d1f; box-shadow: 0 28px 70px rgb(24 24 27 / 16%); transform: rotateY(4deg) rotateX(1deg); transform-origin: center right; }
-.macbookCamera { position: absolute; top: 3px; left: 50%; z-index: 2; width: 5px; height: 5px; border-radius: 50%; background: #050505; transform: translateX(-50%); }
-.macbookScreen { position: relative; aspect-ratio: 2178 / 1354; overflow: hidden; border-radius: 9px 9px 2px 2px; background: #f5f5f6; }
+.appScene { width: 116%; margin-left: -16%; }
+.appWindow { position: relative; overflow: hidden; border: 1px solid var(--border-strong); border-radius: 16px; background: var(--bg); }
+.windowTitleBar { display: flex; align-items: center; gap: .75rem; min-height: 36px; padding: .5rem 1rem; border-bottom: 1px solid var(--border); color: var(--text); font-size: .65rem; font-weight: 500; }
+.windowTitleBar span { padding-left: .75rem; border-left: 1px solid var(--border-strong); color: var(--text-muted); font-weight: 400; }
+.appViewport { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg); }
 .screenCanvas { position: absolute; inset: 0; overflow: hidden; }
+.editorialChatDemo button:disabled { cursor: default; }
+.huddleActions button:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+.meetingPanel { position: absolute; inset: 0; overflow: auto; padding: clamp(12px, 2vw, 24px); background: var(--bg); color: var(--text); }
+.meetingHeader, .meetingDecisions header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.meetingHeader small, .meetingDecisions small { color: var(--brand-text); font: .55rem var(--font-mono); }
+.meetingHeader h4 { margin-top: 4px; font-size: 1.15rem; font-weight: 500; }
+.meetingHeader > span, .meetingDecisions header > span { color: var(--text-muted); font-size: .6rem; }
+.meetingParticipants { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
+.meetingParticipants > div { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 14px 8px; border: 1px solid var(--border); border-radius: 12px; }
+.meetingParticipants > div > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-text); font-size: 1rem; }
+.meetingParticipants strong { font-size: .7rem; font-weight: 500; }
+.meetingParticipants small { color: var(--text-muted); font-size: .55rem; }
+.meetingDecisions { border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.meetingDecisions h4 { font-size: .9rem; font-weight: 500; }
+.meetingDecisions ol { display: grid; gap: 12px; margin-top: 14px; }
+.meetingDecisions li { display: flex; gap: 8px; }
+.meetingDecisions li svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--brand); }
+.meetingDecisions li strong { display: block; font-size: .65rem; font-weight: 500; }
+.meetingDecisions li p { margin-top: 3px; color: var(--text-muted); font-size: .6rem; }
+.meetingNote { margin-top: 10px; color: var(--text-muted); font-size: .55rem; }
+.meetingFooter { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.meetingFooter .meetingNote { margin-top: 0; }
+.meetingReset { border: 1px solid var(--border-strong); border-radius: 6px; background: transparent; padding: 5px 9px; color: var(--text-muted); font-size: .6rem; cursor: pointer; }
+.meetingReset:hover { border-color: var(--brand); color: var(--brand-text); }
+.meetingReset:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 .editorialChatDemo { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; grid-template-columns: 25% 75%; border: 0; border-radius: 0; transform: none; }
 .editorialChatDemo .agentChatSidebar { padding: .65rem .55rem .45rem; }
 .editorialChatDemo .agentChatBrand { padding-bottom: .7rem; }
@@ -162,16 +188,13 @@
 .huddleSignal i:nth-child(3) { height: 12px; animation-delay: .3s; }
 @keyframes huddleEnter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes huddleSignal { to { height: 5px; } }
-.macbookBase { position: relative; width: 108%; height: 14px; margin-left: -4%; border-radius: 2px 2px 18px 18px; background: linear-gradient(180deg, #d9dade 0%, #aeb0b6 58%, #85878d 100%); box-shadow: 0 12px 24px rgb(24 24 27 / 12%); }
-.macbookBase::after { position: absolute; right: 5%; bottom: -4px; left: 5%; height: 4px; border-radius: 0 0 50% 50%; background: #777980; content: ""; }
-.macbookBase span { position: absolute; top: 0; left: 50%; width: 70px; height: 5px; border-radius: 0 0 8px 8px; background: #a2a4aa; transform: translateX(-50%); }
-.chatEditorialCopy { max-width: 470px; padding-bottom: 4rem; }
+.chatEditorialCopy { max-width: 470px; }
 .chatEditorialCopy h3 { font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 500; letter-spacing: -.045em; line-height: 1; }
 .chatEditorialCopy p { margin-top: 1.25rem; color: var(--text-muted); font-size: clamp(1rem, 1.6vw, 1.25rem); line-height: 1.55; }
 .academicEditorialLayout { display: grid; grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(2.5rem, 7vw, 7rem); }
 .academicEditorialLayout .chatEditorialCopy { padding-bottom: 0; }
 .academicDevice { width: 116%; margin-right: -16%; margin-left: 0; }
-.academicDevice .macbookDisplay { transform: rotateY(-4deg) rotateX(1deg); transform-origin: center left; }
+.academicDevice button:disabled { cursor: default; }
 .academicScreen { display: grid; grid-template-columns: 22% 78%; color: #18181b; }
 .academicSidebar { display: flex; flex-direction: column; gap: .45rem; border-right: 1px solid #dedfe3; background: #f1f2f4; padding: 1.1rem .8rem; }
 .academicSidebar strong { margin-bottom: .55rem; font-size: .7rem; }
@@ -234,6 +257,13 @@
 .annotationComposer > div i { display: inline-block; width: 1px; height: .65rem; margin-left: 2px; background: #18181b; vertical-align: -.1rem; animation: composerCursor .8s infinite; }
 .annotationComposer button { display: block; margin-top: .45rem; margin-left: auto; border: 0; border-radius: 999px; background: #2563eb; padding: .35rem .55rem; color: #fff; font-size: .43rem; }
 .annotationComposer > strong { display: block; margin-top: .45rem; color: #059669; font-size: .44rem; font-weight: 600; }
+.annotationComposer .commentMore { position: absolute; top: 4px; right: 6px; display: grid; place-items: center; width: 28px; height: 28px; margin: 0; padding: 0; border-radius: 6px; background: transparent; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+.commentActions { position: absolute; top: 34px; right: 6px; z-index: 7; padding: 4px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); }
+.commentActions button { margin: 0; border-radius: 5px; background: var(--surface); color: var(--text); font-size: .6rem; cursor: pointer; }
+.commentActions button:hover { background: var(--bg-subtle); }
+.commentActions button:disabled { color: var(--text-muted); cursor: default; }
+.commentMore:focus-visible, .commentActions button:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.commentTaskStatus { margin-top: .5rem; border-top: 1px solid var(--border); padding-top: .4rem; color: var(--brand-text); font-size: .5rem; line-height: 1.4; }
 .annotationSubmitted { border-color: #86d4ba; }
 @keyframes annotationOpen { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .previewViewerStrip { position: absolute; right: 1rem; bottom: .8rem; left: 1rem; display: flex; align-items: center; border: 1px solid #e0e1e5; border-radius: 10px; background: #fff; padding: .55rem .7rem; }
@@ -340,10 +370,8 @@
   .whoForLayout { grid-template-columns: 1fr; }
   .chatEditorialLayout { grid-template-columns: 1fr; }
   .academicEditorialLayout { grid-template-columns: 1fr; }
-  .macbookScene { width: 108%; margin-left: -8%; }
-  .hostedPreviewDevice { width: 108%; margin-left: -8%; }
-  .academicDevice { width: 108%; margin-right: -8%; margin-left: 0; }
-  .chatEditorialCopy { max-width: 620px; margin-left: auto; padding-bottom: 0; }
+  .appScene, .hostedPreviewDevice, .academicDevice { width: 100%; margin: 0; }
+  .chatEditorialCopy { max-width: 620px; margin-left: 0; }
   .promiseGrid { grid-template-columns: 1fr; }
   .workflowMedia { position: relative; top: 0; }
 }
@@ -361,14 +389,11 @@
   .faqGrid, .pricingGrid { grid-template-columns: 1fr; }
   .mainFeatureItem { grid-template-columns: 38px 1fr; gap: .5rem .9rem; padding: 1.3rem 0 1.45rem; }
   .mainFeatureItem p { grid-column: 2; }
-  .chatEditorialSection, .academicEditorialSection, .previewEditorialSection { padding-block: 5rem; }
-  .chatEditorialLayout { gap: 3rem; margin-top: 3.5rem; }
+  .chatEditorialSection, .academicEditorialSection, .previewEditorialSection { padding-block: 3rem; }
+  .chatEditorialLayout { gap: 3rem; }
   .academicEditorialLayout { gap: 3rem; }
-  .macbookScene { width: 120%; margin-left: -18%; }
-  .hostedPreviewDevice { width: 116%; margin-left: -12%; }
-  .macbookDisplay { border-width: 5px; border-bottom-width: 7px; border-radius: 12px 12px 6px 6px; transform: rotateY(2deg); }
-  .macbookBase { height: 10px; }
-  .chatEditorialCopy { margin-left: 12%; }
+  .appWindow { border-radius: 12px; }
+  .windowTitleBar { min-height: 30px; padding: .4rem .65rem; font-size: .6rem; }
   .planSteps { align-items: flex-start; flex-direction: column; }
   .planSteps > svg { transform: rotate(90deg); }
   .planFinder { grid-template-columns: 1fr; }

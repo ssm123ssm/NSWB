@@ -219,6 +219,14 @@ export function AccessSection() {
         <h2 className="section-title max-w-3xl">{colabAccess.title}</h2>
         <p className="lead lead-center mt-3 max-w-2xl">{colabAccess.lead}</p>
         <a className="btn btn-gradient btn-lg mt-7" href={colabLinks.signup} target="_blank" rel="noreferrer">{colabAccess.action}<ArrowIcon /></a>
+        <p className="mt-5 max-w-xl text-sm text-faint">
+          Creating a coLab account means agreeing to its{" "}
+          <a className="link-muted" href={colabLinks.terms} target="_blank" rel="noreferrer">Terms of Service</a>
+          {" "}and{" "}
+          <a className="link-muted" href={colabLinks.privacy} target="_blank" rel="noreferrer">Privacy Policy</a>.
+          {" "}Questions:{" "}
+          <a className="link-muted" href={colabLinks.support} target="_blank" rel="noreferrer">coLab support</a>.
+        </p>
       </div>
     </section>
   );

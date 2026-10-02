@@ -24,7 +24,8 @@ export default function sitemap() {
     .filter((product) => product.detail)
     .map((product) => ({ path: product.detail, priority: 0.9 }));
 
-  const legalRoutes = legalDocs.map((doc) => ({
+  // coLab's documents live on colab.neurasense.io, which lists them itself.
+  const legalRoutes = legalDocs.filter((doc) => !doc.external).map((doc) => ({
     path: doc.href,
     priority: 0.3,
   }));

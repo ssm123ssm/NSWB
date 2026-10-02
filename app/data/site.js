@@ -198,6 +198,13 @@ export const footerLinks = [
  * `scope` matters: the website notice covers neurasense.io itself, while the
  * NSQR documents govern the product and say so in their own opening lines.
  *
+ * coLab's are the exception to "the prose lives here": they are published by
+ * the app itself, at colab.neurasense.io, because the app's code is what they
+ * describe and they change with it — App Store review reads them there, and a
+ * copy here would fall behind the first time they moved. So those entries
+ * carry `external: true` and an absolute `href`, and no `file`; the register
+ * links out to them rather than rendering them.
+ *
  * Two descriptions, because they do different jobs: `note` is the one quiet
  * line under each row of the register on `/legal`, and `summary` is the page
  * metadata description, which wants to be fuller for search results.
@@ -245,6 +252,38 @@ export const legalDocs = [
     note: "The 14-day guarantee and how to claim it",
     summary:
       "The 14-day money-back guarantee, how to claim it, and what happens to your QR codes when a refund is issued.",
+  },
+  {
+    slug: "colab-terms",
+    href: "https://colab.neurasense.io/terms",
+    external: true,
+    product: "coLab",
+    title: "coLab Terms of Service",
+    scope: "coLab",
+    note: "Accounts, acceptable use, and zero tolerance for abuse",
+    summary:
+      "The agreement governing use of coLab and its iOS app — accounts, workspaces, acceptable use, reporting and blocking, AI features, and liability.",
+  },
+  {
+    slug: "colab-privacy",
+    href: "https://colab.neurasense.io/privacy",
+    external: true,
+    product: "coLab",
+    title: "coLab Privacy Policy",
+    scope: "coLab",
+    note: "What coLab collects, who processes it, and deleting your account",
+    summary:
+      "How coLab handles account information and workspace content, the providers that process it, how long it is kept, and how to delete your account.",
+  },
+  {
+    slug: "colab-support",
+    href: "https://colab.neurasense.io/support",
+    external: true,
+    product: "coLab",
+    title: "coLab Support",
+    scope: "coLab",
+    note: "Getting help, reporting a message, and contacting us",
+    summary: "How to get help with coLab, report a message or block someone, and reach the team.",
   },
 ];
 
@@ -1349,6 +1388,9 @@ export const vaultAudiences = [
 export const colabLinks = {
   app: "https://colab.neurasense.io/",
   signup: "https://colab.neurasense.io/signup",
+  terms: "https://colab.neurasense.io/terms",
+  privacy: "https://colab.neurasense.io/privacy",
+  support: "https://colab.neurasense.io/support",
 };
 
 /**

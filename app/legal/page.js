@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { legalDocs, products } from "../data/site";
 import { readDoc } from "../components/LegalDoc";
-import { ArrowIcon } from "../components/Icons";
+import { ArrowIcon, ExternalIcon } from "../components/Icons";
 import ProductName from "../components/ProductName";
 
 export const metadata = {
@@ -15,6 +15,8 @@ export default function LegalIndexPage() {
   const siteDocs = legalDocs.filter((doc) => !doc.product);
   const nsqrDocs = legalDocs.filter((doc) => doc.product === "NSQR");
   const nsqrProduct = products.find((product) => product.name === "NSQR");
+  const colabDocs = legalDocs.filter((doc) => doc.product === "coLab");
+  const colabProduct = products.find((product) => product.slug === "colab");
 
   return (
     <main id="main">
@@ -42,6 +44,12 @@ export default function LegalIndexPage() {
             docs={nsqrDocs}
             label={<ProductName product={nsqrProduct} />}
           />
+          <Register
+            brand={colabProduct.accent}
+            className="mt-14"
+            docs={colabDocs}
+            label={<ProductName product={colabProduct} />}
+          />
         </div>
       </section>
     </main>
@@ -62,6 +70,23 @@ function Register({ brand, className = "", docs, label }) {
 }
 
 function DocRow({ doc }) {
+  // coLab publishes its own documents (see `legalDocs`): the row links out,
+  // and carries no date, since the date lives on the page it opens.
+  if (doc.external) {
+    return (
+      <a className="legal-row" href={doc.href} rel="noreferrer" target="_blank">
+        <span className="min-w-0">
+          <span className="legal-row-title block">{doc.title}</span>
+          <span className="legal-row-note block">{doc.note}</span>
+        </span>
+        <span className="flex flex-shrink-0 items-center gap-4">
+          <span className="chip chip-neutral">colab.neurasense.io</span>
+          <ExternalIcon className="h-4 w-4 text-[color:var(--brand-text)]" />
+        </span>
+      </a>
+    );
+  }
+
   // Read straight from the document so the listed date can never drift from
   // the one printed on the page itself.
   const { updated } = readDoc(doc.file);

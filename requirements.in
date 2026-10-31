@@ -1,0 +1,2 @@
+# scripts/contrast.py is the only Python in this repository and imports the
+# standard library only (colorsys). No third-party packages are required.

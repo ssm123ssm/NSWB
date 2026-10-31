@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "runtimes": {
+    "node": "20",
+    "python": "3.11"
+  },
+  "smoke": [
+    {
+      "name": "contrast-audit",
+      "run": "python3 scripts/contrast.py"
+    },
+    {
+      "name": "node-deps-resolve",
+      "run": "node -e \"['next','react','react-dom','react-markdown','remark-gfm','d3-cloud','@vercel/analytics'].forEach(m=>{require.resolve(m);console.log('ok',m)})\""
+    },
+    {
+      "name": "next-cli",
+      "run": "./node_modules/.bin/next --version"
+    }
+  ],
+  "data": [],
+  "lock": null
+}
